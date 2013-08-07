@@ -9,6 +9,11 @@ for a very long time, much like you. They come from all around the
 world, ranging from Sicily to New York. Friends pay their respects,
 care about you and your friend, and you both care about them back.
 
+
+.. image:: ../images/the-codefather.png
+    :alt: A parody of 'The Godfather' logo instead saying 'The Codefather'
+
+
 In exceptional circumstances, they ask for favors because you're
 people of power, people of trust. They're your good friends, so you
 oblige. However, friendship has a cost. Each favor realized is duly
@@ -103,6 +108,11 @@ references, and so on.
 
 What Should the Store Store
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/bff.png
+    :alt: a Best Friends Forever necklace
+
 
 The first step in using Mnesia is to figure out what kind of table
 structure we'll want for our mafia friend-tracking application (which
@@ -310,6 +320,11 @@ directly in memory when it's created. It works fine for tables that
 need to live in RAM only, but when your schema needs to survive across
 many VM restarts, on all the nodes part of the Mnesia cluster, things
 get a bit more complex.
+
+
+.. image:: ../images/chicken-egg.png
+    :alt: A chicken and an egg with arrows pointing both ways to denotate the chicken and egg problem
+
 
 Mnesia depends on the schema, but Mnesia should also create the
 schema. This creates a weird situation where the schema needs to be
@@ -530,6 +545,11 @@ tables. We create the two tables, named after the records
 `#mafiapp_friends{}` and `#mafiapp_services{}`. There's an index on
 the expertise because we do expect to search friends by expertise in
 case of need, as mentioned earlier.
+
+
+.. image:: ../images/moneybag.png
+    :alt: A bag of money with a big dollar sign on it
+
 
 You'll also see that the services table is of type `bag`. This is
 because It's possible to have multiple services with the same senders
@@ -787,6 +807,11 @@ effects of the kind should be included in the transaction*.
 
 Reads, Writes, and More
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/guestbook.png
+    :alt: a pen writing 'sign my guestbook'
+
 
 I've referred to these table-modifying functions a lot and it is now
 time to define them. Most of them are unsurprisingly similar to what
@@ -1399,6 +1424,11 @@ Name matches To , the value returned will be 1 (we received a service,
 we owe one). In both cases, the value is coupled to a tuple containing
 the name.
 
+
+.. image:: ../images/iou.png
+    :alt: A sheet of paper with 'I.O.U. 1 horse head -Fred' written on it
+
+
 Including the name is necessary for the second step of the
 computation, where we'll try to count all the services given for each
 person and give a unique cumulative value. Again, there are many ways
@@ -1877,6 +1907,11 @@ application and run the test suite, all 6 tests should still pass.
 Remember Mnesia
 ~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/trace.png
+    :alt: a chalk outline of a dead body
+
+
 That's it for Mnesia. It's quite a complex database and we've only
 seen a moderate portion of everything it can do. Pushing further ahead
 will require you to read the Erlang manuals and dive into the code.
@@ -1899,6 +1934,13 @@ that allows iteration.
 Mnesia and its tool chain have all the potential to be very useful in
 some of your future applications. For now though, we'll move to
 additional tools to help you develop Erlang systems with Dialyzer.
+
+
+
+
+
+
+
 
 .. _Distribunomicon: distribunomicon.html#rpc
 .. _Meeting Your Match: ets.html#meeting-your-match

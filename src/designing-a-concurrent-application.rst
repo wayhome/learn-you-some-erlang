@@ -4,6 +4,11 @@
 Designing a Concurrent Application
 ----------------------------------
 
+
+.. image:: ../images/clock.png
+    :alt: An alarm clock
+
+
 All fine and dandy. You understand the concepts, but then again, all
 we've had since the beginning of the book were toy examples:
 calculators, trees, Heathrow to London, etc. It's time for something
@@ -53,6 +58,11 @@ following:
 
 
 Here's the structure of the program I picked to do it:
+
+
+.. image:: ../images/reminder-structure.png
+    :alt: 5 components are there: A client (1) that can communicate with an event server (2) and 3 little circles labeled 'x', 'y', and 'z'. All three are linked to the event server.
+
 
 Where the client, event server and x, y and z are all processes.
 Here's what each of them can do:
@@ -108,6 +118,11 @@ you and me, and it's assumed only one user will run it.
 
 Here's a more complex graph with all the possible messages:
 
+
+.. image:: ../images/reminder-bubbles-and-arrows.png
+    :alt: A visual representation of the list above
+
+
 This represents every process we'll have. By drawing all the arrows
 there and saying they're messages, we've written a high level
 protocol, or at least its skeleton.
@@ -129,6 +144,11 @@ good idea would be to make a list of all messages that will be sent
 and specify what they will look like. Let's first start with the
 communication between the client and the event server:
 
+
+.. image:: ../images/reminder-subscribe.png
+    :alt: The client can send {subscribe, Self} to the event server, which can reply only with 'ok'. Note that both the client and server monitor eachother
+
+
 Here I chose to use two monitors because there is no obvious
 dependency between the client and the server. I mean, of course the
 client doesn't work without the server, but the server can live
@@ -139,16 +159,36 @@ dies. And neither can we assume the client can really be turned into a
 system process and trap exits in case the server dies. Now to the next
 message set:
 
+
+.. image:: ../images/reminder-add.png
+    :alt: The client can send the message {add, Name, Description, TimeOut}, to which the server can either reply 'ok' or {error, Reason}
+
+
 This adds an event to the event server. A confirmation is sent back
 under the form of the `ok` atom, unless something goes wrong (maybe
 the TimeOut is in the wrong format.) The inverse operation, removing
 events, can be done as follows:
 
+
+.. image:: ../images/reminder-remove.png
+    :alt: The client can send the message {cancel, Name} and the event server should return ok as an atom
+
+
 The event server can then later send a notification when the event is
 due:
 
+
+.. image:: ../images/reminder-cs-done.png
+    :alt: The event server forwards a {done, Name, Description} message to the client
+
+
 Then we only need the two following special cases for when we want to
 shut the server down or when it crashes:
+
+
+.. image:: ../images/reminder-shutdown.png
+    :alt: When the client sends the 'shutdown' atom to the event server, it dies and returns {'DOWN', Ref, process, Pid, shutdown} because it was monitored
+
 
 No direct confirmation is sent when the server dies because the
 monitor will already warn us of that. That's pretty much all that will
@@ -164,11 +204,26 @@ Ok, so back to the events. When the event server starts them, it gives
 each of them a special identifier (the event's name). Once one of
 these events' time has come, it needs to send a message saying so:
 
+
+.. image:: ../images/reminder-es-done.png
+    :alt: An event can send {done, Id} to the event server
+
+
 On the other hand, the event has to watch for cancel calls from the
 event server:
 
+
+.. image:: ../images/reminder-cancel.png
+    :alt: The server sends 'cancel' to an event, which replies with 'ok'
+
+
 And that should be it. One last message will be needed for our
 protocol, the one that lets us upgrade the server:
+
+
+.. image:: ../images/reminder-code-change.png
+    :alt: the event server has to accept a 'code_change' message from the shell
+
 
 No reply is necessary. We'll see why when we actually program that
 feature and you'll see it makes sense.
@@ -181,6 +236,11 @@ the project.
 
 Lay Them Foundations
 ~~~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/cement.png
+    :alt: A cement truck
+
 
 To begin with it all, we should lay down a standard Erlang directory
 structure, which looks like this:
@@ -648,6 +708,11 @@ should look like this:
         loop(S#state{clients=NewClients});
 
 
+
+.. image:: ../images/rss.png
+    :alt: Hand drawn RSS logo
+
+
 So what this section of `loop/1` does is start a monitor, and store
 the client info in the orddict under the key Ref . The reason for this
 is simple: the only other time we'll need to fetch the client ID will
@@ -844,6 +909,11 @@ However, external calls are always done on the newest version of the
 code available in the code server. Then, if local calls are made from
 within the external one, they are in the new version of the code.
 
+
+.. image:: ../images/hot-code-loading.png
+    :alt: A fake module showing local calls staying in the old version and external calls going on the new one
+
+
 Given that every process/actor in Erlang needs to do a recursive call
 in order to change its state, it is possible to load entirely new
 versions of an actor by having an external recursive call.
@@ -1028,6 +1098,11 @@ gives the Erlang compiler the recipe to cook wonderful and crispy
 `.beam` files:
 
 
+.. image:: ../images/oven.png
+    :alt: An old oven with smoke coming out of it
+
+
+
 ::
 
     
@@ -1156,6 +1231,11 @@ for production environments compared to the real thing.
 Namespaces (or lack thereof)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/gentleman.png
+    :alt: A Gentleman about to step in a pile of crap
+
+
 Because Erlang has a flat module structure (there is no hierarchy), It
 is frequent for some applications to enter in conflict. One example of
 this is the frequently used `user` module that almost every project
@@ -1195,6 +1275,22 @@ will allow for much more robust and elegant applications. A huge part
 of Erlang's power comes from using it. It's a carefully crafted and
 well-engineered tool that any self-respecting Erlang programmer has to
 know.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .. _records are hacks!: a-short-visit-to-common-data-structures.html#records
 .. _ last chapter: errors-and-processes.html#naming-processes

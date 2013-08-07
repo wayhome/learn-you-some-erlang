@@ -8,6 +8,11 @@ Recursion
 Hello recursion!
 ~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/reCURSE.png
+    :alt: A car on the road. Dialogue: 'Are we there yet? - No! - Are we there yet? - No! - Are we there yet? - reCURSE YOU KIDS!
+
+
 Some readers accustomed with imperative and object-oriented
 programming languages might be wondering why loops weren't shown
 already. The answer to this is "what is a loop?" Truth is, functional
@@ -163,6 +168,11 @@ recursive function in Erlang!
 Length of a Tail Recursion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/tail-recursion.png
+    :alt: A childish drawing of a pig with an arrow pointing to the tail mentionning 'tail recursion - Ferd, age 4'
+
+
 You might have noticed that for a list of 4 terms, we expanded our
 function call to a single chain of 5 additions. While this does the
 job fine for short lists, it can become problematic if your list has a
@@ -258,6 +268,11 @@ And now your length function is tail recursive.
 
 More recursive functions
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/rock-paper-scissors.png
+    :alt: A tiny planet with a rock running after paper running after a pair of scissors which runs after the rock itself.
+
 
 We'll write a few more recursive functions, just to get in the habit a
 bit more. After all, recursion being the only looping construct that
@@ -529,6 +544,11 @@ accumulators is what makes tail recursion useful.
 Quick, Sort!
 ~~~~~~~~~~~~
 
+
+.. image:: ../images/quicksort.png
+    :alt: Quicksort expanded: smaller numbers go to the left of the pivot, larger to the right, recursively.
+
+
 I can (and will) now assume recursion and tail recursion make sense to
 you, but just to make sure, I'm going to push for a more complex
 example, quicksort. Yes, the traditional "hey look I can write short
@@ -626,6 +646,11 @@ Erlang is mainly a thing concerning lists. While lists are a good
 example of a data structure that can be defined recursively, there's
 certainly more than that. For the sake of diversity, we'll see how to
 build binary trees, and then read data from them.
+
+
+.. image:: ../images/tree.png
+    :alt: An angry tree with an axe
+
 
 First of all, it's important to define what a tree is. In our case,
 it's nodes all the way down. Nodes are tuples that contain a key, a
@@ -834,15 +859,20 @@ And now ladies and gentlemen, a discussion: *the author vs. himself*
 + — Right, so they're useless except for educational purposes, I get
   it.
 + — Not exactly. In practice you'll see little difference in the
-  performance between tail recursive and normal recursive calls. The
-  areas to take care of are in functions that are supposed to loop
-  infinitely, like main loops. There's also a type of functions that
-  will always generate very large stacks, be slow and possibly crash
-  early if you don't make them tail recursive. The best example of this
-  is the Fibonacci function, which grows exponentially if it's not
-  iterative or tail recursive. You should profile your code (I'll show
-  how to do that at a later point, I promise), see what slows it down,
-  and fix it.
+performance between tail recursive and normal recursive calls. The
+areas to take care of are in functions that are supposed to loop
+infinitely, like main loops. There's also a type of functions that
+will always generate very large stacks, be slow and possibly crash
+early if you don't make them tail recursive. The best example of this
+is the Fibonacci function, which grows exponentially if it's not
+iterative or tail recursive.
+
+.. image:: ../images/fib.png
+    :alt: Function calls expanded to create the sequence '0,1,1,2,3,5,8...'
+
+You should profile your code (I'll show how to do that at a later
+point, I promise), see what slows it down, and fix it.
+
 + — But loops are always iterative and make this a non-issue.
 + — Yes, but... but... my beautiful Erlang...
 + — Well isn't that great? All that learning because there is no
@@ -855,6 +885,11 @@ And now ladies and gentlemen, a discussion: *the author vs. himself*
   functions yourself. If you stay around, I'll show you how such
   abstractions can be built. But for this we will need more power. Let
   me tell you about higher order functions...
+
+
+
+
+
 
 
 

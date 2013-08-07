@@ -8,6 +8,11 @@ Higher Order Functions
 Let's get functional
 ~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/lambda.png
+    :alt: A lambda symbol with a sexy mustache
+
+
 An important part of all functional programming languages is the
 ability to take a function you defined and then pass it as a parameter
 to another function. This in turn binds that function parameter to a
@@ -211,6 +216,11 @@ caller and then assigned to AlarmReady . Note that in this function,
 the variable Room 's value is taken from the 'parent' function (
 PrepareAlarm ). This is related to a concept called *closures*.
 
+
+.. image:: ../images/batman.png
+    :alt: Batman with a manly mustache
+
+
 To understand closures, one must first understand scope. A function's
 scope can be imagined as the place where all the variables and their
 values are stored. In the function `base(A) -> B = A + 1.`, A and B
@@ -343,6 +353,11 @@ has the same name as one that was in the parent scope. This is there
 to prevent some mistakes (usually rightly so), so you might want to
 consider renaming your variables in these circumstances.
 
+
+.. image:: ../images/erland.png
+    :alt: A map of Erland, the mystic Erlang island!
+
+
 We'll set the anonymous function theory aside a bit and we'll explore
 more common abstractions to avoid having to write more recursive
 functions, like I promised at the end of the previous chapter.
@@ -471,6 +486,11 @@ can be used on the following functions:
     sum([H|T], Sum) -> sum(T, H+Sum).
 
 
+
+.. image:: ../images/foldr.png
+    :alt: A playing card with 'Joker' replaced by 'Foldr'. The joker has huge glasses, a hook and hairy legs
+
+
 To find how the fold should behave, we've got to find all the common
 points of these actions and then what is different. As mentioned
 above, we always have a reduction from a list to a single value.
@@ -571,6 +591,10 @@ chapter), unzippers, combinations of maps and folds, etc. I encourage
 you to read the documentation on lists to see what can be done. You'll
 find yourself rarely needing to write recursive functions by using
 what's already been abstracted away by smart people.
+
+
+
+
 
 
 

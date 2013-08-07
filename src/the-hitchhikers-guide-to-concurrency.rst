@@ -42,6 +42,11 @@ about the emergence of multi-core programming. Anyway, the
 probabilities are high that you're reading this book because of all
 this talk about concurrency going on these days.
 
+
+.. image:: ../images/fat-guy.png
+    :alt: A fat guy at the computer
+
+
 A warning though; this chapter is mostly theoric. If you have a
 headache, a distaste for programming language history or just want to
 program, you might be better off skipping to the end of the chapter or
@@ -94,6 +99,11 @@ transparently done in the VM, away from the eyes of the programmers.
 
 Concepts of Concurrency
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/erlang-the-movie.png
+    :alt: Joe Armstrong, as in 'Erlang - The Movie
+
 
 Back in the day, Erlang's development as a language was extremely
 quick with frequent feedback from engineers working on telephone
@@ -198,6 +208,11 @@ them working the same way whether they're local or on a different
 computer, making fault tolerance through distribution nearly
 transparent to the programmer.
 
+
+.. image:: ../images/cacti-laser.png
+    :alt: A server (HAL) protected by cacti and lasers
+
+
 Being distributed has direct consequences on how processes can
 communicate with each other. One of the biggest hurdles of
 distribution is that you can't assume that because a node (a remote
@@ -240,6 +255,11 @@ implementers keep control of optimization and reliability. Nowadays,
 Erlang's processes take about 300 words of memory each and can be
 created in a matter of microseconds—not something doable on major
 operating systems these days.
+
+
+.. image:: ../images/schedulers.png
+    :alt: Erlang's run queues across cores
+
 
 To handle all these potential processes your programs could create,
 the VM starts one thread per core which acts as a *scheduler*. Each of
@@ -309,6 +329,11 @@ shorter than the time it takes them to wait in the queue and pay.
 A generalisation of this principle is called Amdahl's Law. It
 indicates how much of a speedup you can expect your system to have
 whenever you add parallelism to it, and in what proportion:
+
+
+.. image:: ../images/amdahl.png
+    :alt: Graphic showing a program's speedup relative to how much of it is parallel on many cores
+
 
 According to Amdahl's law, code that is 50% parallel can never get
 faster than twice what it was before, and code that is 95% parallel
@@ -497,6 +522,11 @@ about a process' mailbox is that the messages are kept in the order
 they are received. Every time a message is read it is taken out of the
 mailbox. Again, this is a bit similar to the introduction's example
 with people writing letters.
+
+
+.. image:: ../images/hello.png
+    :alt: Message passing explained as a drawing, again
+
 
 To see the contents of the current mailbox, you can use the `flush()`
 command while in the shell:
@@ -713,11 +743,23 @@ our expected behavior of replying once for every message and keep
 going afterwards, except for the `fish` call. The dolphin got fed up
 with our crazy human antics and left us for good.
 
+
+.. image:: ../images/dolphin.png
+    :alt: A man asking a dolphin to do a flip. The dolphin (dressed like the fonz) replies 'how about no?'
+
+
 There you have it. This is the core of all of Erlang's concurrency.
 We've seen processes and basic message passing. There are more
 concepts to see in order to make truly useful and reliable programs.
 We'll see some of them in the next chapter, and more in the chapters
 after that.
+
+
+
+
+
+
+
 
 .. _Errors and Processes: errors-and-processes.html
 

@@ -9,6 +9,11 @@ Type Specifications and Erlang
 PLTs Are The Best Sandwiches
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/blt.png
+    :alt: a BLT sandwich
+
+
 Back in `Types (or lack thereof)`_, I introduced Dialyzer, a tool to
 find type errors in Erlang. This chapter puts its full focus on
 Dialyzer and how to actually find some type errors with Erlang, and
@@ -106,6 +111,11 @@ deployed, and everything seems to be going okay. Then at four in the
 morning, your company's operations guy's cell phone starts ringing
 because your piece of software is repeatedly crashing, enough that the
 supervisors can't cope with the sheer weight of your mistakes.
+
+
+.. image:: ../images/atlas.png
+    :alt: Atlas lifting a rock with bad practice terms such as 'no tests', 'typos', 'large messages', 'bugs', etc.
+
 
 The next morning, you get at the office, and you find your computer
 has been reformatted, your car gets keyed, and your commit rights have
@@ -387,6 +397,11 @@ run Dialyzer on it, we get this:
     done (passed successfully)
 
 
+
+.. image:: http://dev.learnyousomeerlang.com/static/img/small_check.png
+    :alt: A check for 5 cents made to 'YOU!'
+
+
 Uh oh. Somehow the new change to the file made things complex enough
 that Dialyzer got lost in our type definitions. The error is still
 there though. We'll get back to understanding why Dialyzer doesn't
@@ -531,6 +546,11 @@ that the list can not be empty. `tuple()` Any tuple. `{Type1, Type2,
 ..., TypeN}` A tuple of a known size, with known types. For example, a
 binary tree node could be defined as `{'node', any(), any(), any(),
 any()}`, corresponding to `{'node', LeftTree, RightTree, Key, Value}`.
+
+.. image:: ../images/venn.png
+    :alt: A venn diagram. The leftmost circle is a gold ingot, the rightmost one is a shower head. In the center is a pixelated and censored coloured bit
+
+
 Given the built-in types above, it becomes a bit easier to imagine how
 we'd define types for our Erlang programs. Some of it is still missing
 though. Maybe things are too vague, or not appropriate for our needs.
@@ -700,6 +720,11 @@ the types you declared. We need to pepper type signature declarations
 over all the functions we want augmented, bridging our type
 declarations with the functions inside modules.
 
+
+.. image:: ../images/31337.png
+    :alt: 5 playing cards, the 3 of clubs, ace of diamonds, 3 of spades, 3 of hearts, 7 of diamonds
+
+
 We have spent most of the chapter on things like 'here is the syntax
 for this and that', but now it's time to get practical. A simple
 example of things needing to be typed could be playing cards. There
@@ -802,6 +827,11 @@ Running Dialyzer on the module yields the following:
     cards.erl:15: The call cards:kind({'rubies',4}) breaks the contract (card()) -> 'face' | 'number'
      done in 0m0.80s
     done (warnings were emitted)
+
+
+
+.. image:: ../images/contract.png
+    :alt: A contract, ripped in two, saying 'I will always say the truth no matter what' signed by 'Spec'
 
 
 Oh bloody fun. Calling `kind/1` with a "card" that has the `rubies`
@@ -931,6 +961,11 @@ are queues. The first element added will be the first one to be popped
 (unless we do selective receives). The module works as explained in
 this image we've seen a few times already:
 
+
+.. image:: ../images/fifo.png
+    :alt: Drawing representing the implementation of a functional queue
+
+
 To simulate a queue, we use two lists as stacks. One list stores the
 new elements and one list lets us remove them from the queue. We
 always add to the same list, and remove from the second one. When the
@@ -1035,6 +1070,11 @@ mathematical concepts of domain and image. To put it simply, the
 domain is the set of all possible input values to a function, and the
 image is the set of all possible output values of a function.
 Overlapping domain thus refer to two sets of input that overlap.
+
+
+.. image:: ../images/domain-image.png
+    :alt: an url from 'http://example.org/404' with an arrow pointing to the traditional 'broken image' icon, with a caption saying 'an invalid domain leads to an invalid image
+
 
 To find the source of the problem we have to look at `list()`. If you
 remember the large tables from earlier, `list()` is pretty much the
@@ -1238,6 +1278,11 @@ adding it to the PLT or analyzing it at the same time as any other
 module), you can reference it from any other bit of code as
 `cards:card()` in type specifications.
 
+
+.. image:: ../images/opaque.png
+    :alt: A VHS tape saying 'mom and dad wedding night', with a caption that says 'some things are better left unseen'
+
+
 Doing this will have one downside, though. Using a type like this
 doesn't forbid anyone using the card module from ripping the types
 apart and toying with them. Anyone could be writing pieces of code
@@ -1394,6 +1439,11 @@ Oh boy, what a section title. If you've never heard of *polymorphic
 types* (or alternatively, *parameterized types*), this might sound a
 bit scary. It's fortunately not as complex as the name would let us
 believe.
+
+
+.. image:: ../images/ditto.png
+    :alt: ditto with a beard
+
 
 The need for polymorphic types comes from the fact that when we're
 typing different data structures, we might sometimes find ourselves
@@ -1627,6 +1677,11 @@ to reflect the type specification.
 You're my Type
 ~~~~~~~~~~~~~~
 
+
+.. image:: ../images/squid-red-panda.png
+    :alt: A red panda and a squid sharing a meal (sperm whale, bamboo, eggs and grapes
+
+
 Dialyzer will often prove to be a true friend when programming Erlang,
 although the frequent nags might tempt you to just drop it. One thing
 to remember is that Dialyzer is practically never wrong, and you will
@@ -1652,6 +1707,17 @@ Thanks for reading it. There's not much more to say, but if you feel
 like getting a list of more topics to explore and some general words
 from me, you can go read the guide's conclusion. Godspeed! You
 Concurrent Emperor.
+
+
+
+
+
+
+
+
+
+
+
 
 .. _Clients and Servers: clients-and-servers.html#beam-me-up-scotty
 .. _Recursion: recursion.html#more-than-lists

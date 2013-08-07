@@ -29,6 +29,11 @@ correctly. There is indeed no benefit regarding fault-tolerance if
 your application runs on many servers, but cannot deal with one of
 them being taken down.
 
+
+.. image:: ../images/machete.png
+    :alt: a dirty machete
+
+
 See, distributed programming is like being left alone in the dark,
 with monsters everywhere. It's scary, you don't know what to do or
 what's coming at you. Bad news: distributed Erlang is still leaving
@@ -91,13 +96,28 @@ Zoey, Bill, Rick, and Daryl. Zoey and Bill know each other and
 communicate on the same frequency on walkie-talkies. Rick and Daryl
 are each on their own:
 
+
+.. image:: ../images/mesh1.png
+    :alt: Four survivors: Bill, Zoey, Rick and Daryl. Only Bill and Zoey are connected together
+
+
 Now let's say Rick and Daryl meet on their way to a survivor camp.
 They share their walkie-talkie frequency and can now stay up to date
 with each other before splitting ways again.
 
+
+.. image:: ../images/mesh2.png
+    :alt: Four survivors: Bill, Zoey, Rick and Daryl. Bill and Zoey are connected together, and Rick and Daryl are connected together. We thus have two groups of two
+
+
 At some point, Rick meets Bill. Both are pretty happy about that, and
 so they decide to share frequencies. At this point, the connections
 spread and the final graph now looks like this:
+
+
+.. image:: ../images/mesh3.png
+    :alt: Four survivors: Bill, Zoey, Rick and Daryl. All survivors are connected together: Bill is connected to Zoey, Rick and Daryl, Zoey is connected to Bill, Rick and Daryl, Rick is connected to Bill, Zoey and Daryl, and Daryl is connected to Rick, Zoey and Bill.
+
 
 That means that any survivor can contact any other directly. This is
 useful because in the event of the death of any survivor, nobody's
@@ -432,6 +452,11 @@ all survivors will always speak English (or good English) when they
 lay their plans, or that a word will hold different meanings to
 different people.
 
+
+.. image:: ../images/duck.png
+    :alt: A zombie plastick duck
+
+
 In terms of programming, this is usually about not relying on closed
 standards, but using open ones instead, or being ready to switch from
 one protocol to another one at any point in time. When it comes to
@@ -568,6 +593,11 @@ lose data in between servers?
 My Other Cap is a Theorem
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/cap.png
+    :alt: A cap that says 'my other cap is a theorem'
+
+
 A quick answer to the previous question is *no*. There is sadly no way
 to keep an application alive and correct at the same time during a
 netsplit.
@@ -690,6 +720,11 @@ or Zoey and Bill could message the Chainsaw colony. Then each colony
 would communicate the information to the other colony, which would
 forward the changes to the other survivors:
 
+
+.. image:: ../images/zombie-map1.png
+    :alt: Two colonies are on top of hills, and there's a valley in between them, split in half by a third mountain and a river. Rick and Daryl are stuck south of that middle mountain, and Bill and Zoey are stuck north of it. The map shows beams of light shone from each survivor duo to their home base on top of the hill, and both home bases communicating together with another beam of light
+
+
 So knowing this, all four survivors left early on a Sunday morning for
 a long trip on foot, due to meet on Friday morning before dawn.
 Everything went fine (except the occasional skirmishes with dead
@@ -698,6 +733,11 @@ people who had been alive for quite a while now).
 Unfortunately, on Wednesday, heavy rain and increased zombie activity
 had Bill and Zoey separated, lost and delayed. The new situation
 looked a bit like this:
+
+
+.. image:: ../images/zombie-map2.png
+    :alt: Same as the last map, but Bill and Zoey are split on an East-West axis
+
 
 To make matters worse, after the rain, the usually clear sky between
 the two colonies got foggy and it became impossible for the Chainsaw
@@ -1069,6 +1109,11 @@ cookie monster.
 Cookies
 ~~~~~~~
 
+
+.. image:: ../images/cookie-monster.png
+    :alt: A parody of Cookie Monster, looking a bit more like a monster.
+
+
 If you recall the beginning of the chapter, I had mentioned the idea
 that all Erlang nodes are set up as meshes. If someone connects to a
 node, it gets connected to all the other nodes. There are times where
@@ -1227,6 +1272,11 @@ you'll be terminating the remote node!
 
 Hidden Nodes
 ~~~~~~~~~~~~
+
+
+.. image:: ../images/mustardolives.png
+    :alt: An olive loving a packet of mustard
+
 
 Erlang nodes can be connected by calling `net_kernel:connect_node/1`,
 but you have to be aware that pretty much any interaction between
@@ -1429,6 +1479,11 @@ global module already defines three functions for you:
    and lets them resolve the issue themselves so they re-register again.
 
 
+
+.. image:: ../images/cthulu.png
+    :alt: A cthulu representation with a fabulous mustache
+
+
 The `global` module has one downside in that it is often said to be
 rather slow to detect name conflicts and nodes going down. Otherwise
 it is a fine module, and it's even supported by behaviours. Just
@@ -1611,6 +1666,17 @@ chapter's going to introduce the concept of distributed OTP
 applications — something that provides a takeover and failover
 mechanism for hardware failures, but not general distribution; it's
 more like respawning your dead zombie than anything else.
+
+
+
+
+
+
+
+
+
+
+
 
 
 

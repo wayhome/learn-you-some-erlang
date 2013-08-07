@@ -15,6 +15,11 @@ getting an Erlang system up and running requires a lot of effort,
 especially compared to many languages where you call the compiler and
 off you go.
 
+
+.. image:: ../images/pizza.png
+    :alt: A slice of pizza
+
+
 Of course this is entirely right. We can compile files, run
 applications, check for some dependencies, handle crashes and whatnot,
 but it's not very useful without a functioning Erlang system you can
@@ -37,6 +42,11 @@ to change a few things here and there. If you're following along with
 the book and writing your own code, you might want to copy both of our
 apps into a new directory called `release/`, which I will assume you
 will have done for the rest of the chapter.
+
+
+.. image:: ../images/pipes.png
+    :alt: A leaky pipe with brown liquid dripping into a metal bucket
+
 
 The first thing that's really bothering me with erlcount is that once
 it's done running, the VM stays up, doing nothing. We might want most
@@ -209,6 +219,11 @@ However, being explicit about the versions you need is helpful because
 it means that if you have many different Erlang installs, you might
 still only want an older version of `stdlib` that won't badly
 influence whatever you were doing.
+
+
+.. image:: ../images/cupcake.png
+    :alt: A chocolate cupcake with pink creamy topping in a purplish paper, with a face, beard, legs and high heel shoes (pink)
+
 
 You'll also note that I chose to name the *release* `erlcount` and
 make it version 1.0.0. This is unrelated to the `ppool` and `erlcount`
@@ -425,6 +440,11 @@ first level will contain release-wide information. The second level
 will be application-specific, before allowing fine-grained control at
 a module-specific level:
 
+
+.. image:: ../images/reltool-levels.png
+    :alt: The levels of reltools: the release levels contains environment, applications and properties of the releases. The level under that, Applications, contains what to include, compression, debug_info, app files, etc. The last (and lowest) level, the Modules, contains what to include and debug_info
+
+
 For each of these levels, as in the previous graph, different options
 will be available. Rather than taking the encyclopedic approach with
 all the options possible, we'll rather visit a few essential options
@@ -534,6 +554,11 @@ For now we don't care and can just call:
 Ah, a bit simpler to run. You can put these files pretty much
 anywhere, as long as they keep the same file tree and run them from
 wherever you want.
+
+
+.. image:: ../images/cuffs.png
+    :alt: a squid's tentacle being cut off so it could free itself from a pair of handcuffs
+
 
 Have you noticed something different? I hope you have. We didn't need
 to specify any version numbers. Reltool is a bit more clever than
@@ -759,6 +784,11 @@ whole thing, check out the official doc.
 Recipes
 ~~~~~~~
 
+
+.. image:: ../images/rube.png
+    :alt: A complex Rube Goldberg machine to represent the OTP Release process
+
+
 For now we'll have a few general tips and tricks of things to do
 depending on what you want to obtain.
 
@@ -917,6 +947,11 @@ we ask for Reltool to keep only what's necessary in there. Having
 check and only keep what's used for something else. That's why
 `{app_file, strip}` is also used on the release level.
 
+
+.. image:: ../images/ez.png
+    :alt: a crate with a sign that sayz '.ez'
+
+
 The profile is set to `embedded`. If you looked at the `.ez` archives
 in the previous cases, they contained the source files, test
 directories, etc. When switching over to `embedded` only include
@@ -974,6 +1009,19 @@ applications when you need to.
 Of course, what could make your Operations guy happier than no down
 time? The next challenge will be to do software upgrades while a
 release is running.
+
+
+.. image:: ../images/release.png
+    :alt: Parody of the poster of the Grease movie, where 'Grease' is replaced by 'Release', Olivia Newton-Jogn by Joe Armstrong and John Travolta by Bjarne Dacker
+
+
+
+
+
+
+
+
+
 
 
 

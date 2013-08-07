@@ -26,6 +26,11 @@ generic manner.
 A Pool of Processes
 ~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/ppool-dead.png
+    :alt: A dead body floating in a pool, with a queue of people near a jumping board and a lifeguard chair. Labels are added: 'ppool' points towards the pool, 'dead worker' near the dead body, 'queue' near the queue and 'temporary supervision doesn't mind dead children' points at the empty lifeguard chair.
+
+
 So yes, a pool allows to limit how many processes run at once. A pool
 can also queue up jobs when the running workers limit is hit. The jobs
 can then be ran as soon as resources are freed up or simply block by
@@ -70,6 +75,12 @@ impose a certain limit on flexibility. Let's explore that.
 
 The Onion Layer Theory
 ~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/onion.png
+    :alt: A cool onion (it has sunglasses and a goatee)
+
+
 
 To help ourselves design an application with supervisors, it helps to
 have an idea of what needs supervision and how it needs to be
@@ -127,6 +138,11 @@ back) has to be the most protected type. The places where you are
 actually not allowed to fail is called the *error kernel* of your
 application.
 
+
+.. image:: ../images/crash-me-if-you-can.png
+    :alt: Parody of 'catch me if you can's introduction pictures with 'crash me if you can' written instead. The little plane is exploding.
+
+
 The error kernel is likely the place where you'll want to use `try ...
 catch`es more than anywhere else, where handling exceptional cases is
 vital. This is what you want to be error-free. Careful testing has to
@@ -178,6 +194,11 @@ duplicates the functionality of existing, better tested modules.
 A good way to make sure all workers are properly accounted for would
 be to use a supervisor just for them
 
+
+.. image:: ../images/ppool_sup.png
+    :alt: A process named 'ppool_sup' supervises two children: 'ppool_serv' and 'worker_sup'. 'worker_sup' has many 'worker' children. 'ppool_serv', 'worker_sup' and its children form a pool. The 'ppool_sup' also supervises other similar pools.
+
+
 The one above, for example would have a single supervisor for all of
 the pools. Each pool is in fact a set of a pool server and a
 supervisor for workers. The pool server knows the existence of its
@@ -206,6 +227,11 @@ the other pools down. This means what we might want to do is add one
 level of supervision. This will also make it much simpler to handle
 more than one pool at a time, so let's say the following will be our
 application architecture:
+
+
+.. image:: ../images/ppool_supersup.png
+    :alt: Same supervision tree as the last one with 'ppool_sup', except 'ppool_sup' is now part of the pool itself. A supervisor named ppool_supersup looks over the new pool and other pools too.
+
 
 And that makes a bit more sense. From the onion layer perspective, all
 pools are independent, the workers are independent from each other and
@@ -327,6 +353,11 @@ identifier. Great! We can now focus on each pool's direct supervisor!
 Each `ppool_sup` will be in charge of the pool server and the worker
 supervisor.
 
+
+.. image:: ../images/ppool_sup_sub.png
+    :alt: Shows the ppool_sup overlooking the ppool_serv and worker_sup
+
+
 Can you see the funny thing here? The `ppool_serv` process should be
 able to contact the `worker_sup` process. If we're to have them
 started by the same supervisor at the same time, we won't have any way
@@ -403,6 +434,11 @@ could be added in very high number with a requirement for speed, plus
 we want to restrict their type. All the workers are temporary, and
 because we use an `{M,F,A}` tuple to start the worker, we can use any
 kind of OTP behaviour there.
+
+
+.. image:: ../images/zombies.png
+    :alt: Two tombstones one next to each other. The first one says 'here lies <0.58.0>' and says 'we all are temporary'. The second one says 'here lies <0.59.0>' and says 'Not me, I'm permanent'. A zombie hand is coming out of the ground in front of this one
+
 
 The reason to make the workers temporary is twofold. First of all, we
 can not know for sure whether they need to be restarted or not in case
@@ -531,6 +567,11 @@ and get going. However, this code is wrong. The way things work with
 until the `init/1` function returns before resuming its processing.
 This means that by calling `supervisor:start_child/2` in there, we
 create the following deadlock:
+
+
+.. image:: ../images/ppool_deadlock.png
+    :alt: the ppool_sup spawns ppool_serv and then waits for its init function to finish. In the meantime, ppool_serv asks ppool_sup to start a child process, but ppool_sup ignores it (still waiting for the init to end). The ppool_serv falls into waiting mode too, and both processes wait for each other until either crashes
+
 
 Both processes will keep waiting for each other until there is a
 crash. The cleanest way to get around this is to create a special
@@ -1056,6 +1097,11 @@ next chapter will cover how to do that cleanly.
 Cleaning the Pool
 ~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/soap.png
+    :alt: A piece of greenish soap
+
+
 Looking back on everything, we've managed to write a process pool to
 do some resource allocation in a somewhat simple manner. Everything
 can be handled in parallel, can be limited, and can be called from
@@ -1075,6 +1121,14 @@ So far we haven't seen all the advanced features of OTP, but I can
 tell you that you're now on a level where you should be able to
 understand most intermediate to early advanced discussions on OTP and
 Erlang (the non-distributed part, at least). That's pretty good!
+
+
+
+
+
+
+
+
 
 .. _ chapter: clients-and-servers.html
 .. _dynamic supervision: supervisors.html#dynamic-supervision

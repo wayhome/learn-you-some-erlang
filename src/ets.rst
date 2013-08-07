@@ -4,6 +4,11 @@
 Bears, ETS, Beets
 -----------------
 
+
+.. image:: ../images/beets.png
+    :alt: a beet
+
+
 Something we've been doing time and time again has been to implement
 some kind of storage device as a process. We've done fridges to store
 things, built `regis` to register processes, seen key/value stores,
@@ -33,6 +38,11 @@ even though we took great care to make our applications very
 concurrent with independent actors and made sure our supervision
 structure was right to scale up, all of our operations will depend on
 a central regis process that will need to answer messages one by one:
+
+
+.. image:: ../images/central-regis.png
+    :alt: Shows 6 clients (green bubbles) with arrows pointing to a central regis server (blue rectangle)
+
 
 If we have a lot of message passing going on, regis risks getting
 busier and busier, and if the demand is high enough our whole system
@@ -154,6 +164,10 @@ can read from it. This is known as the *protected* level of
 permissions. You can also choose to set the permissions to *public*,
 where everyone can read and write, or *private*, where only the owner
 can read or write.
+
+
+.. image:: ../images/et.png
+
 
 The concept of table ownership goes a bit further. The ETS table is
 intimately linked to the process. If the process dies, the table
@@ -363,6 +377,11 @@ more advanced uses now, when we need more than just matching on keys.
 Meeting Your Match
 ~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/match.png
+    :alt: a match falling in a puddle of gas
+
+
 There are plenty of functions to be used with ETS when it comes to
 finding records from more special mechanisms.
 
@@ -436,6 +455,11 @@ If nothing matches, empty lists are returned.
 It is also possible you might want to delete entries based on such a
 pattern match. In these cases, the function `ets:match_delete(Table,
 Pattern)` is what you want.
+
+
+.. image:: ../images/claw-game.png
+    :alt: A claw game thing
+
 
 This is all fine and lets us put any kind of value to do basic pattern
 matching in a weird way. It would be pretty neat if it were possible
@@ -775,6 +799,11 @@ adding support for sharding, transactions, and distribution.
 A Little Less Conversation, A Little More Action Please
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/elvis.png
+    :alt: A very bad drawing of Elvis
+
+
 Following this rather long section title (and long previous sections),
 we'll turn to the practical problem that brought us here in the first
 place: updating regis so that it uses ETS and gets rid of a few
@@ -987,11 +1016,26 @@ test suite we have written for last chapter starts and stops the
 server all the time, delays can be a bit dangerous. See, this is what
 the timeline of the process looks like with the old one:
 
+
+.. image:: ../images/shell-server-1.png
+    :alt: A sequential graph showing what happens between the shell and the regis server. The shell sends 'stop' to the server, with the server replying to the client, then dying. Then the shell starts a new server replacing the old one.
+
+
 And here's what sometimes happens with the new one:
+
+
+.. image:: ../images/shell-server-2.png
+    :alt: Similar to the previous graph, except that this time dying happens later due to ETS tables getting cleaned. Now the process dies at the same time as the shell tries to create a new server and there's a conflict
+
 
 By using the scheme above, we're making it a lot more unlikely for
 errors to happen by doing more work in the synchronous part of the
 code:
+
+
+.. image:: ../images/shell-server-3.png
+    :alt: Like the previous graph, except the table is removed before the server sends the reply to the shell. This leaves less time before the race condition between the shell and the server happen and there is no conflict.
+
 
 If you don't plan on running the test suite very often, you can just
 ignore the whole thing. I've decided to show it to avoid nasty
@@ -1092,6 +1136,15 @@ now.
 You know what would be really nice to do next? Actually exploring the
 distributed aspects of Erlang. Maybe we can bend our minds in a few
 more twisted ways before being done with the Erlang beast. Let's see.
+
+
+
+
+
+
+
+
+
 
 
 

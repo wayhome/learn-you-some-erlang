@@ -18,6 +18,11 @@ do.
 What is Common Test
 ~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/black-box.png
+    :alt: A black box with a heart on it, sitting on a pink heart also.
+
+
 As programmers, we enjoy treating our programs as black boxes. Many of
 us would define the core principle behind a good abstraction as being
 able to replace whatever it is we've written by an anonymous black
@@ -82,6 +87,11 @@ Test is appropriate for system testing, it will assume two things:
 
 Because of this, Common Test will regularly be organized as follows:
 
+
+.. image:: ../images/ct-struct.png
+    :alt: A diagram showing nested boxes. On the outmost level is the test root, labeled (1). Inside that one is the Test Object Diretory, labeled (2). Inside (2) is the test suite (3), and the innermost box, inside the suite, is the test case (4).
+
+
 The test case is the simplest one. It's a bit of code that either
 fails or succeeds. If the case crashes, the test is unsuccessful (how
 surprising). Otherwise, the test case is thought to be successful. In
@@ -105,6 +115,11 @@ directory contains anything you want.
 
 What about the side-effects? Well because we might run tests many
 times, Common Test develops its structure a bit more:
+
+
+.. image:: ../images/ct-logs.png
+    :alt: Same diagram (nested boxes) as earlier, but an arrow with 'running' tests points to a new box (Log directory) with two smaller boxes inside: priv dir and HTML files.
+
 
 Whenever you run the tests, Common Test will find some place to log
 stuff (usually the current directory, but we'll see how to configure
@@ -158,6 +173,11 @@ Then we have the function `all/0`. That function returns a list of
 test cases. It's basically what tells Common Test "hey, I want to run
 these test cases!". EUnit would do it based on the name ( `*_test()`
 or `*_test_()`); Common Test does it with an explicit function call.
+
+
+.. image:: ../images/priv_dir.png
+    :alt: Folders on the floor with paper everywhere. One of the folder has the label 'DATA', and another one has the label 'not porn'
+
 
 What about these _Config variables? They're unused for now, but for
 your own personal knowledge, they contain the initial state your test
@@ -251,6 +271,11 @@ of the tests you ran while the latter will link to the newest runs
 only. Pick one, and then click around in a browser (or press around if
 you don't believe in mice as an input device) until you find the test
 suite with its two tests:
+
+
+.. image:: ../images/ct-log-screen.png
+    :alt: A screenshot of the HTML log from a browser
+
 
 You see that `test2` failed. if you click on the underlined line
 number, you'll see a raw copy of the module. If you instead click on
@@ -414,6 +439,11 @@ Test Groups
 Right now, our test structure within a suite might look at best like
 this:
 
+
+.. image:: ../images/ct-cases.png
+    :alt: Sequence of [init]->[test]->[end] in a column
+
+
 What if we have many test cases with similar needs in term of some
 init functions, but some different parts in them? Well, the easy way
 to do it is to copy/paste and modify, but this will be a real pain to
@@ -428,6 +458,11 @@ EUnit, too.
 To solve these issues, we've got something called test groups. Common
 Test test groups allow us to regroup some tests hierarchically. Even
 more, they can regroup some groups within other groups:
+
+
+.. image:: ../images/ct-groups.png
+    :alt: The sequence of [init]->[test]->[end] from the previous illustration is now integrated within a [group init]->[previous picture]->[group end]
+
 
 To make this work, we need to be able to declare the groups. The way
 to do it is to add a group function to declare all of them:
@@ -568,6 +603,11 @@ test groups and I feel an example would be appropriate here.
 
 The Meeting Room
 ~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/shuffling.png
+    :alt: LMFAO-like golden robot saying 'every day I'm shuffling (test cases)' 
+
 
 To first use test groups, we'll create a meeting room booking module.
 
@@ -736,6 +776,11 @@ a fourth and final test:
         [{_, Owner}, {_, Owner}, {_, Owner}] = meeting:get_all_bookings().
 
 
+
+.. image:: ../images/dog-meeting.png
+    :alt: A dog with glasses standing at a podium where 'DOGS UNITED' is written
+
+
 This one does a pattern matching on the owners of all different
 objects that can be booked, trying to see whether they are actually
 booked by the same owner. This is a desirable thing if we are looking
@@ -862,6 +907,11 @@ groups and manipulations of how one runs things in terms of hierarchy?
 Not much, but we'll add another level anyway with the test suite
 itself:
 
+
+.. image:: ../images/ct-suite.png
+    :alt: Similar to the earlier groups and test cases nesting illustrations, this one shows groups being wrapped in suites: [suite init] -> [group] -> [suite end]
+
+
 We have two additional functions, `init_per_suite(Config)` and
 `end_per_suite(Config)`. These, like all the other init and end
 functions, aim to give more control over initialization of data and
@@ -895,6 +945,11 @@ from the Erlang shell, and you can find them in the documentation for
 ct_run. However, instead of going into ways to manually specify
 everything for each time you run the tests, we'll see something called
 *test specifications*.
+
+
+.. image:: ../images/ct-specs.png
+    :alt: a button labeled 'do everything'
+
 
 Test specifications are special files that let you detail everything
 about how you want to have the tests run, and they work with the
@@ -1021,6 +1076,11 @@ programming knowledge and apply it.
 
 Large Scale Testing
 ~~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/ct-large-scale.png
+    :alt: a circus ride-like scale with a card that says 'you must be this tall to test'
+
 
 Common Test does support having distributed tests. Before going hog
 wild and writing a bunch of code, let's see what's offered. Well,
@@ -1155,6 +1215,11 @@ for the master node itself. To truly include all nodes,
 `[all_nodes,master]` is required. No clear explanation as to why these
 names were picked.
 
+
+.. image:: ../images/venn-ref.png
+    :alt: A Venn diagram with two categories: boring drawings and self-referential drawings. The intersection of the two sets is 'this'.
+
+
 The reason why I put all values there is that Common Test will
 generate logs (and directories) for each of the slave nodes, and it
 will also generate a master set of logs, referring to the slave ones.
@@ -1251,6 +1316,11 @@ convoluted.
 Integrating EUnit within Common Test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/bots.png
+    :alt: Little robots from rockem sockem (or whatever the name was). One is the Common Test bot while the other is the Eunit bot. In a political-cartoon-like satire, the ring is clearly labelled as 'system tests' and the Common Test bot knocks the head off the EUnit bot.
+
+
 Because sometimes EUnit is the best tool for the job, and sometimes
 Common Test is, it might be desirable for you to include one into the
 other.
@@ -1293,6 +1363,20 @@ about Common Test is the user's guide coming with Erlang/OTP. It is
 hard to read on its own, but understanding the material covered in
 this very chapter will help you figure out the documentation, without
 a doubt.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .. _ETS chapter: ets.html
 

@@ -22,6 +22,11 @@ All is fine and dandy, but because we have an application that we
 don't want to shut down, we decide to load it on the production VM to
 make it run.
 
+
+.. image:: ../images/evolve.png
+    :alt: A chain of evolution/updates. First is a monkey, second is a human-like creature, both separated by an arrow with 'Update' written under it. Then appears an arrow with an explosion saying 'failed upgrade', pointing from the human-like creature to a pile of crap and a tombstone saying 'RIP, YOU'
+
+
 Then a bunch of error reports start pouring in. It turns out that your
 different `handle_cast` functions are incompatible. So when they were
 called a second time, no clause matched. The customer is pissed off,
@@ -136,6 +141,11 @@ relups are done.
 The 9th Circle of Erl
 ~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/9-circles-of-erl.png
+    :alt: The 9 circles are: 0 (vestibule): handling syntax; 1. Records are tuples; 2. sharing nothing; 3. thinking asynchronously; 4. OTP behaviours (gen_server, gen_fsm, gen_event, supervisor); 5. OTP Applications; 6. Parse Transforms; 7. Common Test; 8. Releases; 9. Relups; and the center of erl is the distributed world with netsplits.
+
+
 The act of taking a running release, making a second version of it and
 updating it while it runs is perilous. What seems like a simple
 assembly of *appups* (files containing instructions on how to update
@@ -186,6 +196,11 @@ or even bots to go around and do their bidding for them.
 Progress Quest took all of these generic steps and turned them into
 one streamlined game where all you have to do is sit back and enjoy
 your character doing all the work:
+
+
+.. image:: ../images/progressquest.jpg
+    :alt: A screenshot of Progress Quest
+
 
 With the permission of the creator of this fantastic game, Eric
 Fredricksen, I've made a very minimal Erlang clone of it called
@@ -255,6 +270,11 @@ time. It contains more modules than `regis`:
 
 sockserv-1.0.0
 ``````````````
+
+
+.. image:: ../images/sock.png
+    :alt: A rainbow-colored sock
+
 
 A customized raw socket server, made to work only with the
 processquest app. It will spawn gen_servers each in charge of a TCP
@@ -430,6 +450,11 @@ Awesome right? Well...
 
 Making Process Quest Better
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/ant.png
+    :alt: an ant being beheaded with a tiny axe
+
 
 There are a few issues with the current versions of the applications
 of Process Quest. First of all, we have very little variety in terms
@@ -771,6 +796,11 @@ necessarily be there.
 Upgrading the Release
 ~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/take-a-break.png
+    :alt: A cup of coffee with cookies and a spoon. Text says 'take a break'
+
+
 Sweet, we've got a relup file. There's still stuff to do before being
 able to use it though. The next step is to generate a tar file for the
 whole new version of the release:
@@ -911,6 +941,11 @@ an active session going on. This shows the importance of keeping code
 responsive. Had our processes been able to receive messages and act on
 them, things would have been fine.
 
+
+.. image:: ../images/couch.png
+    :alt: A couch, with 'heaven' written on it
+
+
 In the two last commands, I just start more workers to fix the
 problem. While this works, it requires manual action from the person
 running the upgrade. In any case, this is far from optimal. A better
@@ -1012,6 +1047,11 @@ functional relups:
 
 You might want to write a few scripts to automate this.
 
+
+.. image:: ../images/podium.png
+    :alt: A podium with 3 positions: 1. you, 2. relups, 3. the author (3rd person)
+
+
 Again, relups are a very messy part of OTP, a part that is hard to
 grasp. You will likely find yourself finding plenty of new errors,
 which are all more impossible to understand than the previous ones.
@@ -1034,6 +1074,14 @@ to go through the hassle of using them (got to love that circular
 logic!) When the need arises, relups are entirely useful.
 
 How about we go learn about some friendlier features of Erlang, now?
+
+
+
+
+
+
+
+
 
 .. _A Short Visit to Common Data Structures: a-short-visit-to-common-data-structures.html
 

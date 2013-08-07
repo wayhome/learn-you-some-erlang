@@ -9,6 +9,11 @@ Who Supervises The Supervisors?
 From Bad to Good
 ~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/watchmen.png
+    :alt: Rorschach from Watchmen in a recycle bin
+
+
 Supervisors are one of the most useful part of OTP you'll get to use.
 We've seen basic supervisors back in `Errors and Processes`_ and in
 `Designing a Concurrent Application`_. We've seen them as a way to
@@ -62,6 +67,11 @@ may die while doing so. They are usually not trusted.
 Supervisors can supervise workers and other supervisors, while workers
 should never be used in any position except under another supervisor:
 
+
+.. image:: ../images/sup-tree.png
+    :alt: A supervision tree where all the supervisor nodes are above worker nodes (leaves)
+
+
 Why should every process be supervised? Well the idea is simple: if
 for some reason you're spawning unsupervised processes, how can you be
 sure they are gone or not? If you can't measure something, it doesn't
@@ -86,6 +96,11 @@ an application, you have the top supervisor of the VM shut down (this
 is done for you with functions like `init:stop/1`). Then that
 supervisor asks each of its children to terminate. If some of the
 children are supervisors, they do the same:
+
+
+.. image:: ../images/sup-tree-shutdown.png
+    :alt: Same kind of supervisor tree as before, but the messages are going from top to bottom, and back up again. The child nodes are terminated before their parents.
+
 
 This gives you a well-ordered VM shutdown, something that is very hard
 to do without having all of your processes being part of the tree.
@@ -162,6 +177,11 @@ to each other, or when the process can restart and lose its state
 without impacting its siblings.
 
 
+.. image:: ../images/restart-one-for-one.png
+    :alt: Out of 3 children process set out left to right under a single supervisor, the middle one dies and is restarted
+
+
+
 
 one_for_all
 ```````````
@@ -177,6 +197,11 @@ of them at once would be a saner choice and `one_for_all` would be the
 strategy for that.
 
 
+.. image:: ../images/restart-one-for-all.png
+    :alt: Out of 3 children process set out left to right under a single supervisor, the middle one dies, then the two others are killed and then all are restarted
+
+
+
 
 rest_for_one
 ````````````
@@ -189,6 +214,11 @@ dependencies ( X works alone, but Y depends on X and Z depends on
 both). What a `rest_for_one` restarting strategy does, basically, is
 make it so if a process dies, all the ones that were started after it
 (depend on it) get restarted, but not the other way around.
+
+
+.. image:: ../images/restart-rest-for-one.png
+    :alt: Out of 3 children process set out left to right under a single supervisor, the middle one dies, then the rightmost one is killed and then both are restarted
+
 
 
 
@@ -393,6 +423,11 @@ with more content!
 Testing it Out
 ~~~~~~~~~~~~~~
 
+
+.. image:: ../images/take-a-break.png
+    :alt: A cup of coffee with cookies and a spoon. Text says 'take a break'
+
+
 Some practice is in order. And in term of practice, the perfect
 example is a band practice. Well not that perfect, but bear with me
 for a while, because we'll go on quite an analogy as a pretext to try
@@ -571,6 +606,11 @@ And we can set the terminate function:
                   [S#state.name]);
     terminate(_Reason, S) ->
         io:format("~s has been kicked out (~s)~n", [S#state.name, S#state.role]).
+
+
+
+.. image:: ../images/bus.png
+    :alt: A short school bus
 
 
 We've got many different messages here. If we terminate with a
@@ -858,6 +898,11 @@ start this one, terminate it, etc.) and which are in little number.
 Because the internal representation is a list, this won't work very
 well when you need quick access to many children.
 
+
+.. image:: ../images/guitar-case.png
+    :alt: a guitar case with some money inside it
+
+
 In these case, what you want is `simple_one_for_one`. The problem with
 `simple_one_for_one` is that it will not allow you to manually restart
 a child, delete it or terminate it. This loss in flexibility is
@@ -957,6 +1002,15 @@ am I going to get a working application out of that?' and if that's
 the case, you'll be happy to get to the next chapter, which actually
 builds a simple application with a short supervision tree, to see how
 it could be done in the real world.
+
+
+
+
+
+
+
+
+
 
 .. _Rage Against The Finite State Machines: finite-state-machines.html
 .. _Designing a Concurrent Application: designing-a-concurrent-application.html

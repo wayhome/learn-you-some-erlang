@@ -8,6 +8,11 @@ Modules
 What are modules
 ~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/modules.png
+    :alt: A box with functions written on it
+
+
 Working with the interactive shell is often considered a vital part of
 using dynamic programming languages. It is useful to test all kinds of
 code and programs. Most of the basic data types of Erlang were used
@@ -65,6 +70,11 @@ and instead focus on clean logical separations.
 
 Module Declaration
 ~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/declaration.png
+    :alt: A scroll with small text on it
+
 
 When writing a module, you can declare two kinds of things:
 *functions* and *attributes*. Attributes are metadata describing the
@@ -179,6 +189,11 @@ A last function will be added to the module, using both functions
     greet_and_add_two(X) ->
     	hello(),
     	add(X,2).
+
+
+
+.. image:: ../images/imports.png
+    :alt: A box being put in another one
 
 
 Do not forget to add `greet_and_add_two/1` to the exported function
@@ -448,6 +463,11 @@ and by some tools related to release handling. You can also specify a
 `vsn` value yourself if you want: just add `-vsn(VersionNumber)` to
 your module.
 
+
+.. image:: ../images/circular-dependencies.png
+    :alt: A small graph with three nodes: Mom, Dad and You. Mom and Dad are parents of You, and You is brother of Dad. Text under: 'If circular dependencies are digusting in real life, maybe they should be disgusting in your programs too'
+
+
 Another point that would be nice to approach regards general module
 design: avoid circular dependencies! A module A should not call a
 module B that also calls module A . Such dependencies usually end up
@@ -466,6 +486,10 @@ scenario.
 
 Well, that's enough for the pedantic moralizations. How about we
 explore Erlang a little more?
+
+
+
+
 
 .. _atom: starting-out-for-real.html#atoms
 

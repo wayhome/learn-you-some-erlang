@@ -9,6 +9,11 @@ More On Multiprocessing
 State Your State
 ~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/turkey.png
+    :alt: a roasted turkey leg
+
+
 The examples shown in the previous chapter were all right for
 demonstrative purposes, but you won't go far with only that in your
 toolkit. It's not that the examples were bad, it's mostly that there
@@ -197,6 +202,11 @@ following `start/1` function:
         spawn(?MODULE, fridge2, [FoodList]).
 
 
+
+.. image:: ../images/abstraction.png
+    :alt: Two tin cans with a string, where the tin cans somehow represent the abstraction layer between the vibrating string and the voice
+
+
 Here, `?MODULE` is a macro returning the current module's name. It
 doesn't look like there are any advantages to writing such a function,
 but there really are some. The essential part of it would be
@@ -256,6 +266,11 @@ happens in the normal case:
 #. Your process switches to receive mode and waits for a new message;
 #. The fridge stores the item and sends 'ok' to your process;
 #. Your process receives it and moves on with its life.
+
+
+
+.. image:: ../images/hourglass.png
+    :alt: Hourglass
 
 
 And here's what happens when the shell freezes:
@@ -454,10 +469,20 @@ normally until the next `receive`. When this next `receive` is
 evaluated, the VM will look for the oldest message currently in the
 mailbox (the one after the one we removed), and so on.
 
+
+.. image:: ../images/msg-match.png
+    :alt: Visual explanation of how message matching is done when a message from the mailbox does match
+
+
 When there is no way to match a given message, it is put in a *save
 queue* and the next message is tried. If the second message matches,
 the first message is put back on top of the mailbox to be retried
 later.
+
+
+.. image:: ../images/msg-nomatch.png
+    :alt: Visual explanation of how messages that won't match are moved back and forth from the mailbox to a save queue
+
 
 This lets you only care about the messages that are useful. Ignoring
 some messages to handle them later in the manner described above is
@@ -545,6 +570,11 @@ code, optimizations should come to you. Not the other way around.
 
 With these concepts understood, the next step will be to do error
 handling with multiple processes.
+
+
+
+
+
 
 .. _previous chapter: the-hitchhikers-guide-to-concurrency.html
 .. _^G: starting-out.html#shell-commands

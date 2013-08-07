@@ -8,6 +8,11 @@ Errors and Exceptions
 Not so fast!
 ~~~~~~~~~~~~
 
+
+.. image:: ../images/cyclist.png
+    :alt: A green man with a huge head and tiny body on a bicycle
+
+
 There's no right place for a chapter like this one. By now, you've
 learned enough that you're probably running into errors, but not yet
 enough to know how to handle them. In fact we won't be able to see all
@@ -111,6 +116,11 @@ with an explanation as soon as possible.
 
 No, YOUR logic is wrong!
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/exam.png
+    :alt: An exam with the grade 'F'
+
 
 Logical errors are the hardest kind of errors to find and debug.
 They're most likely errors coming from the programmer: branches of
@@ -297,6 +307,11 @@ The `badarity` error is a specific case of `badfun`: it happens when
 Raising Exceptions
 ~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/stop.png
+    :alt: A stop sign
+
+
 In trying to monitor the execution of code and protect against logical
 errors, it's often a good idea to provoke run-time crashes so problems
 will be spotted early.
@@ -447,6 +462,11 @@ handles that and substitutes it with the user-supplied default value.
 This keeps the programmer of the module from needing to pass the
 default value as a parameter of every function of the lookup
 algorithm, again focusing only on the successful cases.
+
+
+.. image:: ../images/catch.png
+    :alt: A fish that was caught
+
 
 As a rule of thumb, try to limit the use of your throws for non-local
 returns to a single module in order make it easier to debug your code.
@@ -618,6 +638,11 @@ And now for something completely different :
     "Just a flesh wound."
     14> exceptions:black_knight(fun() -> exceptions:sword(5) end).
     "Just a flesh wound."
+
+
+
+.. image:: ../images/black-knight.png
+    :alt: Monty Python's black knight
 
 
 The expression on line 9 demonstrates normal behavior for the black
@@ -928,6 +953,11 @@ hand, we can write a basic implementation without exceptions:
 The problem with this implementation is that every node of the tree we
 branch at has to test for the result of the previous branch:
 
+
+.. image:: ../images/tree-case.png
+    :alt: A diagram of the tree with an arrow following every node checked while traversing the tree, and then when returning the result
+
+
 This is a bit annoying. With the help of throws, we can make something
 that will require less comparisons:
 
@@ -958,6 +988,11 @@ found. When this happens, the tree evaluation stops and it falls back
 to the `catch` on top. Otherwise, the execution keeps going until the
 last false is returned and that's what the user sees:
 
+
+.. image:: ../images/tree-throw.png
+    :alt: A diagram of the tree with an arrow following every node checked while traversing the tree, and then skipping all the nodes on the way back up (thanks to a throw)
+
+
 Of course, the implementation above is longer than the previous one.
 However, it is possible to realize gains in speed and in clarity by
 using non-local returns with a throw, depending on the operations
@@ -967,6 +1002,13 @@ data structures and operations.
 
 That being said, we're probably ready to solve real problems in
 sequential Erlang.
+
+
+
+
+
+
+
 
 
 

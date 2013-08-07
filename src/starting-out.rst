@@ -46,6 +46,11 @@ The Erlang shell has a built-in line editor based on a subset of
 Emacs, a popular text editor that's been in use since the 70s. If you
 know Emacs, you should be fine. For the others, you'll do fine anyway.
 
+
+.. image:: ../images/shell.png
+    :alt: super turtle
+
+
 First of all, if you type some text and then go `^A` (Ctrl+A), you
 should see your cursor moving to the beginning of the line. `^E`
 (Ctrl+E) gets you to the end. You can use arrow keys to go forward,
@@ -116,6 +121,7 @@ If you read back the help text, you'll notice we can start remote
 shells. I won't get into details right now, but this should give you
 an idea of what the Erlang VM can do apart from running code. For now,
 let's get things started (for real).
+
 
 
 

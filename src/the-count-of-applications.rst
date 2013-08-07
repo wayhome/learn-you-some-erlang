@@ -9,6 +9,11 @@ The Count of Applications
 From OTP Application to Real Application
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/files.png
+    :alt: A file cabinet with files scattered on the ground
+
+
 Our ppool app has become a valid OTP application and we are now able
 to understand what this means. It would be nice to build something
 that actually uses our process pool to do anything useful, though. To
@@ -25,6 +30,11 @@ output to the screen.
 
 This specific application will be relatively simple, relying heavily
 on our process pool instead. It will have a structure as follows:
+
+
+.. image:: ../images/erlcount-sups.png
+    :alt: 'erlcount_sup' supervises 'erlcount_dispatch', and 'ppool' stands in a cloudy shape, supervising 'erlcount_counter'
+
 
 In the diagram above, `ppool` represents the whole application, but
 only means to show that `erlcount_counter` will be the worker for the
@@ -103,6 +113,11 @@ it `erlcount` and note it there. If all applications that use `ppool`
 do the same, we should be able to detect conflicts in the future. The
 `mod` tuple is similar as before; we define the application behaviour
 callback module there.
+
+
+.. image:: ../images/snowman.png
+    :alt: A snowman made of regular expression characters
+
 
 The last new thing in here is the `env` tuple. As seen earlier, this
 entire tuple gives us a key/value store for application-specific
@@ -223,6 +238,11 @@ The two big points we have to consider right now is how we're going to
 go through a directory recursively while still being able to get
 results from there in order to schedule them, and then accept results
 back while that goes on, without getting confused.
+
+
+.. image:: ../images/continue.png
+    :alt: A game over screen with a pixelated LYSE squid with 3 lifes. The screen asks 'CONTINUE?'
+
 
 At a first look, the way that looks the simplest to gain the ability
 to return results while in the middle of recursion would be to use a
@@ -403,6 +423,11 @@ we will never think about us being done with the counting. That will
 only happen in the second and final state, 'listening', but we will
 still receive notices from ppool all the time:
 
+
+.. image:: ../images/erlcount-events.png
+    :alt: illustrated as bubbles and arrows: the event 'get files' only sends messages to the 'dispatching' state (which itself asks for files). The dispatching state then points to a 'dispatching' event, which itself leads to 'results from ppool'. The results from ppool point to both the dispatching state and the listening state
+
+
 This will thus require us to have:
 
 
@@ -443,6 +468,11 @@ asynchronous and we are going to always call `ppool:run_async/2`
 instead of anything else, we will have no real way of knowing if we're
 ever done scheduling files or not. Basically we could have a timeline
 like this:
+
+
+.. image:: ../images/dispatch-async.png
+    :alt: A diagram that shows that once you dispatch events, if you do not track them, there is no way to know if only some of them completed or if they all did
+
 
 One way to solve the problem could be to use a timeout, but this is
 always annoying: is the timeout too long or too short? Has something
@@ -605,10 +635,20 @@ explain anyway. When we schedule jobs, we can receive results while in
 `dispatching/2` or while in `listening/2`. This can take the following
 form:
 
+
+.. image:: ../images/erlcount-race1.png
+    :alt: A diagram showing the following sequence of events between a FSM and workers. The FSM starts in the 'dispatch' and add workers (twice). Part of the results come in, and then the FSM is done dispatching and goes to the 'listening' state. At this point the rest of the results are in and we know that for sure.
+
+
 In this case, the 'listening' state can just wait for results and
 declare everything is in. But remember, this is Erlang Land (
 *Erland*) and we work in parallel and asynchronously! This scenario is
 as probable:
+
+
+.. image:: ../images/erlcount-race2.png
+    :alt: A diagram showing the following sequence of events between a FSM and workers. The FSM starts in the 'dispatch' and add workers (twice). All the results are in as soon as the FSM is done dispatching. It then goes to the 'listening' state. There are no more events left to trigger the final check in 'listening'
+
 
 Ouch. Our application would then be hanging forever, waiting for
 messages. This is the reason why we need to manually call
@@ -630,6 +670,11 @@ all the results. Here's what this looks like:
 If no *refs* are left, then everything was received and we can output
 the results. Otherwise, we can keep listening to messages. If you take
 another look at `complete/4` and this diagram:
+
+
+.. image:: ../images/erlcount-events.png
+    :alt: illustrated as bubbles and arrows: the event 'get files' only sends messages to the 'dispatching' state (which itself asks for files). The dispatching state then points to a 'dispatching' event, which itself leads to 'results from ppool'. The results from ppool point to both the dispatching state and the listening state
+
 
 The result messages are global, because they can be received in either
 'dispatching' or 'listening' states. Here's the implementation:
@@ -867,6 +912,11 @@ way to test our paths. We can start the apps:
 Your results may vary depending on what you have in your directories.
 Note that depending how many files you have, this can take longer.
 
+
+.. image:: ../images/pope.png
+    :alt: A pope shocked by profanities
+
+
 What if we want different variables to be set for our applications,
 though? Do we need to change the application file all the time? No we
 don't! Erlang also supports that. So let's say I wanted to see how
@@ -936,6 +986,11 @@ both applications.
 The gist of it is that you modify your application file a bit, and
 then you need to add something called *start phases* to them, etc.
 
+
+.. image:: ../images/club.png
+    :alt: Parody of the Simpson's 'No Homers Club' with a sign that instead says 'No Included Apps Club'
+
+
 It is more and more recommended not to use included applications for a
 simple reason: they seriously limit code reuse. Think of it this way.
 We've spent a lot of time working on ppool's architecture to make it
@@ -986,6 +1041,11 @@ Agner is basically structured in a way where the application is
 started, starts a top-level supervisor, which starts a server and
 another supervisor, which in turn spawns the dynamic children
 
+
+.. image:: ../images/agner1.png
+    :alt: A diagram representing a supervision tree. The App supervises a process named 'TopSup', which supervises 'SomeWorker' and 'Sup', another supervisor. 'Sup' supervises 'SimpleOneForOneWorkers', many simple one for one workers.
+
+
 Now the thing is that the documentation says the following:
 Important note on simple-one-for-one supervisors: The dynamically
 created child processes of a simple-one-for-one supervisor are not
@@ -1009,6 +1069,11 @@ However, if you mix in both features, and then decide to shut the
 application down with `application:stop(agner)`, you end up in a very
 troublesome situation:
 
+
+.. image:: ../images/agner2.png
+    :alt: A diagram representing a supervision tree. The App supervises a process named 'TopSup', which supervises 'SomeWorker' and 'Sup', another supervisor. 'Sup' supervises 'SimpleOneForOneWorkers', many simple one for one workers. In this case though, TopSup, Sup and SomeWorker are dead.
+
+
 At this precise point in time, both supervisors are dead, as well as
 the regular worker in the app. The simple-one-for-one workers are
 currently dying, each catching the `EXIT` signal sent by their direct
@@ -1030,6 +1095,11 @@ forces the application controller to stay alive until all of the
 dynamic children were dead. You can see the actual file on Agner's
 github repository
 
+
+.. image:: ../images/trainwreck.png
+    :alt: A trainwreck with 3 wagons, a fire and flying debris
+
+
 What an ugly thing! Hopefully, people very rarely run into this kind
 of issue and you hopefully won't. You can go put some soap in your
 eyes to wash away the terrible pictures of using `prep_stop/1` to get
@@ -1041,6 +1111,20 @@ update:
 Since version R15B, the issue above has been resolved. The termination
 of dynamic children appears to be synchronous in the case of a
 supervisor shutdown.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -31,6 +31,11 @@ standard library.
 Records
 ~~~~~~~
 
+
+.. image:: ../images/record-player.png
+    :alt: a phonograph
+
+
 Records are, first of all, a hack. They are more or less an
 afterthought to the language and can have their share of
 inconveniences. I'll cover that later. They're still pretty useful
@@ -368,6 +373,11 @@ maintainability of your code.
 Key-Value Stores
 ~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/key.png
+    :alt: key and keyhole, another terrible pun
+
+
 I've had you build a tree back a few chapters, and the use was to use
 it as a key-value store for an address book. That book sucked: we
 couldn't delete or convert it to anything useful. It was a good
@@ -411,6 +421,11 @@ etc. Common functions for the CRUD usage include `orddict:store/3`,
 `orddict:find/2` (when you do not know whether the key is in the
 dictionaries), `orddict:fetch/2` (when you know it is there or that it
 must be there) and `orddict:erase/2`.
+
+
+.. image:: ../images/dict.png
+    :alt: A dictionary with the definition of 'Awesome' being 'it's you!'
+
 
 Orddicts are a generally good compromise between complexity and
 efficiency up to about 75 elements (see my benchmark). After that
@@ -505,6 +520,11 @@ with indexing in the regular expressions module. Be careful with them.
 A Set of Sets
 ~~~~~~~~~~~~~
 
+
+.. image:: ../images/swingset.png
+    :alt: a swingSET
+
+
 If you've ever studied set theory in whatever mathematics class you
 have an idea about what sets can do. If you haven't, you might want to
 skip over this. However, I'll just say that sets are groups of unique
@@ -598,6 +618,11 @@ Queues
 The queue module implements a double-ended FIFO (First In, First Out)
 queue:
 
+
+.. image:: ../images/fifo.png
+    :alt: Drawing representing the implementation of a functional queue
+
+
 They're implemented a bit as illustrated above: two lists (in this
 context, stacks) that allow to both append and prepend elements
 rapidly.
@@ -657,6 +682,17 @@ readers were very impatient to read about them.
 However, I judged it made more sense to be comfortable with functional
 Erlang before moving on to concurrent Erlang. It will be easier to
 move on afterwards and focus on all the new concepts. Here we go!
+
+
+.. image:: ../images/squid-concurrency.png
+    :alt: The splash screen's squid riding a rocket towards concurrency
+
+
+
+
+
+
+
 
 
 

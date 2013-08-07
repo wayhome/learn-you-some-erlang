@@ -4,6 +4,11 @@
 Buckets of Sockets
 ------------------
 
+
+.. image:: ../images/bucket.png
+    :alt: A 'hello' enters a tin can and exits from a bucket
+
+
 So far we've had some fun dealing with Erlang itself, barely
 communicating to the outside world, if only by text files that we read
 here and there. As much of relationships with yourself might be fun,
@@ -108,6 +113,11 @@ Try the previous Hello World IO List in the shell with
 `io:format("~s~n", [IoList])` just to see. It should work without a
 problem.
 
+
+.. image:: ../images/brotocol.png
+    :alt: A guido with an RJ-45 connection head
+
+
 All in all, they're a pretty clever way of building strings to avoid
 the problems of immutable data structures when it comes to dynamically
 building content to be output.
@@ -139,6 +149,11 @@ but less reliable. Choose carefully depending on what you need.
 In any case, using UDP in Erlang is relatively simple. We set up a
 socket over a given port, and that socket can both send and receive
 data:
+
+
+.. image:: ../images/udp-ports.png
+    :alt: Diagram showing a Host A that has ports A, B and C, which can all send and receive packets to other hosts
+
 
 For a bad analogy, this is like having a bunch of mailboxes on your
 house (each mailbox being a port) and receiving tiny slips of paper in
@@ -182,6 +197,11 @@ UDP Sockets
 There are only a few basic operations with UDP: setting up a socket,
 sending messages, receiving messages and closing a connection. The
 possibilities are a bit like this:
+
+
+.. image:: ../images/udp.png
+    :alt: A graph showing that Opening a socket can lead to 3 options: sending data, receiving data, or closing a socket. Sending can lead to receiving data or closing a socket, receiving data can lead to sending data or closing a socket. Finally, closing a socket does nothing
+
 
 The first operation, no matter what, is to open a socket. This is done
 by calling `gen_udp:open/1-2`. The simplest form is done by calling
@@ -339,7 +359,17 @@ sockets, there are some vital differences in how they work. The
 biggest one is that clients and servers are two entirely different
 things. A client will behave with the following operations:
 
+
+.. image:: ../images/tcp-client.png
+    :alt: A diagram similar to the UDP one: connection leads to send and receive, which both send to each other. More over, all states can then lead to the closed state
+
+
 While a server will rather follow this scheme:
+
+
+.. image:: ../images/tcp-server.png
+    :alt: Diagram similar to the UDP one, although a listen state is added before the whole thing. That state can either move on to the 'accept' state (similar to 'open socket' for the possible branches) or to a close state.
+
 
 Weird looking, huh? The client acts a bit like what we had with
 gen_udp: you connect to a port, send and receive, stop doing so. When
@@ -446,6 +476,11 @@ By this, I mean that UDP sockets, TCP client sockets and TCP accept
 sockets can all have messages sent through them from any process in
 existence, but messages received can only be read by the process that
 started the socket:
+
+
+.. image:: ../images/socket-owner.png
+    :alt: A diagram that shows that all processes can send to a socket, but only the owner can receive messages
+
 
 That's not very practical now, is it? It means that we have to always
 keep the owner process alive to relay messages, even if it has nothing
@@ -559,6 +594,11 @@ Of course not, we're in passive mode. Let's fix this:
 Yes! With full control over active and passive sockets, the power is
 ours. How do we pick between active and passive modes?
 
+
+.. image:: ../images/stop.png
+    :alt: A stop sign
+
+
 Well there are many points. In general, if you're waiting for a
 message right away, passive mode will be much faster. Erlang won't
 have to toy with your process' mailbox to handle things, you won't
@@ -650,6 +690,11 @@ thing around.
 Sockserv, Revisited
 ~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/take-a-break.png
+    :alt: A cup of coffee with cookies and a spoon. Text says 'take a break'
+
+
 I won't be introducing that much new code for this chapter. Instead,
 we'll look back at the sockserv server from Process Quest, in the last
 chapter. It's a perfectly viable server and we'll see how to deal with
@@ -692,6 +737,11 @@ A naive implementation of a TCP server might look a bit like this:
 
 To understand how this works, a little graphical representation might
 be helpful:
+
+
+.. image:: ../images/sequential-server.png
+    :alt: A diagram showing the first process (P1) spawning a listen socket and a first acceptor process (P2). The first acceptor can accept request, handle messages, and then spawn a new acceptor process (P3) that does the same as P2
+
 
 So the `start_server` function opens a listen socket, spawns an
 acceptor and then just idles forever. The idling is necessary because
@@ -750,7 +800,17 @@ five hundred to a thousand queries per second. That's impractical.
 
 What we'd need would be to change the sequential workflow we have:
 
+
+.. image:: ../images/sequential-accept.png
+    :alt: A diagram showing in order, a listen operation, then a bunch of 'accepts' coming one after the other in a chain
+
+
 To something more parallel:
+
+
+.. image:: ../images/parallel-accept.png
+    :alt: A diagram showing in order, a listen operation, then a bunch of 'accepts' coming under the listen operation
+
 
 By having many acceptors already ready on standby, we'll be cutting
 down on a lot of delays to answer new queries. Now, rather than going
@@ -1061,6 +1121,11 @@ The stats rolling comes back into a `handle_cast` clause:
         {noreply, S#state{next={stats, Roll}}};
 
 
+
+.. image:: ../images/dice.png
+    :alt: two dice, with a 5 rolled on each
+
+
 The pq_stats module contains functions to roll stats, and the whole
 clause is only being used to output the stats there. The `~B` format
 parameters means we want an integer to be printed out. The `next` part
@@ -1207,6 +1272,19 @@ exercise for amateurs, but Erlang is one of them. Practice a bit and
 it'll become like a second nature. Erlang communicating to the outside
 world is just one of the many steps we've done towards writing useful
 software.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .. _supervisors chapter: supervisors.html
 

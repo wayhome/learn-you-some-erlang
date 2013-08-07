@@ -58,6 +58,11 @@ when a link has been set between the two processes.
 
 Or, to put it in picture:
 
+
+.. image:: ../images/link-exit.png
+    :alt: A process receiving an exit signal
+
+
 However, this `{'EXIT', B, Reason}` message can not be caught with a
 `try ... catch` as usual. Other mechanisms need to be used to do this.
 We'll see them later.
@@ -149,6 +154,11 @@ save a set of parentheses too.
 
 It's a Trap!
 ~~~~~~~~~~~~
+
+
+.. image:: ../images/ackbar.jpg
+    :alt: Admiral Ackbar
+
 
 Now to get back to links and processes dying. Error propagation across
 processes is done through a process similar to message passing, but
@@ -306,6 +316,11 @@ trapped. This ensures any process you terminate with it will really be
 dead. Usually, `kill` is a bit of a last resort, when everything else
 has failed.
 
+
+.. image:: ../images/trap.png
+    :alt: A mouse trap with a beige laptop on top
+
+
 As the `kill` reason can never be trapped, it needs to be changed to
 `killed` when other processes receive the message. If it weren't
 changed in that manner, every other process linked to it would in turn
@@ -338,6 +353,11 @@ differences:
 
 + they are unidirectional;
 + they can be stacked.
+
+
+
+.. image:: ../images/homer.png
+    :alt: Ugly Homer Simpson parody
 
 
 Monitors are what you want when a process wants to know what's going
@@ -718,6 +738,10 @@ dynamic names.
 In the next chapter, we'll put the recent knowledge we gained on
 concurrent programming with Erlang to practice by writing a real
 application.
+
+
+
+
 
 .. _exceptions chapter: errors-and-exceptions.html
 

@@ -9,6 +9,11 @@ Syntax in functions
 Pattern Matching
 ~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/snail.png
+    :alt: A snail greeting you.
+
+
 Now that we have the ability to store and compile our code, we can
 begin to write more advanced functions. Those that we have written so
 far were extremely simple and a bit underwhelming. We'll get to more
@@ -184,6 +189,11 @@ And it's that simple. Before explaining how the function works, we'll
 go over the concept of bound and unbound variables again, just in
 case:
 
+
+.. image:: ../images/un-bound.png
+    :alt: Three characters: one sad bridegroom and a happy bride (representing variables and values) next to a happy bum (unbound variable)
+
+
 Here, the bridegroom is sad because in Erlang, variables can never
 change value: no freedom! Joking aside, unbound variables are
 variables without any values attached to them (like our little bum on
@@ -254,6 +264,11 @@ solve this problem, we use guards.
 Guards, Guards!
 ~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/driving-age.png
+    :alt: A baby driving a car
+
+
 Guards are additional clauses that can go in a function's head to make
 pattern matching more expressive. As mentioned above, pattern matching
 is somewhat limited as it cannot express things like a range of value
@@ -322,6 +337,11 @@ opposite way:
         true;
     wrong_age(_) ->
         false.
+
+
+
+.. image:: ../images/guard.png
+    :alt: Guard
 
 
 And we get correct results from that too. Test it if you want (you
@@ -410,6 +430,11 @@ Save this as `what_the_if.erl` and let's try it:
     2> what_the_if:heh_fine().
     ** exception error: no true branch found when evaluating an if expression
          in function  what_the_if:heh_fine/0
+
+
+
+.. image:: ../images/labyrinth.png
+    :alt: Labyrinth with no exit
 
 
 Uh oh! the compiler is warning us that no clause from the if on line
@@ -618,6 +643,11 @@ functions to do conditional expressions?
 Which to use?
 ~~~~~~~~~~~~~
 
+
+.. image:: ../images/coppertone.png
+    :alt: parody of the coppertone logo mixed with the squid on the tunnel page of this site
+
+
 Which to use is rather hard to answer. The difference between function
 calls and `case ... of` are very minimal: in fact, they are
 represented the same way at a lower level, and using one or the other
@@ -655,6 +685,12 @@ Nobody's going to go try to beat you up because of what you've chosen,
 as long as it is easy to understand. As Ward Cunningham once put it,
 "Clean code is when you look at a routine and it's pretty much what
 you expected."
+
+
+
+
+
+
 
 .. _Invariable Variables: starting-out-for-real.html#invariable-variables
 .. _Types (or lack thereof): types-or-lack-thereof.html#type-conversions

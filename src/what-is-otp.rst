@@ -9,6 +9,11 @@ What is OTP?
 It's The Open Telecom Platform!
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/hullo.png
+    :alt: A telephone with someone on the other end saying 'Hullo'
+
+
 OTP stands for *Open Telecom Platform*, although it's not that much
 about telecom anymore (it's more about software that has the property
 of telecom applications, but yeah.) If half of Erlang's greatness
@@ -50,6 +55,11 @@ loop, etc.
 These parts, as it turns out, are usually present in all concurrent
 programs you'll write, no matter what the process might be used for.
 
+
+.. image:: ../images/common-pattern.png
+    :alt: common process pattern: spawn -> init -> loop -> exit
+
+
 The engineers and computer scientists behind the OTP framework spotted
 these patterns and included them in a bunch of common libraries. These
 libraries are built with code that is equivalent to most of the
@@ -62,6 +72,11 @@ Funnily enough, you should rarely need to use these libraries
 yourself. The abstractions they contain are so basic and universal
 that a lot more interesting things were built on top of them. Those
 libraries are the ones we'll use.
+
+
+.. image:: ../images/abstraction-layers.png
+    :alt: graph of Erlang/OTP abstraction layers: Erlang -> Basic Abstraction Libraries (gen, sys, proc_lib) -> Behaviours (gen_*, supervisors)
+
 
 In the following chapters we'll see a few of the common uses of
 processes and then how they can be abstracted, then made generic. Then
@@ -348,6 +363,11 @@ With this done, the loop can now look like this:
         end.
 
 
+
+.. image:: ../images/sink.png
+    :alt: A kitchen sink
+
+
 And then you could also add specific slots to handle messages that
 don't fit the sync/async concept (maybe they were sent by accident) or
 to have your debug functions and other stuff like hot code reloading
@@ -557,6 +577,11 @@ there's a single generic implementation of it to test, document, etc.
 The rest of the effort can be put on each specific implementation of
 it.
 
+
+.. image:: ../images/dung.png
+    :alt: A dung beetle pushing its crap
+
+
 This means you reduce a lot of time tracking and solving bugs (just do
 it at one place for all servers). It also means that you reduce the
 number of bugs you introduce. If you were to re-write the
@@ -603,6 +628,11 @@ people who'll support your applications), the Erlang/OTP team managed
 to handle all of that for you with the gen_server behaviour.
 `gen_server` is a bit like `my_server` on steroids, except it has
 years and years of testing and production use behind it.
+
+
+
+
+
 
 .. _event server: designing-a-concurrent-application.html
 

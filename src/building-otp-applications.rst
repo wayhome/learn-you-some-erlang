@@ -9,6 +9,11 @@ Building OTP Applications
 Why Would I Want That?
 ~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/construction.png
+    :alt: A construction sign with a squid holdin a shovel, rather than a man doing so
+
+
 After seeing our whole application's supervision tree start at once
 with a simple function call, we might wonder why we would want to make
 things more complicated than they already are. The concepts behind
@@ -76,6 +81,11 @@ will hold compiled files, the `include/` directory will contain Erlang
 header ( `.hrl`) files, `priv/` will hold executables, other programs,
 and various specific files needed for the application to work and
 `src/` will hold the Erlang source files you will need.
+
+
+.. image:: ../images/carpool.png
+    :alt: A pool with wheels and an exhaust pipe
+
 
 You'll note that I added a `test/` directory just for the test file I
 had before. The reason for this is that tests are somewhat common, but
@@ -316,6 +326,11 @@ expliciteness, but there's no *need* for it right now.
 The Application Behaviour
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/indiana.gif
+    :alt: Parody of Indiana Jones' scene where he substitutes a treasure for a fake weight. The piece of gold has 'generic' written on it, and the fake weight has 'specific' on it
+
+
 As for most OTP abstractions we've seen, what we want is a pre-built
 implementation. Erlang programmers are not happy with design patterns
 as a convention, they want a solid abstraction for them. This gives us
@@ -365,6 +380,11 @@ and terminates its whole family tree. Brutally killing children is a
 common topic among Erlangers.
 
 An Erlang VM with a bunch of applications might look a bit like this:
+
+
+.. image:: ../images/application-controller.png
+    :alt: The Application controller stands over three application masters (in this graphic, in real life it has many more), which each stand on top of a supervisor process
+
 
 Up to now, we were still looking at the generic part of the behaviour,
 but what about the specific stuff? After all, this is all we actually
@@ -635,6 +655,10 @@ You can see it's a pretty standard application file, but without the
 callback module. A library application.
 
 How about we go deeper with applications?
+
+
+
+
 
 .. _Designing a Concurrent Application: designing-a-concurrent-application.html#lay-them-foundation
 

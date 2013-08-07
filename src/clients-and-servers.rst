@@ -8,6 +8,11 @@ Clients and Servers
 Callback to the Future
 ~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/cbttf.png
+    :alt: Weird version of Marty from Back to The Future
+
+
 The first OTP behaviour we'll see is one of the most used ones. Its
 name is `gen_server` and it has an interface a bit similar to the one
 we've written with `my_server` in `last chapter`_; it gives you a few
@@ -188,6 +193,11 @@ to change it for a regular dict. In order to avoid the process
 crashing on the next function call, the conversion from one data
 structure to the other can be done in there, safely. All you have to
 do is return the new state with `{ok, NewState}`.
+
+
+.. image:: ../images/kitty.png
+    :alt: a cat with an eye patch
+
 
 The Extra variable isn't something we'll worry about for now. It's
 mostly used in larger OTP deployment, where specific tools exist to
@@ -423,6 +433,11 @@ And we can now try the brand new code:
     ok
 
 
+
+.. image:: ../images/mittens.png
+    :alt: pair of wool mittens
+
+
 Oh and hot damn, it works!
 
 So what can we say about this generic adventure? Probably the same
@@ -433,6 +448,9 @@ there are bugs, they are easier to fix. Generic servers are only one
 of the many available abstractions, but they're certainly one of the
 most used ones. We'll see more of these abstractions and behaviours in
 the next chapters.
+
+
+
 
 .. _last chapter: what-is-otp.html#the-basic-server
 .. _More About Modules: modules.html#more-about-modules

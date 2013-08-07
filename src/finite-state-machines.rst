@@ -14,6 +14,11 @@ easier to understand with graphs and diagrams. For example, the
 following would be a simplistic diagram for a (very dumb) dog as a
 state machine:
 
+
+.. image:: ../images/fsm_dog.png
+    :alt: A dog supports 3 states: barks, wag tail and sits. A barking dog can have the action 'gets petted' applied to it, prompting a transition to 'wag tail'. If the dog waits for too long, it goes back to barks state. If it gets petted more, it will sit until it sees a squirrel and starts barking again
+
+
 Here the dog has 3 states: sitting, barking or wagging its tail.
 Different events or inputs may force it to change its state. If a dog
 is calmly sitting and sees a squirrel, it will start barking and won't
@@ -24,6 +29,11 @@ the real world that would be a freaky event, but your dog would come
 back after being ran over by a car, so it's not all bad.
 
 Here's a cat's state diagram for a comparison:
+
+
+.. image:: ../images/fsm_cat.png
+    :alt: A cat only has the state 'doesn't give a crap about you' and can receive any event, remaining in that state.
+
 
 This cat has a single state, and no event can ever change it.
 
@@ -225,6 +235,11 @@ What's new here is that StateName variable. StateName is an atom and
 represents the next callback function to be called.
 
 
+.. image:: ../images/dog.png
+    :alt: A samoyed dog barking
+
+
+
 
 StateName
 `````````
@@ -395,6 +410,11 @@ his FSM to send an item to Carl, Carl's FSM has to be made aware of
 it. This means both players can talk to their own FSM, which will talk
 to the other's FSM. This gives us something a bit like this:
 
+
+.. image:: ../images/fsm_talk.png
+    :alt: Jim <--> Jim's FSM  <---> Carl's FSM <--> Carl
+
+
 The first thing to notice when we have two identical processes
 communicating with each other is that we have to avoid synchronous
 calls as much as possible. The reason for this is that if Jim's FSM
@@ -416,6 +436,11 @@ call Jim and so no deadlock can occur between them.
 When two of these FSMs communicate together, the whole exchange might
 look a bit like this:
 
+
+.. image:: ../images/fsm_overview.png
+    :alt: Two FSMs exist, with a client each: Your FSM and Jim's FSM. You ask your FSM to ask Jim to communicate. Jim accepts and both FSMs move to a state where items are offered and withdrawn. When both players are ready, the trade is done
+
+
 Both FSMs are in an idle state. When you ask Jim to trade, Jim has to
 accept before things move on. Then both of you can offer items or
 withdraw them. When you are both declaring yourself ready, the trade
@@ -430,22 +455,47 @@ Some things might go wrong even after having reviewed it many times.
 Because of this, I'll simply put the one I decided to implement here
 and then explain it.
 
+
+.. image:: ../images/fsm_general.png
+    :alt: The idle state can switch to either idle_wait or negotiate. The idle_wait state can switch to negotiate state only. Negotiate can loop on itself or go into wait state. The wait state can go back to negotiate or move to ready state. The ready state is last and after that the FSM stops. All in bubbles and arrows.
+
+
 At first, both finite-state machines start in the `idle` state. At
 this point, one thing we can do is ask some other player to negotiate
 with us:
+
+
+.. image:: ../images/fsm_initiate_nego.png
+    :alt: Your client can send a message to its FSM asking to negotiate with Jim's FSM (The other player). Your FSM asks the other FSM to negotiate and switches to the idle_wait state.
+
 
 We go into `idle_wait` mode in order to wait for an eventual reply
 after our FSM forwarded the demand. Once the other FSM sends the
 reply, ours can switch to `negotiate`:
 
+
+.. image:: ../images/fsm_other_accept.png
+    :alt: The other's FSM accepts our invitation while in idle_wait state, and so we move to 'negotiate'
+
+
 The other player should also be in `negotiate` state after this.
 Obviously, if we can invite the other, the other can invite us. If all
 goes well, this should end up looking like this:
+
+
+.. image:: ../images/fsm_other_initiate_nego.png
+    :alt: The other sends asks us to negotiate. We fall in idle_wait state until our client accepts. We then switch to negotiate mode
+
 
 So this is pretty much the opposite as the two previous state diagrams
 bundled into one. Note that we expect the player to accept the offer
 in this case. What happens if by pure luck, we ask the other player to
 trade with us at the same time he asks us to trade?
+
+
+.. image:: ../images/fsm_initiate_race.png
+    :alt: Both clients ask their own FSM to negotiate with the other and instantly switch to the 'idle_wait' state. Both negotiation questions will be handled in the idle_wait state. No further communications are needed and both FSMs move to negotiate state
+
 
 What happens here is that both clients ask their own FSM to negotiate
 with the other one. As soon as the *ask negotiate* messages are sent,
@@ -461,17 +511,32 @@ So now we're negotiating. According to the list of actions I listed
 earlier, we must support users offering items and then retracting the
 offer:
 
+
+.. image:: ../images/fsm_item_offers.png
+    :alt: Our player sends either offers or retractions, which are forwarded by our FSM, which remains in negotiate state
+
+
 All this does is forward our client's message to the other FSM. Both
 finite-state machines will need to hold a list of items offered by
 either player, so they can update that list when receiving such
 messages. We stay in the `negotiate` state after this; maybe the other
 player wants to offer items too:
 
+
+.. image:: ../images/fsm_other_item_offers.png
+    :alt: Jim's FSM sends our FSM an offer or retracts one. Our FSM remains in the same state
+
+
 Here, our FSM basically acts in a similar manner. This is normal. Once
 we get tired of offering things and think we're generous enough, we
 have to say we're ready to officialise the trade. Because we have to
 synchronise both players, we'll have to use an intermediary state, as
 we did for `idle` and `idle_wait`:
+
+
+.. image:: ../images/fsm_own_ready.png
+    :alt: Our player tells its FSM he's ready. The FSM asks the other player's FSM if the player is ready and switches to wait state
+
 
 What we do here is that as soon as our player is ready, our FSM asks
 Jim's FSM if he's ready. Pending its reply, our own FSM falls into its
@@ -481,16 +546,31 @@ tell us that it's not ready yet. That's precisely what our FSM
 automatically replies to Jim if he asks us if we are ready when in
 `negotiate` state:
 
+
+.. image:: ../images/fsm_other_ready.png
+    :alt: Jim's FSM asks our FSM if it's ready. It automatically says 'not yet' and remains in negotiate mode.
+
+
 Our finite state machine will remain in `negotiate` mode until our
 player says he's ready. Let's assume he did and we're now in the
 `wait` state. However, Jim's not there yet. This means that when we
 declared ourselves as ready, we'll have asked Jim if he was also ready
 and his FSM will have replied 'not yet':
 
+
+.. image:: ../images/fsm_wait_after_are_you_ready.png
+    :alt: Jim's FSM sent us a not yet reply. Our FSM keeps waiting
+
+
 He's not ready, but we are. We can't do much but keep waiting. While
 waiting after Jim, who's still negotiating by the way, it is possible
 that he will try to send us more items or maybe cancel his previous
 offers:
+
+
+.. image:: ../images/fsm_wait_item_offers.png
+    :alt: Jim's FSM modifies the items of the trade (offer or retract). Our FSM instantly switches back to negotiate state.
+
 
 Of course, we want to avoid Jim removing all of his items and then
 clicking "I'm ready!", screwing us over in the process. As soon as he
@@ -501,11 +581,21 @@ we're ready. Rinse and repeat.
 At some point, Jim will be ready to finalise the trade too. When this
 happens, his finite-state machine will ask ours if we are ready:
 
+
+.. image:: ../images/fsm_reply_are_you_ready.png
+    :alt: Jim's FSM asks us if our FSM is ready. Our FSM automatically replies that it is indeed ready and keeps waiting
+
+
 What our FSM does is reply that we indeed are ready. We stay in the
 waiting state and refuse to move to the `ready` state though. Why is
 this? Because there's a potential race condition! Imagine that the
 following sequence of events takes place, without doing this necessary
 step:
+
+
+.. image:: ../images/fsm_race_wait.png
+    :alt: You send 'ready' to your FSM while in negotiate at the same time the other player makes an offer (also in negotiate state). Your FSM turns to 'wait'. The other player declares himself ready slightly before your 'are you ready?' message is sent. At the same time as your FSM goes to 'wait', it receives the other player's offer and switches back to 'negotiate' state. Meanwhile, the other player (now in 'wait') receives your 'are you ready?' message and assumes it's a race condition. It automatically switches to 'ready'. Your FSM then receives the other's 'are you ready?' message, replies 'not yet', which is caught by the other player's FSM in 'ready' state. Nothing can happen from now on
+
 
 This is a bit complex, so I'll explain. Because of the way messages
 are received, we could possibly only process the item offer *after* we
@@ -523,6 +613,11 @@ David Wheeler). This is why we stay in `wait` mode and send 'ready!'
 'ready!' message, assuming we were already in the `ready` state
 because we told our FSM we were ready beforehand:
 
+
+.. image:: ../images/fsm_both_ready.png
+    :alt: Our FSM receives ready!, sends ready! back (see the explanations below), and then sends 'ack' before moving to the ready state.
+
+
 When we receive 'ready!' from the other FSM, we send 'ready!' back
 again. This is to make sure that we won't have the 'double race
 condition' mentioned above. This will create a superfluous 'ready!'
@@ -539,6 +634,11 @@ players are ready and have basically given the finite-state machines
 all the control they need. This lets us implement a bastardized
 version of a two-phase commit to make sure things go right when making
 the trade official:
+
+
+.. image:: ../images/fsm_commit.png
+    :alt: Both FSMs exchange an ack message. Then, one of them asks the other if it wants to commit. The other replies 'ok'. The first one tells it to do the commit. The second FSM saves its data, then replies saying it's done. The first one then saves its own data and both FSMs stop.
+
 
 Our version (as described above) will be rather simplistic. Writing a
 truly correct two-phase commit would require a lot more code than what
@@ -574,6 +674,11 @@ doing so.
 
 Game trading between two players
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/take-a-break.png
+    :alt: A cup of coffee with cookies and a spoon. Text says 'take a break'
+
 
 The first thing that needs to be done to implement our protocol with
 OTP's `gen_fsm` is to create the interface. There will be 3 callers
@@ -814,6 +919,11 @@ player, if you look at the API functions, will use a synchronous call:
         {next_state, idle, Data}.
 
 
+
+.. image:: ../images/camera.png
+    :alt: a security camera
+
+
 A monitor is set up to allow us to handle the other dying, and its ref
 is stored in the FSM's data along with the other's pid, before moving
 to the `idle_wait` state. Note that we will report all unexpected
@@ -1024,6 +1134,11 @@ need to worry about are those related to with synchronising both FSMs
 so they can move to the `ready` state and confirm the trade. For this
 one we should really focus on the protocol defined earlier.
 
+
+.. image:: ../images/cash.png
+    :alt: a cash register
+
+
 The three messages we could have are `are_you_ready` (because the
 other user just declared himself ready), `not_yet` (because we asked
 the other if he was ready and he was not) and `ready!` (because we
@@ -1080,6 +1195,11 @@ message to the other FSM, reply to our own user and then move to the
 You might have noticed that I've used `ack_trans/1`. In fact, both
 FSMs should use it. Why is this? To understand this we have to start
 looking at what goes on in the `ready!` state.
+
+
+.. image:: ../images/commitment.png
+    :alt: An ugly man, kneeling and offering a diamond ring to nobody
+
 
 When in the ready state, both players' actions become useless (except
 cancelling). We won't care about new item offers. This gives us some
@@ -1318,6 +1438,11 @@ but that's how it goes). You can try it if you feel like it.
 That Was Quite Something
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/snake.png
+    :alt: A snake shaped as an interrogation mark
+
+
 If you've found this chapter a bit harder than the others, I must
 remind you that it's entirely normal. I've just gone crazy and decided
 to make something hard out of the generic finite-state machine
@@ -1373,6 +1498,31 @@ have to face swords and knives. Beware the dormant bugs.
 Fortunately, we can put all of this madness behind us. We'll next see
 how OTP allows you to handle various events, such as alarms and logs,
 with the help of the `gen_event` behaviour.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -12,6 +12,11 @@ This is the beginning of Learn You Some Erlang for Great Good! Reading
 this tutorial should be one of your first steps in learning Erlang, so
 let's talk about it a bit.
 
+
+.. image:: ../images/erlang.png
+    :alt: Erlang logo
+
+
 First of all, I began growing the idea of writing this after reading
 Miran Lipovača's Learn You a Haskell for great Good! (LYAH) tutorial;
 I thought he did a great job making the language attractive and the
@@ -105,6 +110,11 @@ programming: obey its purest principles (referential transparency,
 avoiding mutable data, etc), but break away from them when real world
 problems pop up.
 
+
+.. image:: ../images/envelope.png
+    :alt: An envelope
+
+
 Now, we defined Erlang as a functional programming language, but
 there's also a large emphasis on concurrency and high reliability. To
 be able to have dozens of tasks being performed at the same time,
@@ -145,6 +155,11 @@ The VM and the libraries also allow you to update the code of a
 running system without interrupting any program, distribute your code
 with ease on many computers and manage errors and faults in a simple
 but powerful manner.
+
+
+.. image:: ../images/letitcrash.png
+    :alt: A crashed plane
+
 
 We'll see how to use most of these tools and achieve safety later on,
 but for now, I'll tell you about a related general policy in Erlang:
@@ -190,6 +205,11 @@ Erlang is also said to be able to scale in a directly proportional
 manner to how many cores your computer has, but this is usually not
 true: it is possible, but most problems do not behave in a way that
 lets you just run everything at the same time.
+
+
+.. image:: ../images/scaling.png
+    :alt: Bad Graph: Speed vs Cores: It just scales!
+
 
 There's something else to keep in mind: while Erlang does some things
 very well, it's technically still possible to get the same results
@@ -270,6 +290,10 @@ Oh and if you're the type of person to go for cookbooks and pre-made
 recipes, trapexit is the place you're looking for. They also mirror
 the mailing lists as a forum and a general wiki, which can always be
 helpful.
+
+
+
+
 
 
 

@@ -24,6 +24,11 @@ error is caught at runtime and the compiler won't always yell at you
 when compiling modules where things may result in failure, like in
 `Starting Out (for real)`_'s `"llama + 5"` example.
 
+
+.. image:: ../images/ham.png
+    :alt: A knife slicing ham.
+
+
 One classic friction point between proponents of static and dynamic
 typing has to do with the safety of the software being written. A
 frequently suggested idea is that good static type systems with
@@ -141,6 +146,11 @@ been possible with pattern matching: a function `head/1` taking a list
 could only accept lists because otherwise, the matching ( `[H|_]`)
 would have failed.
 
+
+.. image:: ../images/my-name-is.png
+    :alt: Hi, My name is Tuple
+
+
 However, we've had a problem with numeric values because we couldn't
 specify ranges. Consequently, we used guards in functions about
 temperature, the age to drive, etc. We're hitting another roadblock
@@ -219,6 +229,11 @@ functions`_, which could exhaust memory.
 
 For Type Junkies
 ~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/type-dance.png
+    :alt: A sign for homeless people: 'Will dance for types'
+
 
 This section is meant to be read by programmers who can not live
 without a static type system for one reason or another. It will
@@ -316,6 +331,11 @@ annotations:
     -spec empty({'fifo',_,_}) -> bool().
 
 
+
+.. image:: ../images/fifo.png
+    :alt: Implementation of fifo (queues): made out of two stacks (last-in first-out).
+
+
 Which is pretty much right. Improper lists should be avoided because
 `lists:reverse/1` doesn't support them, but someone bypassing the
 module's interface would be able to get through it and submit one. In
@@ -367,6 +387,10 @@ drink too much Kool-aid* partially wrong. Shame on me.
 Note that the type documentation has also become official (although it
 remains subject to change) and is more complete than what can be found
 in EEP8.
+
+
+
+
 
 .. _Syntax in Functions: syntax-in-functions.html
 .. _Errors and Exceptions: errors-and-exceptions.html

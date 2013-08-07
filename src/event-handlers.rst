@@ -31,6 +31,11 @@ This third approach simply takes a process which accepts functions and
 lets them run on any incoming event. This process is usually called an
 *event manager* and it might end up looking a bit like this:
 
+
+.. image:: ../images/event-manager.png
+    :alt: Shows a bubble labeled 'your server', another one labeled 'event manager'. An arrow (representing an event) goes from your server to the event manager, which has the event running in callback functions (illustrated as f, y and g)
+
+
 Doing things that way has a few advantages:
 
 
@@ -85,10 +90,25 @@ if you recall what has been said before, event handlers are a bunch of
 functions running in the manager. This means the currently presented
 model:
 
+
+.. image:: ../images/common-pattern.png
+    :alt: common process pattern: spawn -> init -> loop -> exit
+
+
 Switches to something more like this for the programmer:
+
+
+.. image:: ../images/event-handler-pattern.png
+    :alt:  spawn event manager -> attach handler -> init handler -> loop (with handler calls) -> exit handlers
+
 
 Each event handler can hold its own state, carried around by the
 manager for them. Each event handler can then take the form:
+
+
+.. image:: ../images/event-handler-pattern-local.png
+    :alt: init --> handle events + special messages --> terminate
+
 
 This is nothing too complex so let's get it on with the event
 handlers' callbacks themselves.
@@ -119,6 +139,11 @@ regards to what it can return though:
   into hibernation until the next event
 + `remove_handler`
 + `{swap_handler, Args1, NewState, NewHandler, Args2}`
+
+
+
+.. image:: ../images/hibernate.png
+    :alt: A sleeping polar bear with a birthday hat
 
 
 The tuple `{ok, NewState}` works in a way similar to what we've seen
@@ -201,6 +226,11 @@ the most entertaining sports in the world: curling.
 
 If you've never seen or played curling before (which is a shame!), the
 rules are relatively simple:
+
+
+.. image:: ../images/curling-ice.png
+    :alt: A top view of a curling ice/game
+
 
 You have two teams and they try to send a curling stone sliding on the
 ice, trying to get to the middle of the red circle. They do this with
@@ -399,6 +429,11 @@ as `gen_event:add_handler(Pid, {Module, Ref}, Args)`. From this point
 on, you can use `{Module, Ref}` to talk to that specific handler.
 Problem solved.
 
+
+.. image:: ../images/curling-stone.png
+    :alt: A curling stone
+
+
 Anyway, you can then see that we send messages to the event handler,
 which successfully calls the hardware module. We then remove the
 handler. Here, `turn_off` is an argument to the `terminate/2`
@@ -457,6 +492,11 @@ And now running it:
     4> curling:next_round(Pid). 
     Scoreboard: round over
     ok
+
+
+
+.. image:: ../images/alert.png
+    :alt: Some kind of weird looking alien sitting on a toilet, surprised at the newspapers it is reading
 
 
 This doesn't look like much of an advantage, but it's really about
@@ -596,6 +636,11 @@ can handle it. Easy enough, right? Think again.
 
 Don't Drink Too Much Kool-Aid
 `````````````````````````````
+
+
+.. image:: ../images/leash.png
+    :alt: alien kid on a leash
+
 
 It might have happened at some time in your childhood that you went to
 your aunt or grandmother's place for a party or something. If you were
@@ -777,6 +822,15 @@ applications. More importantly, we've finally covered the three main
 OTP behaviours used in active code development. We still have a few
 behaviours left to visit—those that act as a bunch of glue between all
 of our worker processes—such as the supervisor.
+
+
+
+
+
+
+
+
+
 
 .. _Errors and Processes: errors-and-processes.html#monitors
 .. _previous chapter: finite-state-machines.html

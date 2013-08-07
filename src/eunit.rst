@@ -9,6 +9,11 @@ EUnited Nations Council
 The Need for Tests
 ~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/eunit.png
+    :alt: G-Unit logo, parodied to be say 'E-Unit'
+
+
 The software we've written has gotten progressively bigger and
 somewhat more complex with time. When that happens, it becomes rather
 tedious to start an Erlang shell, type things in, look at results, and
@@ -153,6 +158,11 @@ ops:add(2,2)`) to see what failures look like:
     =======================================================
       Failed: 1.  Skipped: 0.  Passed: 0.
     error
+
+
+
+.. image:: ../images/lies.png
+    :alt: A lie detector with a red light lit up, meaning someone lied
 
 
 We can see what test failed ( `ops_tests: add_test...`) and why it did
@@ -397,6 +407,11 @@ suites for entire applications or even releases.
 Fixtures
 ~~~~~~~~
 
+
+.. image:: ../images/fixture.png
+    :alt: a light fixture
+
+
 It would still be pretty hard to test entire applications just by
 using assertions and test generators. This is why *fixtures* were
 added. Fixtures, while not being a catch-all solution to getting your
@@ -562,6 +577,11 @@ By using the fact that test sets can be deeply nested lists, we wrap a
 bunch of instantiators with an anonymous function behaving like an
 instantiator for them.
 
+
+.. image:: ../images/fatspawn.png
+    :alt: A fat Spawn (the anti-hero comic book character)
+
+
 Tests can also have some finer grained control into how they should be
 running when you use fixtures. Four options are available:
 
@@ -627,6 +647,11 @@ Because just seeing fake tests as above isn't the most entertaining
 thing to do, and because pretending to test software that doesn't
 exist is even worse, we'll instead study the tests I have written for
 the regis-1.0.0 process registry, the one used by Process Quest.
+
+
+.. image:: ../images/regis.png
+    :alt: A portrait of Regis Philbin
+
 
 Now, the development of `regis` was done in a test-driven manner.
 Hopefully you don't hate TDD (Test-Driven Development), but even if
@@ -849,6 +874,11 @@ function:
          ?_assertEqual(Pid, whereis(regis_server))].
 
 
+
+.. image:: ../images/electrocardiogram.png
+    :alt: a heart monitor
+
+
 As explained earlier when we looked at the first version of the test,
 this checks whether the process is available or not. There's nothing
 really special about that one, although the function
@@ -969,6 +999,11 @@ processes have the time to register themselves, and then call
 between 1 and 15, inclusively. Then a slight cleanup is done by
 eliminating all the registered processes — we don't want to be leaking
 them, after all.
+
+
+.. image:: ../images/watch.png
+    :alt: a pocket watch
+
 
 You'll notice the tendency of the tests to store state in variables (
 L1 and L2 ) before using them in test sets. The reason for this is
@@ -1209,6 +1244,11 @@ descriptions and run time information to the reports? That's neat.
 He Who Knits EUnits
 ~~~~~~~~~~~~~~~~~~~
 
+
+.. image:: ../images/knit.png
+    :alt: a ball of yarn
+
+
 In this chapter, we've seen how to use most features of EUnit, how to
 run suites written in them. More importantly, we've seen a few
 techniques related to how to write tests for concurrent processes,
@@ -1256,6 +1296,14 @@ differently.
 In any case, we'll see the true value of tests when we rewrite the
 process registry to use ETS, an in-memory database available for all
 Erlang processes.
+
+
+
+
+
+
+
+
 
 .. _RPN calculator: functionally-solving-problems.html#rpn-calculator
 

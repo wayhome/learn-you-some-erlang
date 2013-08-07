@@ -52,6 +52,11 @@ transparently for you. However, if you want to have the integer-to-
 integer division, use `div`, and to have the modulo operator, use
 `rem` (remainder).
 
+
+.. image:: ../images/calculator.png
+    :alt: A calculator with the number '80085' typed in
+
+
 Note that we can use several operators in a single expression, and
 mathematical operations obey the normal precedence rules.
 
@@ -231,6 +236,11 @@ values will never clash and it is impossible for such a constant to be
 undefined! If you really want constants with values associated to
 them, there's a way to do it that we'll see in `chapter 4`_ (Modules).
 
+
+.. image:: ../images/atom.png
+    :alt: An Atom, as imagined by Rutherford
+
+
 An atom is therefore mainly useful to express or qualify data coupled
 with it. Used alone, it's a bit harder to find a good use to it. This
 is why we won't spend more time toying with them; their best use will
@@ -261,6 +271,11 @@ orelse query receive rem try when xor`
 
 Boolean Algebra & Comparison operators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. image:: ../images/boole.png
+    :alt: George Boole
+
 
 One would be in pretty deep trouble if one couldn't tell the
 difference between what's small and big, what's true and false. As any
@@ -461,6 +476,11 @@ hand side of the `=` operator, the `=` operator compares both values:
 tuple and distribute them to the unbound variables on the left-hand
 side. Then the comparison is only `{4,5} = {4,5}`, which obviously
 succeeds! That's one of the many forms of pattern matching.
+
+
+.. image:: ../images/mr-brackets.png
+    :alt: {Mr.Brackets}
+
 
 Note that on expression 6, I used the anonymous _ variable. This is
 exactly how it's meant to be used: to drop the value that would
@@ -706,6 +726,11 @@ followed by more heads. In this sense we could imagine a list being a
 bit like an earthworm: you can slice it in half and you'll then have
 two worms.
 
+
+.. image:: ../images/worm.png
+    :alt: Two drawn worms, the first one normal with the text 'Head' and 'tail' as usual; the second has its head cut off, and under it a new 'head' is written.
+
+
 The ways Erlang lists can be built are sometimes confusing to people
 who are not used to similar constructors. To help you get familiar
 with the concept, read all of these examples (hint: they're all
@@ -863,6 +888,11 @@ surprising feature that makes interpreting binary data easy as pie.
 
 Bit Syntax!
 ~~~~~~~~~~~
+
+
+.. image:: ../images/binometer.png
+    :alt: Speedometer with values in binary
+
 
 Most languages have support for manipulating data such as numbers,
 atoms, tuples, lists, records and/or structs, etc. Most of them also
@@ -1077,6 +1107,11 @@ passing (with the help of atoms being extremely light), etc. It can
 deal with events in matters of milliseconds and as such is a great
 candidate for soft-real-time applications.
 
+
+.. image:: ../images/string.png
+    :alt: A string
+
+
 There's a whole other aspect to binary notation: bit strings. Binary
 strings are bolted on top of the language the same way they are with
 lists, but they're much more efficient in terms of space. This is
@@ -1181,6 +1216,13 @@ used and not documented very well. As such, it was decided not to dig
 more than what is necessary to identify them and understand their
 basic working. To understand more bit syntax as a whole, read the
 white paper defining their specification.
+
+
+
+
+
+
+
 
 .. _chapter 4: modules.html
 

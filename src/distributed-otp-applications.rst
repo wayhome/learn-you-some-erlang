@@ -21,11 +21,21 @@ structure of an application as something using a central application
 controller, dispatching to application masters, each monitoring a top-
 level supervisor for an application:
 
+
+.. image:: ../images/application-controller.png
+    :alt: The Application controller stands over three application masters (in this graphic, in real life it has many more), which each stand on top of a supervisor process
+
+
 In standard OTP applications, the application can be loaded, started,
 stopped or unloaded. In distributed applications, we change how things
 work; now the application controller shares its work with the
 *distributed application controller*, another process sitting next to
 it (usually called *dist_ac*):
+
+
+.. image:: ../images/dist_ac.png
+    :alt: The application controller supervises two master which in turn supervise two supervisors. In parallel to the application cantroller is the dist_ac, also supervising its own application
+
 
 Depending on the application file, the ownership of the application
 will change. A dist_ac will be started on all nodes, and all dist_acs
@@ -88,19 +98,44 @@ mechanism for you in these cases.
 Let's imagine that we have a system with three nodes, where only the
 first one is running a given application:
 
+
+.. image:: ../images/failover1.png
+    :alt: Three nodes, A, B and C, and the application runs under A
+
+
 The nodes `B` and `C` are declared to be backup nodes in case `A`
 dies, which we pretend just happened:
+
+
+.. image:: ../images/failover2.png
+    :alt: Two nodes, B and C, and no application
+
 
 For a brief moment, there's nothing running. After a while, `B`
 realizes this and decides to take over the application:
 
+
+.. image:: ../images/failover3.png
+    :alt: Two nodes, B and C, and the application runs under B
+
+
 That's a failover. Then, if `B` dies, the application gets restarted
 on `C`:
+
+
+.. image:: ../images/failover4.png
+    :alt: Node C with an application running under it
+
 
 Another failover and all is well and good. Now, suppose that `A` comes
 back up. `C` is now running the app happily, but `A` is the node we
 defined to be the main one. This is when a takeover occurs: the app is
 willingly shut down on `C` and restarted on `A`:
+
+
+.. image:: ../images/failover5.png
+    :alt: Two nodes, A andbC, and the application runs under A
+
 
 And so on for all other failures.
 
@@ -136,6 +171,11 @@ application. The `A` node will represent the main node running the
 magic 8-ball server, and the `B` and `C` nodes will be the backup
 nodes:
 
+
+.. image:: ../images/main-back.png
+    :alt: three nodes, A, B, and C, connected together
+
+
 Whenever `A` fails, the 8-ball application should be restarted on
 either `B` or `C`, and both nodes will still be able to use it
 transparently.
@@ -143,6 +183,11 @@ transparently.
 Before setting things up for distributed OTP applications, we'll first
 build the application itself. It's going to be mind bogglingly naive
 in its design:
+
+
+.. image:: ../images/sup-serv.png
+    :alt: A supervisor supervising a server
+
 
 And in total we'll have 3 modules: the supervisor, the server, and the
 application callback module to start things. The supervisor will be
@@ -449,6 +494,11 @@ one, and so on. Another syntax is possible, giving a list of like `[A,
 {B, C}, D]`, so A is still the main node, B and C are equal secondary
 backups, then the other ones, etc.
 
+
+.. image:: ../images/magic-8-ball.png
+    :alt: A magic 8-ball showing 'I don't think so'
+
+
 The `sync_nodes_mandatory` tuple will work in conjunction with
 `sync_nodes_timeout`. When you start a distributed virtual machine
 with values set for this, it will stay locked up until all the
@@ -644,6 +694,16 @@ application to run only at a single place. It's also simpler to scale
 it once that design has been picked. If you need some
 failover/takeover mechanism, distributed OTP applications might be
 just what you need.
+
+
+
+
+
+
+
+
+
+
 
 .. _OTP application chapter: building-otp-applications.html
 .. _Sockets chapter: buckets-of-sockets.html

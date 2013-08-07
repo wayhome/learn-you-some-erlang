@@ -66,9 +66,19 @@ we see is 10 . We add that to the stack. Then there's 4 , so we also
 push that on top of the stack. In third place, we have 3 ; let's push
 that one on the stack too. Our stack should now look like this:
 
+
+.. image:: ../images/stack1.png
+    :alt: A stack showing the values [3 4 10]
+
+
 The next character to parse is a `+`. That one is a function of arity
 2. In order to use it we will need to feed it two operands, which will
 be taken from the stack:
+
+
+.. image:: ../images/stack2.png
+    :alt: Drawing showing the operands 3 and 4 taken from the stack, used in the postfix exppression '3 4 +' and returning 7 on top of the stack
+
 
 So we take that 7 and push it back on top of the stack (yuck, we don't
 want to keep these filthy numbers floating around!) The stack is now
@@ -76,9 +86,19 @@ want to keep these filthy numbers floating around!) The stack is now
 and push it on top of the stack. We then see `*`, which needs two
 operands to work. Again, we take them from the stack:
 
+
+.. image:: ../images/stack3.png
+    :alt: Drawing showing the operands 2 and 7 taken from the stack, used in '7 2 *', which returns 14 and pushes it on top of the stack.
+
+
 And push 14 back on top of our stack. All that remains is `-`, which
 also needs two operands. O Glorious luck! There are two operands left
 in our stack. Use them!
+
+
+.. image:: ../images/stack4.png
+    :alt: Drawing of the operands 14 and 10 taken from the stack into the operation '10 14 -' for the result '-4'
+
 
 And so we have our result. This stack-based approach is relatively
 fool-proof and the low amount of parsing needed to be done before
@@ -342,6 +362,11 @@ to drive on than others. Before you land, you decide to maximize your
 chances by finding the optimal path to his house. Here's the map
 you've found on your laptop:
 
+
+.. image:: ../images/road1.png
+    :alt: A little map with a main road 'A' with 4 segments of length 50, 5, 40 and 10, B with 4 segments of length 10, 90, 2 and 8, where each of these segments are joined by paths 'X' of length 30, 20, 25 and 0.
+
+
 Having become a huge fan of Erlang after reading online books, you
 decide to solve the problem using that language. To make it easier to
 work with the map, you enter data the following way in a file named
@@ -381,6 +406,11 @@ one tuple to analyze, that is, if we only had to choose between A , B
 (and crossing X , which in this case is useless because we're at
 destination):
 
+
+.. image:: ../images/road2.png
+    :alt: Only two paths A and B: A of length 10 and B of length 15.
+
+
 Then the choice is only between picking which of path A or path B is
 the shortest. If you've learned your recursion right, you know that we
 ought to try and converge towards the base case. This means that on
@@ -388,6 +418,11 @@ each step we'll take, we'll want to reduce the problem to choosing
 between A and B for the next step.
 
 Let's extend our map and start over:
+
+
+.. image:: ../images/road3.png
+    :alt: Path A: 5, 10. Path B: 1, 15. Crossover path X: 3.
+
 
 Ah! It gets interesting! How can we reduce the triple `{5,1,3}` to a
 strict choice between A and B? Let's see how many options are possible
@@ -414,6 +449,11 @@ the path A2 from `[B, X]`, which gives us a length of 14 ( `14 = 4 +
 10`), or by taking B2 then X2 from `[B]`, which gives us a length of
 16 ( `16 = 1 + 15 + 0`). In this case, the path `[B, X, A]` is better
 than `[B, B, X]`.
+
+
+.. image:: ../images/road3.2.png
+    :alt: Same drawing as the one above, but with the paths drawn over.
+
 
 We can also get to the next point B by either taking the path A2 from
 `[B, X]` and then crossing over X2 for a length of 14 ( `14 = 4 + 10 +
@@ -573,7 +613,17 @@ To decide on which path is the best, I need to have the result from
 the previous triple. Luckily, we know how to do it, because we don't
 need an accumulator and we got all that logic out already. So for A:
 
+
+.. image:: ../images/road1.2.png
+    :alt: Visual re-explanation of how to find the shortest path
+
+
 And take the shortest of these two paths. For B, it was similar:
+
+
+.. image:: ../images/road1.3.png
+    :alt: Visual re-explanation of how to find the shortest path
+
 
 So now we know that the current best path coming from A is `[B, X]`.
 We also know it has a length of 40. For B, the path is simply `[B]`
@@ -672,6 +722,11 @@ Oh, look! We've got the right answer! Great Job!
 
 Or, to put it in a visual way:
 
+
+.. image:: ../images/road1.4.png
+    :alt: The shortest path, going through [b,x,a,x,b,b]
+
+
 But you know what would be really useful? Being able to run our
 program from outside the Erlang shell. We'll need to change our main
 function again:
@@ -764,6 +819,17 @@ much to go ahead and program something without understanding it.
 Finally, a few tests are always appreciated. They'll let you make sure
 everything works fine and will let you change the code without
 changing the results at the end.
+
+
+
+
+
+
+
+
+
+
+
 
 .. _Pattern Matching: syntax-in-functions.html#pattern-matching
 
