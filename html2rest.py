@@ -398,10 +398,10 @@ class Parser(SGMLParser):
         self.data('**')
 
     def start_code(self, attrs):
-        self.data(' `')
+        self.data(' ``')
 
     def end_code(self):
-        self.data('`')
+        self.data('``')
 
     def start_span(self, attrs):
         pass
