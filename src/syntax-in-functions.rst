@@ -85,39 +85,39 @@ We write:
 
 
 in order to get similar results, but in a much more declarative style.
-Each of these `function` declarations is called a *function clause*.
-Function clauses must be separated by semicolons ( `;`) and together
+Each of these ``function`` declarations is called a *function clause*.
+Function clauses must be separated by semicolons ( ``;``) and together
 form a *function declaration*. A function declaration counts as one
 larger statement, and it's why the final function clause ends with a
 period. It's a "funny" use of tokens to determine workflow, but you'll
 get used to it. At least you'd better hope so because there's no way
 out of it!
 
-Note: `io:format`'s formatting is done with the help of tokens being
+Note: ``io:format``'s formatting is done with the help of tokens being
 replaced in a string. The character used to denote a token is the
-tilde ( `~`). Some tokens are built-in such as `~n`, which will be
+tilde ( ``~``). Some tokens are built-in such as ``~n``, which will be
 changed to a line-break. Most other tokens denote a way to format
-data. The function call `io:format("~s!~n",["Hello"]).` includes the
-token `~s`, which accepts strings and bitstrings as arguments, and
-`~n`. The final output message would thus be `"Hello!\n"`. Another
-widely used token is `~p`, which will print an Erlang term in a nice
+data. The function call ``io:format("~s!~n",["Hello"]).`` includes the
+token ``~s``, which accepts strings and bitstrings as arguments, and
+``~n``. The final output message would thus be ``"Hello!\n"``. Another
+widely used token is ``~p``, which will print an Erlang term in a nice
 way (adding in indentation and everything).
 
-The `io:format` function will be seen in more details in later
+The ``io:format`` function will be seen in more details in later
 chapters dealing with input/output with more depth, but in the
 meantime you can try the following calls to see what they do:
-`io:format("~s~n",[<<"Hello">>])`, `io:format("~p~n",[<<"Hello">>])`,
-`io:format("~~~n")`, `io:format("~f~n", [4.0])`, `io:format("~30f~n",
-[4.0])`. They're a small part of all that's possible and all in all
-they look a bit like `printf` in many other languages. If you can't
-wait until the chapter about I/O, you can read the online
-documentation to know more.
+``io:format("~s~n",[<<"Hello">>])``,
+``io:format("~p~n",[<<"Hello">>])``, ``io:format("~~~n")``,
+``io:format("~f~n", [4.0])``, ``io:format("~30f~n", [4.0])``. They're
+a small part of all that's possible and all in all they look a bit
+like ``printf`` in many other languages. If you can't wait until the
+chapter about I/O, you can read the online documentation to know more.
 
 Pattern matching in functions can get more complex and powerful than
 that. As you may or may not remember from a few chapters ago, we can
 pattern match on lists to get the heads and tails. Let's do this!
-Start a new module called `functions` in which we'll write a bunch of
-functions to explore many pattern matching avenues available to us:
+Start a new module called ``functions`` in which we'll write a bunch
+of functions to explore many pattern matching avenues available to us:
 
 
 ::
@@ -127,9 +127,10 @@ functions to explore many pattern matching avenues available to us:
     -compile(export_all). %% replace with -export() later, for God's sake!
 
 
-The first function we'll write is `head/1`, acting exactly like
-`erlang:hd/1` which takes a list as an argument and returns its first
-element. It'll be done with the help of the cons operator ( `|`):
+The first function we'll write is ``head/1``, acting exactly like
+``erlang:hd/1`` which takes a list as an argument and returns its
+first element. It'll be done with the help of the cons operator (
+``|``):
 
 
 ::
@@ -138,10 +139,10 @@ element. It'll be done with the help of the cons operator ( `|`):
     head([H|_]) -> H.
 
 
-If you type `functions:head([1,2,3,4]).` in the shell (once the module
-is compiled), you can expect the value '1' to be given back to you.
-Consequently, to get the second element of a list you would create the
-function:
+If you type ``functions:head([1,2,3,4]).`` in the shell (once the
+module is compiled), you can expect the value '1' to be given back to
+you. Consequently, to get the second element of a list you would
+create the function:
 
 
 ::
@@ -172,7 +173,7 @@ on. For now, let's concentrate on more pattern matching. The concept
 of free and bound variables we discussed in `Starting Out (for real)`_
 still holds true for functions: we can then compare and know if two
 parameters passed to a function are the same or not. For this, we'll
-create a function `same/2` that takes two arguments and tells if
+create a function ``same/2`` that takes two arguments and tells if
 they're identical:
 
 
@@ -206,19 +207,19 @@ won't differentiate them and will act normally. If a different woman
 comes around, he'll complain. You can go back to the subchapter about
 `Invariable Variables`_ if this concept is not clear to you.
 
-Back to our code: what happens when you call `same(a,a)` is that the
-first X is seen as unbound: it automatically takes the value `a`. Then
-when Erlang goes over to the second argument, it sees X is already
-bound. It then compares it to the `a` passed as the second argument
-and looks to see if it matches. The pattern matching succeeds and the
-function returns `true`. If the two values aren't the same, this will
-fail and go to the second function clause, which doesn't care about
-its arguments (when you're the last to choose, you can't be picky!)
-and will instead return false. Note that this function can effectively
-take any kind of argument whatsoever! It works for any type of data,
-not just lists or single variables. As a rather advanced example, the
-following function prints a date, but only if it is formatted
-correctly:
+Back to our code: what happens when you call ``same(a,a)`` is that the
+first X is seen as unbound: it automatically takes the value ``a``.
+Then when Erlang goes over to the second argument, it sees X is
+already bound. It then compares it to the ``a`` passed as the second
+argument and looks to see if it matches. The pattern matching succeeds
+and the function returns ``true``. If the two values aren't the same,
+this will fail and go to the second function clause, which doesn't
+care about its arguments (when you're the last to choose, you can't be
+picky!) and will instead return false. Note that this function can
+effectively take any kind of argument whatsoever! It works for any
+type of data, not just lists or single variables. As a rather advanced
+example, the following function prints a date, but only if it is
+formatted correctly:
 
 
 ::
@@ -231,10 +232,10 @@ correctly:
         io:format("Stop feeding me wrong data!~n").
 
 
-Note that it is possible to use the `=` operator in the function head,
-allowing us to match both the content inside a tuple ( `{Y,M,D}`) and
-the tuple as a whole ( Date ). The function can be tested the
-following way:
+Note that it is possible to use the ``=`` operator in the function
+head, allowing us to match both the content inside a tuple (
+``{Y,M,D}``) and the tuple as a whole ( Date ). The function can be
+tested the following way:
 
 
 ::
@@ -253,11 +254,11 @@ following way:
 
 There is a problem though! This function could take anything for
 values, even text or atoms, as long as the tuples are of the form
-`{{A,B,C}, {D,E,F}}`. This denotes one of the limits of pattern
+``{{A,B,C}, {D,E,F}}``. This denotes one of the limits of pattern
 matching: it can either specify really precise values such as a known
 number of atom, or abstract values such as the head|tail of a list, a
-tuple of N elements, or anything ( `_` and unbound variables), etc. To
-solve this problem, we use guards.
+tuple of N elements, or anything ( ``_`` and unbound variables), etc.
+To solve this problem, we use guards.
 
 
 
@@ -294,8 +295,8 @@ such as:
 
 But it would be incredibly impractical. You can do it if you want, but
 you'll be alone to work on your code forever. If you want to
-eventually make friends, start a new `guards` module so we can type in
-the "correct" solution to the driving question:
+eventually make friends, start a new ``guards`` module so we can type
+in the "correct" solution to the driving question:
 
 
 ::
@@ -306,12 +307,12 @@ the "correct" solution to the driving question:
 
 
 And you're done! As you can see, this is much shorter and cleaner.
-Note that a basic rule for guard expression is they must return `true`
-to succeed. The guard will fail if it returns `false` or if it throws
-an exception. Suppose we now forbid people who are over 104 years old
-to drive. Our valid ages for drivers is now from 16 years old up to
-104 years old. We need to take care of that, but how? Let's just add a
-second guard clause:
+Note that a basic rule for guard expression is they must return
+``true`` to succeed. The guard will fail if it returns ``false`` or if
+it throws an exception. Suppose we now forbid people who are over 104
+years old to drive. Our valid ages for drivers is now from 16 years
+old up to 104 years old. We need to take care of that, but how? Let's
+just add a second guard clause:
 
 
 ::
@@ -323,11 +324,11 @@ second guard clause:
         false.
 
 
-The comma ( `,`) acts in a similar manner to the operator `andalso`
-and the semicolon ( `;`) acts a bit like `orelse` (described in
-"`Starting Out (for real)`_"). Both guard expressions need to succeed
-for the whole guard to pass. We could also represent the function the
-opposite way:
+The comma ( ``,``) acts in a similar manner to the operator
+``andalso`` and the semicolon ( ``;``) acts a bit like ``orelse``
+(described in "`Starting Out (for real)`_"). Both guard expressions
+need to succeed for the whole guard to pass. We could also represent
+the function the opposite way:
 
 
 ::
@@ -346,53 +347,53 @@ opposite way:
 
 And we get correct results from that too. Test it if you want (you
 should always test stuff!). In guard expressions, the semi-colon (
-`;`) acts like the `orelse` operator: if the first guard fails, it
+``;``) acts like the ``orelse`` operator: if the first guard fails, it
 then tries the second, and then the next one, until either one guard
 succeeds or they all fail.
 
 You can use a few more functions than comparisons and boolean
-evaluation in functions, including math operations ( `A*B/C >= 0`) and
-functions about data types, such as `is_integer/1`, `is_atom/1`, etc.
-(We'll get back on them in the following chapter). One negative point
-about guards is that they will not accept user-defined functions
-because of side effects. Erlang is not a purely functional programming
-language (like Haskell is) because it relies on side effects a lot:
-you can do I/O, send messages between actors or throw errors as you
-want and when you want. There is no trivial way to determine if a
-function you would use in a guard would or wouldn't print text or
-catch important errors every time it is tested over many function
-clauses. So instead, Erlang just doesn't trust you (and it may be
-right to do so!)
+evaluation in functions, including math operations ( ``A*B/C >= 0``)
+and functions about data types, such as ``is_integer/1``,
+``is_atom/1``, etc. (We'll get back on them in the following chapter).
+One negative point about guards is that they will not accept user-
+defined functions because of side effects. Erlang is not a purely
+functional programming language (like Haskell is) because it relies on
+side effects a lot: you can do I/O, send messages between actors or
+throw errors as you want and when you want. There is no trivial way to
+determine if a function you would use in a guard would or wouldn't
+print text or catch important errors every time it is tested over many
+function clauses. So instead, Erlang just doesn't trust you (and it
+may be right to do so!)
 
 That being said, you should be good enough to understand the basic
 syntax of guards to understand them when you encounter them.
 
-Note: I've compared `,` and `;` in guards to the operators `andalso`
-and `orelse`. They're not exactly the same, though. The former pair
-will catch exceptions as they happen while the latter won't. What this
-means is that if there is an error thrown in the first part of the
-guard `X >= N; N >= 0`, the second part can still be evaluated and the
-guard might succeed; if an error was thrown in the first part of `X >=
-N orelse N >= 0`, the second part will also be skipped and the whole
-guard will fail.
+Note: I've compared ``,`` and ``;`` in guards to the operators
+``andalso`` and ``orelse``. They're not exactly the same, though. The
+former pair will catch exceptions as they happen while the latter
+won't. What this means is that if there is an error thrown in the
+first part of the guard ``X >= N; N >= 0``, the second part can still
+be evaluated and the guard might succeed; if an error was thrown in
+the first part of ``X >= N orelse N >= 0``, the second part will also
+be skipped and the whole guard will fail.
 
-However (there is always a 'however'), only `andalso` and `orelse` can
-be nested inside guards. This means `(A orelse B) andalso C` is a
-valid guard, while `(A; B), C` is not. Given their different use, the
-best strategy is often to mix them as necessary.
+However (there is always a 'however'), only ``andalso`` and ``orelse``
+can be nested inside guards. This means ``(A orelse B) andalso C`` is
+a valid guard, while ``(A; B), C`` is not. Given their different use,
+the best strategy is often to mix them as necessary.
 
 
 
 What the If!?
 ~~~~~~~~~~~~~
 
-`If`s act like guards and share guards' syntax, but outside of a
-function clause's head. In fact, the `if` clauses are called *Guard
-Patterns*. Erlang's `if`s are different from the `if`s you'll ever
+``If``s act like guards and share guards' syntax, but outside of a
+function clause's head. In fact, the ``if`` clauses are called *Guard
+Patterns*. Erlang's ``if``s are different from the ``if``s you'll ever
 encounter in most other languages; compared to them they're weird
 creatures that might have been more accepted had they had a different
 name. When entering Erlang's country, you should leave all you know
-about `if`s at the door. Take a seat because we're going for a ride.
+about ``if``s at the door. Take a seat because we're going for a ride.
 
 To see how similar to guards the if expression is, look at the
 following examples:
@@ -417,7 +418,7 @@ following examples:
         end.
 
 
-Save this as `what_the_if.erl` and let's try it:
+Save this as ``what_the_if.erl`` and let's try it:
 
 
 ::
@@ -438,15 +439,15 @@ Save this as `what_the_if.erl` and let's try it:
 
 
 Uh oh! the compiler is warning us that no clause from the if on line
-12 ( `1 =:= 2, 1 =:= 1`) will ever match because its only guard
-evaluates to `false`. Remember, in Erlang, everything has to return
-something, and `if` expressions are no exception to the rule. As such,
-when Erlang can't find a way to have a guard succeed, it will crash:
-it cannot *not* return something. As such, we need to add a catch-all
-branch that will always succeed no matter what. In most languages,
-this would be called an 'else'. In Erlang, we use 'true' (this
-explains why the VM has thrown "no true branch found" when it got
-mad):
+12 ( ``1 =:= 2, 1 =:= 1``) will ever match because its only guard
+evaluates to ``false``. Remember, in Erlang, everything has to return
+something, and ``if`` expressions are no exception to the rule. As
+such, when Erlang can't find a way to have a guard succeed, it will
+crash: it cannot *not* return something. As such, we need to add a
+catch-all branch that will always succeed no matter what. In most
+languages, this would be called an 'else'. In Erlang, we use 'true'
+(this explains why the VM has thrown "no true branch found" when it
+got mad):
 
 
 ::
@@ -475,13 +476,13 @@ warnings, ignore them or take them as a reminder of what not to do):
     always_does
 
 
-Here's another function showing how to use many guards in an `if`
+Here's another function showing how to use many guards in an ``if``
 expression. The function also illustrates how any expression must
-return something: Talk has the result of the `if` expression bound to
-it, and is then concatenated in a string, inside a tuple. When reading
-the code, it's easy to see how the lack of a `true` branch would mess
-things up, considering Erlang has no such thing as a null value (ie.:
-lisp's nil, C's NULL, Python's None, etc):
+return something: Talk has the result of the ``if`` expression bound
+to it, and is then concatenated in a string, inside a tuple. When
+reading the code, it's easy to see how the lack of a ``true`` branch
+would mess things up, considering Erlang has no such thing as a null
+value (ie.: lisp's nil, C's NULL, Python's None, etc):
 
 
 ::
@@ -545,28 +546,28 @@ results to show that it's a bad idea. I have started to replace:
 which I find mildly annoying when _writing_ the code but enormously
 helpful when _reading_ it.
 
-'Else' or 'true' branches should be "avoided" altogether: `if`s are
+'Else' or 'true' branches should be "avoided" altogether: ``if``s are
 usually easier to read when you cover all logical ends rather than
 relying on a *"catch all"* clause.
 
 As mentioned before, there are only a limited set of functions that
 can be used in guard expressions (we'll see more of them in `Types (or
 lack thereof)`_). This is where the real conditional powers of Erlang
-must be conjured. I present to you: the `case` expression!
+must be conjured. I present to you: the ``case`` expression!
 
 Note: All this horror expressed by the function names in
-`what_the_if.erl` is expressed in regards to the `if` language
-construct when seen from the perspective of any other languages' `if`.
-In Erlang's context, it turns out to be a perfectly logical construct
-with a confusing name.
+``what_the_if.erl`` is expressed in regards to the ``if`` language
+construct when seen from the perspective of any other languages'
+``if``. In Erlang's context, it turns out to be a perfectly logical
+construct with a confusing name.
 
 
 
 In Case ... of
 ~~~~~~~~~~~~~~
 
-If the `if` expression is like a guard, a `case ... of` expression is
-like the whole function head: you can have the complex pattern
+If the ``if`` expression is like a guard, a ``case ... of`` expression
+is like the whole function head: you can have the complex pattern
 matching you can use with each argument, and you can have guards on
 top of it!
 
@@ -590,11 +591,11 @@ terms of efficiency, but what we want here is the syntax:
 
 
 If we send in an empty set (list) and a term X to be added, it returns
-us a list containing only X . Otherwise, the function `lists:member/2`
-checks whether an element is part of a list and returns true if it is,
-false if it is not. In the case we already had the element X in the
-set, we do not need to modify the list. Otherwise, we add X as the
-list's first element.
+us a list containing only X . Otherwise, the function
+``lists:member/2`` checks whether an element is part of a list and
+returns true if it is, false if it is not. In the case we already had
+the element X in the set, we do not need to modify the list.
+Otherwise, we add X as the list's first element.
 
 In this case, the pattern matching was really simple. It can get more
 complex (you can compare your code with mine):
@@ -619,7 +620,7 @@ complex (you can compare your code with mine):
 Here, the answer of "is it the right time to go to the beach" is given
 in 3 different temperature systems: Celsius, Kelvins and Fahrenheit
 degrees. Pattern matching and guards are combined in order to return
-an answer satisfying all uses. As pointed out earlier, `case ... of`
+an answer satisfying all uses. As pointed out earlier, ``case ... of``
 expressions are pretty much the same thing as a bunch of function
 heads with guards. In fact we could have written our code the
 following way:
@@ -635,8 +636,8 @@ following way:
         'avoid beach'.
 
 
-This raises the question: when should we use `if`, `case ... of` or
-functions to do conditional expressions?
+This raises the question: when should we use ``if``, ``case ... of``
+or functions to do conditional expressions?
 
 
 
@@ -649,11 +650,11 @@ Which to use?
 
 
 Which to use is rather hard to answer. The difference between function
-calls and `case ... of` are very minimal: in fact, they are
+calls and ``case ... of`` are very minimal: in fact, they are
 represented the same way at a lower level, and using one or the other
 effectively has the same cost in terms of performance. One difference
 between both is when more than one argument needs to be evaluated:
-`function(A,B) -> ... end.` can have guards and values to match
+``function(A,B) -> ... end.`` can have guards and values to match
 against A and B , but a case expression would need to be formulated a
 bit like:
 
@@ -668,15 +669,15 @@ bit like:
 
 This form is rarely seen and might surprise the reader a bit. In
 similar situations, using a function call might be more appropriate.
-On the other hand the `insert/2` function we had written earlier is
+On the other hand the ``insert/2`` function we had written earlier is
 arguably cleaner the way it is rather than having an immediate
-function call to track down on a simple `true` or `false` clause.
+function call to track down on a simple ``true`` or ``false`` clause.
 
-Then the other question is why would you ever use `if`, given `case`s
-and functions are flexible enough to even encompass `if` through
-guards? The rationale behind `if` is quite simple: it was added to the
-language as a short way to have guards without needing to write the
-whole pattern matching part when it wasn't needed.
+Then the other question is why would you ever use ``if``, given
+``case``s and functions are flexible enough to even encompass ``if``
+through guards? The rationale behind ``if`` is quite simple: it was
+added to the language as a short way to have guards without needing to
+write the whole pattern matching part when it wasn't needed.
 
 Of course, all of this is more about personal preferences and what you
 may encounter more often. There is no good solid answer. The whole

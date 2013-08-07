@@ -65,22 +65,22 @@ Now open the Erlang shell, compile the module and get going:
 
 
 Confusing? Not so much, once you know how it works (isn't that always
-the case?) In command 2, the atoms `one` and `two` are passed to
-`add/2`, which then uses both atoms as function names ( `X() + Y()`).
-If function names are written without a parameter list then those name
-as interpreted as atoms, and atoms can not be functions, so the call
-fails. This is the reason why the expression 3 also fails: the values
-1 and 2 can not be called as functions either, and functions are what
-we need!
+the case?) In command 2, the atoms ``one`` and ``two`` are passed to
+``add/2``, which then uses both atoms as function names ( ``X() +
+Y()``). If function names are written without a parameter list then
+those name as interpreted as atoms, and atoms can not be functions, so
+the call fails. This is the reason why the expression 3 also fails:
+the values 1 and 2 can not be called as functions either, and
+functions are what we need!
 
 This is why a new notation has to be added to the language in order to
-let you pass functions from outside a module. This is what `fun
-Module:Function/Arity` is: it tells the VM to use that specific
+let you pass functions from outside a module. This is what ``fun
+Module:Function/Arity`` is: it tells the VM to use that specific
 function, and then bind it to a variable.
 
 So what are the gains of using functions in that manner? Well a little
 example might be needed in order to understand it. We'll add a few
-functions to `hhfuns` that work recursively over a list to add or
+functions to ``hhfuns`` that work recursively over a list to add or
 subtract one from each integer of a list:
 
 
@@ -95,12 +95,12 @@ subtract one from each integer of a list:
 
 
 See how similar these functions are? They basically do the same thing:
-they cycle through a list, apply a function on each element ( `+` or
-`-`) and then call themselves again. There is almost nothing changing
-in that code: only the applied function and the recursive call are
-different. The core of a recursive call on a list like that is always
-the same. We'll abstract all the similar parts in a single function (
-`map/2`) that will take another function as an argument:
+they cycle through a list, apply a function on each element ( ``+`` or
+``-``) and then call themselves again. There is almost nothing
+changing in that code: only the applied function and the recursive
+call are different. The core of a recursive call on a list like that
+is always the same. We'll abstract all the similar parts in a single
+function ( ``map/2``) that will take another function as an argument:
 
 
 ::
@@ -135,9 +135,9 @@ Which can then be tested in the shell:
 
 Here the results are the same, but you have just created a very smart
 abstraction! Every time you will want to apply a function to each
-element of a list, you only have to call `map/2` with your function as
-a parameter. However, it is a bit annoying to have to put every
-function we want to pass as a parameter to `map/2` in a module, name
+element of a list, you only have to call ``map/2`` with your function
+as a parameter. However, it is a bit annoying to have to put every
+function we want to pass as a parameter to ``map/2`` in a module, name
 it, export it, then compile it, etc. In fact it's plainly unpractical.
 What we need are functions that can be declared on the fly...
 
@@ -209,8 +209,8 @@ they still have more hidden powers:
 Hold the phone Batman! What's going on here? Well, first of all, we
 declare an anonymous function assigned to PrepareAlarm . This function
 has not run yet: it only gets executed when
-`PrepareAlarm("bathroom").` is called. At that point, the call to
-`io:format/2` is evaluated and the "Alarm set" text is output. The
+``PrepareAlarm("bathroom").`` is called. At that point, the call to
+``io:format/2`` is evaluated and the "Alarm set" text is output. The
 second expression (another anonymous function) is returned to the
 caller and then assigned to AlarmReady . Note that in this function,
 the variable Room 's value is taken from the 'parent' function (
@@ -223,11 +223,11 @@ PrepareAlarm ). This is related to a concept called *closures*.
 
 To understand closures, one must first understand scope. A function's
 scope can be imagined as the place where all the variables and their
-values are stored. In the function `base(A) -> B = A + 1.`, A and B
-are both defined to be part of `base/1`'s scope. This means that
-anywhere inside `base/1`, you can refer to A and B and expect a value
-to be bound to them. And when I say 'anywhere', I ain't kidding, kid;
-this includes anonymous functions too:
+values are stored. In the function ``base(A) -> B = A + 1.``, A and B
+are both defined to be part of ``base/1``'s scope. This means that
+anywhere inside ``base/1``, you can refer to A and B and expect a
+value to be bound to them. And when I say 'anywhere', I ain't kidding,
+kid; this includes anonymous functions too:
 
 
 ::
@@ -239,8 +239,8 @@ this includes anonymous functions too:
         F().
 
 
-B and A are still bound to `base/1`'s scope, so the function F can
-still access them. This is because F inherits `base/1`'s scope. Like
+B and A are still bound to ``base/1``'s scope, so the function F can
+still access them. This is because F inherits ``base/1``'s scope. Like
 most kinds of real-life inheritance, the parents can't get what the
 children have:
 
@@ -255,9 +255,9 @@ children have:
         C.
 
 
-In this version of the function, B is still equal to `A + 1` and F
+In this version of the function, B is still equal to ``A + 1`` and F
 will still execute fine. However, the variable C is only in the scope
-of the anonymous function in F . When `base/1` tries to access C 's
+of the anonymous function in F . When ``base/1`` tries to access C 's
 value on the last line, it only finds an unbound variable. In fact,
 had you tried to compile this function, the compiler would have thrown
 a fit. Inheritance only goes one way.
@@ -289,9 +289,9 @@ Then if we compile it:
     "a/0's password is pony"
 
 
-Who told `a/0`'s password? Well, `a/0` did. While the anonymous
-function has `a/0`'s scope when it's declared in there, it can still
-carry it when executed in `b/1`, as explained above. This is very
+Who told ``a/0``'s password? Well, ``a/0`` did. While the anonymous
+function has ``a/0``'s scope when it's declared in there, it can still
+carry it when executed in ``b/1``, as explained above. This is very
 useful because it lets us carry around parameters and content out of
 its original context, where the whole context itself are not needed
 anymore (exactly like we did with Batman in a previous example).
@@ -314,10 +314,10 @@ a constant one:
     [2.0,4.0,8.0,16.0]
 
 
-By wrapping the call to `math:pow/2` inside an anonymous function with
-the Base variable bound in its scope, we made it possible to have each
-of the calls to PowerOfTwo in `hhfuns:map/2` use the integers from the
-list as the exponents of our base.
+By wrapping the call to ``math:pow/2`` inside an anonymous function
+with the Base variable bound in its scope, we made it possible to have
+each of the calls to PowerOfTwo in ``hhfuns:map/2`` use the integers
+from the list as the exponents of our base.
 
 A little trap you might fall into when writing anonymous functions is
 when you try to redefine the scope:
@@ -332,8 +332,8 @@ when you try to redefine the scope:
 
 
 This will declare an anonymous function and then run it. As the
-anonymous function inherits `base/0`'s scope, trying to use the `=`
-operator compares 2 with the variable A (bound to 1). This is
+anonymous function inherits ``base/0``'s scope, trying to use the
+``=`` operator compares 2 with the variable A (bound to 1). This is
 guaranteed to fail. However it is possible to redefine the variable if
 it's done in the nested function's head:
 
@@ -368,9 +368,9 @@ Maps, filters, folds and more
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 At the beginning of this chapter, I briefly showed how to abstract
-away two similar functions to get a `map/2` function. I also affirmed
-that such a function could be used for any list where we want to act
-on each element. The function was the following:
+away two similar functions to get a ``map/2`` function. I also
+affirmed that such a function could be used for any list where we want
+to act on each element. The function was the following:
 
 
 ::
@@ -409,7 +409,7 @@ these two functions:
 
 The first one takes a list of numbers and returns only those that are
 even. The second one goes through a list of people of the form
-`{Gender, Age}` and only keeps those that are males over 60. The
+``{Gender, Age}`` and only keeps those that are males over 60. The
 similarities are a bit harder to find here, but we've got some common
 points. Both functions operate on lists and have the same objective of
 keeping elements that succeed some test (also a *predicate*) and then
@@ -431,7 +431,7 @@ useful information we need and abstract them away:
 
 
 To use the filtering function we now only need to get the test outside
-of the function. Compile the `hhfuns` module and try it:
+of the function. Compile the ``hhfuns`` module and try it:
 
 
 ::
@@ -449,12 +449,13 @@ of the function. Compile the `hhfuns` module and try it:
     [{male,66},{male,74}]
 
 
-These two examples show that with the use of the `filter/2` function,
-the programmer only has to worry about producing the predicate and the
-list. The act of cycling through the list to throw out unwanted items
-is no longer necessary to think about. This is one important thing
-about abstracting functional code: try to get rid of what's always the
-same and let the programmer supply in the parts that change.
+These two examples show that with the use of the ``filter/2``
+function, the programmer only has to worry about producing the
+predicate and the list. The act of cycling through the list to throw
+out unwanted items is no longer necessary to think about. This is one
+important thing about abstracting functional code: try to get rid of
+what's always the same and let the programmer supply in the parts that
+change.
 
 In the previous chapter, another kind of recursive manipulation we
 applied on lists was to look at every element of a list one after the
@@ -502,15 +503,16 @@ look a lot like sum.
 
 A subtle element of all three functions that wasn't mentioned yet is
 that every function needs to have an initial value to start counting
-with. In the case of `sum/2`, we use 0 as we're doing addition and
-given `X = X + 0`, the value is neutral and we can't mess up the
+with. In the case of ``sum/2``, we use 0 as we're doing addition and
+given ``X = X + 0``, the value is neutral and we can't mess up the
 calculation by starting there. If we were doing multiplication we'd
-use 1 given `X = X * 1`. The functions `min/1` and `max/1` can't have
-a default starting value: if the list was only negative numbers and we
-started at 0, the answer would be wrong. As such, we need to use the
-first element of the list as a starting point. Sadly, we can't always
-decide this way, so we'll leave that decision to the programmer. By
-taking all these elements, we can build the following abstraction:
+use 1 given ``X = X * 1``. The functions ``min/1`` and ``max/1`` can't
+have a default starting value: if the list was only negative numbers
+and we started at 0, the answer would be wrong. As such, we need to
+use the first element of the list as a starting point. Sadly, we can't
+always decide this way, so we'll leave that decision to the
+programmer. By taking all these elements, we can build the following
+abstraction:
 
 
 ::
@@ -571,20 +573,20 @@ And they all work the same as those written by hand before. How's that
 for powerful abstractions?
 
 Map, filters and folds are only one of many abstractions over lists
-provided by the Erlang standard library (see `lists:map/2`,
-`lists:filter/2`, `lists:foldl/3` and `lists:foldr/3`). Other
-functions include `all/2` and `any/2` which both take a predicate and
-test if all the elements return true or if at least one of them
-returns true, respectively. Then you have `dropwhile/2` that will
+provided by the Erlang standard library (see ``lists:map/2``,
+``lists:filter/2``, ``lists:foldl/3`` and ``lists:foldr/3``). Other
+functions include ``all/2`` and ``any/2`` which both take a predicate
+and test if all the elements return true or if at least one of them
+returns true, respectively. Then you have ``dropwhile/2`` that will
 ignore elements of a list until it finds one that fit a certain
-predicate, its opposite, `takewhile/2`, that will keep all elements
+predicate, its opposite, ``takewhile/2``, that will keep all elements
 until there is one that doesn't return true to the predicate. A
-complimentary function to the two previous ones is `partition/2`,
+complimentary function to the two previous ones is ``partition/2``,
 which will take a list and return two: one that has the terms which
 satisfy a given predicate, and one list for the others. Other
-frequently used lists functions include `flatten/1`, `flatlength/1`,
-`flatmap/2`, `merge/1`, `nth/2`, `nthtail/2`, `split/2` and a bunch of
-others.
+frequently used lists functions include ``flatten/1``,
+``flatlength/1``, ``flatmap/2``, ``merge/1``, ``nth/2``,
+``nthtail/2``, ``split/2`` and a bunch of others.
 
 You'll also find other functions such as zippers (as seen in last
 chapter), unzippers, combinations of maps and folds, etc. I encourage

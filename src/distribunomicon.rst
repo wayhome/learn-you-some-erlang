@@ -852,10 +852,10 @@ tends to make things easier.
 
 As mentioned earlier, Erlang gives names to each of the nodes to be
 able to locate and contact them. The names are of the form
-`Name@Host`, where the host is based on available DNS entries, either
-over the network or in your computer's host files ( `/etc/hosts` on
-OSX, Linux and other Unix-likes,
-`C:\Windows\system32\drivers\etc\hosts` for most Windows installs).
+``Name@Host``, where the host is based on available DNS entries,
+either over the network or in your computer's host files (
+``/etc/hosts`` on OSX, Linux and other Unix-likes,
+``C:\Windows\system32\drivers\etc\hosts`` for most Windows installs).
 All names need to be unique to avoid conflicts — if you try to start a
 node with the same name as another one on the same exact hostname,
 you'll get a pretty terrible crash message.
@@ -863,29 +863,29 @@ you'll get a pretty terrible crash message.
 Before starting these shells to provoke a crash, we have to know a bit
 about the names. There are two types of names: short names and long
 names. Long names are based on fully qualified domain names (
-`aaa.bbb.ccc`), and many DNS resolvers consider a domain name to be
-fully qualified if they have a period ( `.`) inside of it. Short names
-will be based on host names without a period, and are resolved going
-through your host file or through any possible DNS entry. Because of
-this, it is generally easier to set up a bunch of Erlang nodes
-together on a single computer using short names than long names. One
-last thing: because names need to be unique, nodes with short names
-cannot communicate with nodes that have long names, and the opposite
-is also true.
+``aaa.bbb.ccc``), and many DNS resolvers consider a domain name to be
+fully qualified if they have a period ( ``.``) inside of it. Short
+names will be based on host names without a period, and are resolved
+going through your host file or through any possible DNS entry.
+Because of this, it is generally easier to set up a bunch of Erlang
+nodes together on a single computer using short names than long names.
+One last thing: because names need to be unique, nodes with short
+names cannot communicate with nodes that have long names, and the
+opposite is also true.
 
 To pick between long and short names, you can start the Erlang VM with
-two different options: `erl -sname short_name@domain` or `erl -name
-long_name@some.domain`. Note that you can also start nodes with only
-the names: `erl -sname short_name` or `erl -name long_name`. Erlang
-will automatically attribute a host name based on your operating
-system's configuration. Lastly, you also have the option of starting a
-node with a name such as `erl -name name@127.0.0.1` to give a direct
-IP.
+two different options: ``erl -sname short_name@domain`` or ``erl -name
+long_name@some.domain``. Note that you can also start nodes with only
+the names: ``erl -sname short_name`` or ``erl -name long_name``.
+Erlang will automatically attribute a host name based on your
+operating system's configuration. Lastly, you also have the option of
+starting a node with a name such as ``erl -name name@127.0.0.1`` to
+give a direct IP.
 
-Note: Windows users should still use `werl` instead of `erl`. However,
-in order to start distributed nodes and giving them a name, the node
-should be started from the command line instead of clicking some
-shortcut or executable.
+Note: Windows users should still use ``werl`` instead of ``erl``.
+However, in order to start distributed nodes and giving them a name,
+the node should be started from the command line instead of clicking
+some shortcut or executable.
 
 Let's start two nodes:
 
@@ -918,17 +918,18 @@ first shell and enter the following function:
     true
 
 
-The `net_kernel:connect_node(NodeName)` function sets up a connection
-with another Erlang node (some tutorials use `net_adm:ping(Node)`, but
-I think `net_kernel:connect_node/1` sounds more serious and lends me
-credence!) If you see `true` as the result from the function call,
-congratulations, you're in distributed Erlang mode now. If you see
-`false`, then you're in for a world of hurt trying to get your network
-to play nice. For a very quick fix, edit your host files to accept
-whatever host you want. Try again and see if it works.
+The ``net_kernel:connect_node(NodeName)`` function sets up a
+connection with another Erlang node (some tutorials use
+``net_adm:ping(Node)``, but I think ``net_kernel:connect_node/1``
+sounds more serious and lends me credence!) If you see ``true`` as the
+result from the function call, congratulations, you're in distributed
+Erlang mode now. If you see ``false``, then you're in for a world of
+hurt trying to get your network to play nice. For a very quick fix,
+edit your host files to accept whatever host you want. Try again and
+see if it works.
 
-You can see your own node name by calling the BIF `node()` and see who
-you're connecting to by calling the BIF `nodes()`:
+You can see your own node name by calling the BIF ``node()`` and see
+who you're connecting to by calling the BIF ``nodes()``:
 
 
 ::
@@ -941,7 +942,7 @@ you're connecting to by calling the BIF `nodes()`:
 
 
 To get the nodes communicating together, we'll try with a very simple
-trick. Register each shell's process as `shell` locally:
+trick. Register each shell's process as ``shell`` locally:
 
 
 ::
@@ -960,7 +961,7 @@ trick. Register each shell's process as `shell` locally:
 
 
 Then, you'll be able to call the process by name. The way to do it is
-to send a message to `{Name, Node}`. Let's try this on both shells:
+to send a message to ``{Name, Node}``. Let's try this on both shells:
 
 
 ::
@@ -994,16 +995,16 @@ As you can see, we transparently send tuples, atoms, pids, and
 binaries without a problem. Any other Erlang data structure is fine
 too. And that's it. You know how to work with distributed Erlang!
 There is yet another BIF that might be useful:
-`erlang:monitor_node(NodeName, Bool)`. This function will let the
-process that calls it with `true` as a value for Bool receive a
-message of the format `{nodedown, NodeName}` if the node dies.
+``erlang:monitor_node(NodeName, Bool)``. This function will let the
+process that calls it with ``true`` as a value for Bool receive a
+message of the format ``{nodedown, NodeName}`` if the node dies.
 
 Unless you're writing a special library that relies on checking the
 life of other nodes, you will rarely need to use
-`erlang:monitor_node/2`. The reason for this is that functions like
-`link/1` and `monitor/2` still work across nodes.
+``erlang:monitor_node/2``. The reason for this is that functions like
+``link/1`` and ``monitor/2`` still work across nodes.
 
-If you set up the following from the `fries` node:
+If you set up the following from the ``fries`` node:
 
 
 ::
@@ -1017,8 +1018,8 @@ If you set up the following from the `fries` node:
     #Ref<0.0.0.132>
 
 
-And then kill the `ketchup` node, the `fries`' shell process should
-receive an `'EXIT'` and monitor message:
+And then kill the ``ketchup`` node, the ``fries``' shell process
+should receive an ``'EXIT'`` and monitor message:
 
 
 ::
@@ -1041,13 +1042,13 @@ Why the hell does the pid look like that? Am I seeing things right?
     <6349.52.0>
 
 
-What? Shouldn't this be `<0.52.0>`? Nope. See, that way of displaying
-a pid is just some kind of visual representation of what a process
-identifier is really like. The first number represents the node (where
-`0` means the process is coming from the current node), the second one
-is a counter, and the third one is a second counter for when you have
-so many processes created that the first counter is not enough. The
-true underlying representation of a pid is more like this:
+What? Shouldn't this be ``<0.52.0>``? Nope. See, that way of
+displaying a pid is just some kind of visual representation of what a
+process identifier is really like. The first number represents the
+node (where ``0`` means the process is coming from the current node),
+the second one is a counter, and the third one is a second counter for
+when you have so many processes created that the first counter is not
+enough. The true underlying representation of a pid is more like this:
 
 
 ::
@@ -1059,26 +1060,27 @@ true underlying representation of a pid is more like this:
 
 
 The binary sequence
-`<<107,101,116,99,104,117,112,64,102,101,114,100,109,98,112>>` is in
-fact a latin-1 (or ASCII) representation of `<<"ketchup@ferdmbp">>`,
+``<<107,101,116,99,104,117,112,64,102,101,114,100,109,98,112>>`` is in
+fact a latin-1 (or ASCII) representation of ``<<"ketchup@ferdmbp">>``,
 the name of the node where the process is located. Then we have the
-two counters, `<<0,0,0,52>>` and `<<0,0,0,0>>`. The last value (3) is
-some token value to differentiate whether the pid comes from an old
+two counters, ``<<0,0,0,52>>`` and ``<<0,0,0,0>>``. The last value (3)
+is some token value to differentiate whether the pid comes from an old
 node, a dead one, etc. That's why pids can be used transparently
 anywhere.
 
 Note: Instead of killing a node to disconnect it, you may also want to
-try the BIF `erlang:disconnect_node(Node)` to get rid of the node
+try the BIF ``erlang:disconnect_node(Node)`` to get rid of the node
 without shutting it down.
 
 Note: if you're unsure which node a Pid is coming from, you don't need
-to convert it to a binary to read the node name. Just call `node(Pid)`
-and the node where it's running on will be returned as a string.
+to convert it to a binary to read the node name. Just call
+``node(Pid)`` and the node where it's running on will be returned as a
+string.
 
-Other interesting BIFs to use are `spawn/2`, `spawn/4`, `spawn_link/2`
-and `spawn_link/4`. They work exactly like the other `spawn` BIFs
-except that these let you spawn functions on remote nodes. Try this
-from the ketchup node:
+Other interesting BIFs to use are ``spawn/2``, ``spawn/4``,
+``spawn_link/2`` and ``spawn_link/4``. They work exactly like the
+other ``spawn`` BIFs except that these let you spawn functions on
+remote nodes. Try this from the ketchup node:
 
 
 ::
@@ -1133,8 +1135,8 @@ consider having a username (and nothing else) as a security feature.
 Cookies make way more sense as a mechanism used to divide clusters of
 nodes than as an authentication mechanism.
 
-To give a cookie to a node, just start it by adding a `-setcookie
-Cookie` argument to the command line. Let's try again with two new
+To give a cookie to a node, just start it by adding a ``-setcookie
+Cookie`` argument to the command line. Let's try again with two new
 nodes:
 
 
@@ -1178,12 +1180,12 @@ at the mustard node:
 
 
 Good. Now what if we did really want salad and mustard to be together?
-There's a BIF called `erlang:set_cookie/2` to do what we need. If you
-call `erlang:set_cookie(OtherNode, Cookie)`, you will use that cookie
-only when connecting to that other node. If you instead use
-`erlang:set_cookie(node(), Cookie)`, you'll be changing the node's
+There's a BIF called ``erlang:set_cookie/2`` to do what we need. If
+you call ``erlang:set_cookie(OtherNode, Cookie)``, you will use that
+cookie only when connecting to that other node. If you instead use
+``erlang:set_cookie(node(), Cookie)``, you'll be changing the node's
 current cookie for all future connections. To see the changes, use
-`erlang:get_cookie()`:
+``erlang:get_cookie()``:
 
 
 ::
@@ -1205,13 +1207,13 @@ current cookie for all future connections. To see the changes, use
 
 Fantastic. There is one last cookie mechanism to see. If you tried the
 earlier examples of this chapter, go look into your home directory.
-There should be a file named `.erlang.cookie` in there. If you read
+There should be a file named ``.erlang.cookie`` in there. If you read
 it, you'll have a random string that looks a bit like
-`PMIYERCHJZNZGSRJPVRK`. Whenever you start a distributed node without
-a specific command to give it a cookie, Erlang will create one and put
-it in that file. Then, every time you start a node again without
-specifying its cookie, the VM will look into your home directory and
-use whatever is in that file.
+``PMIYERCHJZNZGSRJPVRK``. Whenever you start a distributed node
+without a specific command to give it a cookie, Erlang will create one
+and put it in that file. Then, every time you start a node again
+without specifying its cookie, the VM will look into your home
+directory and use whatever is in that file.
 
 
 
@@ -1219,8 +1221,8 @@ Remote Shells
 ~~~~~~~~~~~~~
 
 One of the first things we've learned in Erlang was how to interrupt
-running code using `^G` ( `CTRL + G`). In there, we had seen a menu
-for distributed shells:
+running code using ``^G`` ( ``CTRL + G``). In there, we had seen a
+menu for distributed shells:
 
 
 ::
@@ -1239,7 +1241,7 @@ for distributed shells:
       ? | h             - this message
 
 
-The `r [node [shell]]` option is the one we're looking for. We can
+The ``r [node [shell]]`` option is the one we're looking for. We can
 start a job on the mustard node by doing as follows:
 
 
@@ -1260,13 +1262,13 @@ And there you have it. You can now use the remote shell the same way
 you would with a local one. There are a few differences with older
 versions of Erlang, where things like auto-completion no longer work.
 This way of doing things is still very useful whenever you need to
-change things on a node running with the `-noshell` option. If the
-`-noshell` node has a name, then you can connect to it to do admin-
+change things on a node running with the ``-noshell`` option. If the
+``-noshell`` node has a name, then you can connect to it to do admin-
 related things like reloading modules, debugging some code, and so on.
 
-By using `^G` again, you can go back to your original node. Be careful
-when you stop your session though. If you call `q()` or `init:stop()`,
-you'll be terminating the remote node!
+By using ``^G`` again, you can go back to your original node. Be
+careful when you stop your session though. If you call ``q()`` or
+``init:stop()``, you'll be terminating the remote node!
 
 
 
@@ -1278,24 +1280,24 @@ Hidden Nodes
     :alt: An olive loving a packet of mustard
 
 
-Erlang nodes can be connected by calling `net_kernel:connect_node/1`,
-but you have to be aware that pretty much any interaction between
-nodes will get them to set up a connection. Calling `spawn/2` or
-sending a message to a foreign Pid are going to automatically set up
-connections.
+Erlang nodes can be connected by calling
+``net_kernel:connect_node/1``, but you have to be aware that pretty
+much any interaction between nodes will get them to set up a
+connection. Calling ``spawn/2`` or sending a message to a foreign Pid
+are going to automatically set up connections.
 
 This might be rather annoying if you have a decent cluster and you
 want to connect to a single node to change a few things there. You
 wouldn't want your admin node to suddenly be integrated into the
 cluster, and having other nodes believing that they've got a new
 coworker to send tasks to. To do this, you could use the rarely-used
-`erlang:send(Dest, Message, [noconnect])` function, which sends a
+``erlang:send(Dest, Message, [noconnect])`` function, which sends a
 message without creating a connection, but this is rather error prone.
 
-Instead, what you want to do is set up a node with the `-hidden` flag.
-Let's say you're still running the mustard and salad nodes. We'll
-start a third node, `olives` that will connect only to `mustard` (make
-sure the cookies are the same!):
+Instead, what you want to do is set up a node with the ``-hidden``
+flag. Let's say you're still running the mustard and salad nodes.
+We'll start a third node, ``olives`` that will connect only to
+``mustard`` (make sure the cookies are the same!):
 
 
 ::
@@ -1312,7 +1314,7 @@ sure the cookies are the same!):
 
 
 Ah ha! The node didn't connect to ketchup, and at first sight, it
-didn't connect with mustard either. However, calling `node(hidden)`
+didn't connect with mustard either. However, calling ``node(hidden)``
 shows that we do have a connection there! Let's see what the mustard
 node sees:
 
@@ -1328,11 +1330,11 @@ node sees:
     [salad@ferdmbp,olives@ferdmbp]
 
 
-Similar view, but now we add the `nodes(connected)` BIF that shows all
-connections, regardless of their type. The ketchup node will never see
-any connection to olives, unless especially told to connect there. One
-last interesting use of `nodes/1` is using `nodes(known)` which will
-show all nodes that the current node ever connected to.
+Similar view, but now we add the ``nodes(connected)`` BIF that shows
+all connections, regardless of their type. The ketchup node will never
+see any connection to olives, unless especially told to connect there.
+One last interesting use of ``nodes/1`` is using ``nodes(known)``
+which will show all nodes that the current node ever connected to.
 
 With remote shells, cookies, and hidden nodes, managing distributed
 Erlang system becomes simpler.
@@ -1354,14 +1356,14 @@ Then you will want to open a range of ports for connections between
 nodes. The problem is that Erlang just assigns random port numbers to
 inter-node connections. There are, however, two hidden application
 variables that let you specify a range within which ports can be
-assigned. The two values are `inet_dist_listen_min` and
-`inet_dist_listen_max` from the `kernel` application.
+assigned. The two values are ``inet_dist_listen_min`` and
+``inet_dist_listen_max`` from the ``kernel`` application.
 
-You could, as an example, start Erlang as `erl -name
+You could, as an example, start Erlang as ``erl -name
 left_4_distribudead -kernel inet_dist_listen_min 9100 -kernel
-inet_dist_listen_max 9115` in order to set a range of 15 ports to be
+inet_dist_listen_max 9115`` in order to set a range of 15 ports to be
 used for Erlang nodes. You could alternatively have a config file
-`ports.config` looking a bit like this:
+``ports.config`` looking a bit like this:
 
 
 ::
@@ -1373,8 +1375,8 @@ used for Erlang nodes. You could alternatively have a config file
     ]}].
 
 
-And then starting the Erlang node as `erl -name the_army_of_darknodes
--config ports`. The variables will be set in the same way.
+And then starting the Erlang node as ``erl -name the_army_of_darknodes
+-config ports``. The variables will be set in the same way.
 
 
 
@@ -1383,7 +1385,7 @@ The Calls from Beyond
 
 On top of all the BIFs and concepts we've seen, there are a few
 modules that can be used to help developers work with distribution.
-The first of these is `net_kernel`, which we used to connect nodes,
+The first of these is ``net_kernel``, which we used to connect nodes,
 and, as noted earlier, can be used to disconnect them.
 
 It has some other fancy functionality, such as being able to transform
@@ -1400,18 +1402,19 @@ a non-distributed node into a distributed one:
     (romero@ferdmbp)2>
 
 
-Where you can use either `shortnames` or `longnames` to define whether
-you want to have the equivalent of `-sname` or `-name`. Moreover, if
-you know a node is going to be sending large messages and thus might
-need a large heartbeat time between nodes, a third argument can be
-passed to the list. This gives `net_kernel:start([Name, Type,
-HeartbeatInMilliseconds])`. By default, the heartbeat delay (also
+Where you can use either ``shortnames`` or ``longnames`` to define
+whether you want to have the equivalent of ``-sname`` or ``-name``.
+Moreover, if you know a node is going to be sending large messages and
+thus might need a large heartbeat time between nodes, a third argument
+can be passed to the list. This gives ``net_kernel:start([Name, Type,
+HeartbeatInMilliseconds])``. By default, the heartbeat delay (also
 named *tick time*) is set to 15 seconds, or 15,000 milliseconds.
 
-Other functions of the module include `net_kernel:set_net_ticktime(S)`
-that lets you change the tick time of the node to avoid disconnections
-(in seconds this time!), and `net_kernel:stop()` to stop being
-distributed and go back to being a normal node:
+Other functions of the module include
+``net_kernel:set_net_ticktime(S)`` that lets you change the tick time
+of the node to avoid disconnections (in seconds this time!), and
+``net_kernel:stop()`` to stop being distributed and go back to being a
+normal node:
 
 
 ::
@@ -1424,20 +1427,20 @@ distributed and go back to being a normal node:
     4>
 
 
-The next useful module for distribution is `global`. The global module
-is a new alternative process registry. It automatically spreads its
-data to all connected nodes, replicates data there, handles node
+The next useful module for distribution is ``global``. The global
+module is a new alternative process registry. It automatically spreads
+its data to all connected nodes, replicates data there, handles node
 failures and supports different conflict resolution strategies when
 nodes get back online again.
 
-You register a name by calling `global:register_name(Name, Pid)`,
-unregister with `global:unregister_name(Name)`. In case you want to do
-a name transfer without ever having it point to nothing, you can call
-`global:re_register_name(Name, Pid)`. You can find a process' id with
-`global:whereis_name(Name)`, and send a message to one by calling
-`global:send(Name, Message)`. There is everything you need. What's
-especially nice is that the names you use to register the processes
-can be *any* term at all.
+You register a name by calling ``global:register_name(Name, Pid)``,
+unregister with ``global:unregister_name(Name)``. In case you want to
+do a name transfer without ever having it point to nothing, you can
+call ``global:re_register_name(Name, Pid)``. You can find a process'
+id with ``global:whereis_name(Name)``, and send a message to one by
+calling ``global:send(Name, Message)``. There is everything you need.
+What's especially nice is that the names you use to register the
+processes can be *any* term at all.
 
 A naming conflict will happen when two nodes get connected and both of
 them have two different processes sharing the same name. In these
@@ -1469,14 +1472,15 @@ the pids, the process name is unregistered. For your convenience, the
 global module already defines three functions for you:
 
 
-#. `fun global:random_exit_name/3` will kill a process randomly. This
-   is the default option.
-#. `fun global:random_notify_name/3` will randomly pick one of the two
-   processes as the one to survive, and it will send
-   `{global_name_conflict, Name}` to the process that lost.
-#. `fun global:notify_all_name/3` it unregisters both pids, and sends
-   the message `{global_name_conflict, Name, OtherPid}` to both processes
-   and lets them resolve the issue themselves so they re-register again.
+#. ``fun global:random_exit_name/3`` will kill a process randomly.
+   This is the default option.
+#. ``fun global:random_notify_name/3`` will randomly pick one of the
+   two processes as the one to survive, and it will send
+   ``{global_name_conflict, Name}`` to the process that lost.
+#. ``fun global:notify_all_name/3`` it unregisters both pids, and
+   sends the message ``{global_name_conflict, Name, OtherPid}`` to both
+   processes and lets them resolve the issue themselves so they re-
+   register again.
 
 
 
@@ -1484,24 +1488,24 @@ global module already defines three functions for you:
     :alt: A cthulu representation with a fabulous mustache
 
 
-The `global` module has one downside in that it is often said to be
+The ``global`` module has one downside in that it is often said to be
 rather slow to detect name conflicts and nodes going down. Otherwise
 it is a fine module, and it's even supported by behaviours. Just
-change all the `gen_Something:start_link(...)` calls that use local
-names ( `{local, Name}`) to instead use `{global, Name}`, and then all
-calls and casts (and their equivalents) to use `{global, Name}`
-instead of just `Name` and things will be distributed.
+change all the ``gen_Something:start_link(...)`` calls that use local
+names ( ``{local, Name}``) to instead use ``{global, Name}``, and then
+all calls and casts (and their equivalents) to use ``{global, Name}``
+instead of just ``Name`` and things will be distributed.
 
-The next module on the list is `rpc`, which stands for *Remote
+The next module on the list is ``rpc``, which stands for *Remote
 Procedure Call*. It contains functions that let you execute commands
 on remote nodes, and a few which facilitate parallel operations. To
 test these out, let's begin by starting two different nodes and
 connecting them together. I won't show the steps this time because I
 assume you now understand how this works. The two nodes are going to
-be `cthulu` and `lovecraft`.
+be ``cthulu`` and ``lovecraft``.
 
-The most basic rpc operation is `rpc:call/4-5`. It allows you to run a
-given operation on a remote node and get the results locally:
+The most basic rpc operation is ``rpc:call/4-5``. It allows you to run
+a given operation on a remote node and get the results locally:
 
 
 ::
@@ -1514,14 +1518,14 @@ given operation on a remote node and get the results locally:
 
 
 As seen in this Call of the Cthulu node, the function with four
-arguments takes the form `rpc:call(Node, Module, Function, Args)`.
+arguments takes the form ``rpc:call(Node, Module, Function, Args)``.
 Adding a fifth argument gives a timeout. The rpc call will return
-whatever was returned by the function it ran, or `{badrpc, Reason}` in
-case of a failure.
+whatever was returned by the function it ran, or ``{badrpc, Reason}``
+in case of a failure.
 
 If you've studied some distributed or parallel computing concepts
 before, you might have heard of promises. Promises are a bit like
-remote procedure calls, except that they are asynchronous. The `rpc`
+remote procedure calls, except that they are asynchronous. The ``rpc``
 module lets us have this:
 
 
@@ -1534,8 +1538,8 @@ module lets us have this:
     lovecraft@ferdmbp
 
 
-By combining the result of the function `rpc:async_call/4` with the
-function `rpc:yield(Res)`, we can have asynchronous remote procedure
+By combining the result of the function ``rpc:async_call/4`` with the
+function ``rpc:yield(Res)``, we can have asynchronous remote procedure
 calls and fetch the result later on. This is especially useful when
 you know the RPC you will make will take a while to return. Under
 these circumstances, you send it off, get busy doing other stuff in
@@ -1557,10 +1561,10 @@ need to:
     ok
 
 
-If by any chance you wanted to use the `yield/1` function with a
-timeout value, use `rpc:nb_yield(Key, Timeout)` instead. To poll for
-results, use `rpc:nb_yield(Key)` (which is equivalent to
-`rpc:nb_yield(Key,0)`):
+If by any chance you wanted to use the ``yield/1`` function with a
+timeout value, use ``rpc:nb_yield(Key, Timeout)`` instead. To poll for
+results, use ``rpc:nb_yield(Key)`` (which is equivalent to
+``rpc:nb_yield(Key,0)``):
 
 
 ::
@@ -1581,20 +1585,21 @@ results, use `rpc:nb_yield(Key)` (which is equivalent to
     {value,ok}
 
 
-If you don't care about the result, then you can use `rpc:cast(Node,
-Mod, Fun, Args)` to send a command to another node and forget about
+If you don't care about the result, then you can use ``rpc:cast(Node,
+Mod, Fun, Args)`` to send a command to another node and forget about
 it.
 
 The futures are yours, now! But wait, what if what we want is to call
 more than one node at a time? Let's add three nodes to our little
-cluster: `minion1`, `minion2` and `minion3`. Those are Cthulu's
+cluster: ``minion1``, ``minion2`` and ``minion3``. Those are Cthulu's
 minions. When we want to ask them questions, we have to send 3
 different calls, and when we want to give orders, we have to cast 3
 times. That's pretty bad, and it doesn't scale with very large armies.
 
 The trick is to use two RPC functions for calls and casts,
-respectively `rpc:multicall(Nodes, Mod, Fun, Args)` (with an optional
-Timeout argument) and `rpc:eval_everywhere(Nodes, Mod, Fun, Args)`:
+respectively ``rpc:multicall(Nodes, Mod, Fun, Args)`` (with an
+optional Timeout argument) and ``rpc:eval_everywhere(Nodes, Mod, Fun,
+Args)``:
 
 
 ::
@@ -1608,14 +1613,14 @@ Timeout argument) and `rpc:eval_everywhere(Nodes, Mod, Fun, Args)`:
 
 This, right there, tells us that all four nodes are alive (and nobody
 was unavailable for an answer). The left side of the tuple is alive,
-the right side isn't. Yeah, `erlang:is_alive()` just returns whether
+the right side isn't. Yeah, ``erlang:is_alive()`` just returns whether
 the node it runs on is alive or not, which might look a bit weird. Yet
-again, remember that in a distributed setting, `alive` means 'can be
+again, remember that in a distributed setting, ``alive`` means 'can be
 reached', not 'is it running'. Then let's say Cthulu isn't really
 appreciative of its minions and decides to kill them, or rather, talk
 them into killing themselves. This is an order, and so it's cast. For
-this reason, we use `eval_everywhere/4` with a call to `init:stop()`
-on the minion nodes:
+this reason, we use ``eval_everywhere/4`` with a call to
+``init:stop()`` on the minion nodes:
 
 
 ::

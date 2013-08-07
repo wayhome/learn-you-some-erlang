@@ -51,10 +51,10 @@ should be of some interest to you.
 My Other Car is a Pool
 ~~~~~~~~~~~~~~~~~~~~~~
 
-We're going to reuse the `ppool` application we wrote for last chapter
-and turn it into a real OTP application.
+We're going to reuse the ``ppool`` application we wrote for last
+chapter and turn it into a real OTP application.
 
-The first step in doing so is to copy all the `ppool` related files
+The first step in doing so is to copy all the ``ppool`` related files
 into a neat directory structure:
 
 
@@ -76,31 +76,31 @@ into a neat directory structure:
 
 
 Most directories will for now remain empty. As explained in the
-`Designing a Concurrent Application`_ chapter, the `ebin/` directory
-will hold compiled files, the `include/` directory will contain Erlang
-header ( `.hrl`) files, `priv/` will hold executables, other programs,
-and various specific files needed for the application to work and
-`src/` will hold the Erlang source files you will need.
+`Designing a Concurrent Application`_ chapter, the ``ebin/`` directory
+will hold compiled files, the ``include/`` directory will contain
+Erlang header ( ``.hrl``) files, ``priv/`` will hold executables,
+other programs, and various specific files needed for the application
+to work and ``src/`` will hold the Erlang source files you will need.
 
 
 .. image:: ../images/carpool.png
     :alt: A pool with wheels and an exhaust pipe
 
 
-You'll note that I added a `test/` directory just for the test file I
-had before. The reason for this is that tests are somewhat common, but
-you don't necessarily want them distributed as part of your
+You'll note that I added a ``test/`` directory just for the test file
+I had before. The reason for this is that tests are somewhat common,
+but you don't necessarily want them distributed as part of your
 application — you just need them when developing your code and
 justifying yourself to your manager ("tests pass, I don't understand
 why the app killed people"). Other directories like that end up being
-added as required, depending on the case. One example is the `doc/`
+added as required, depending on the case. One example is the ``doc/``
 directory, added whenever you have EDoc documentation to add to your
 application.
 
-The four basic directories to have are `ebin/`, `include/`, `priv/`
-and `src/` and they'll be common to pretty much every OTP application
-you get, although only `ebin/` and `priv/` are going to be exported
-when real OTP systems are deployed.
+The four basic directories to have are ``ebin/``, ``include/``,
+``priv/`` and ``src/`` and they'll be common to pretty much every OTP
+application you get, although only ``ebin/`` and ``priv/`` are going
+to be exported when real OTP systems are deployed.
 
 
 
@@ -110,15 +110,16 @@ The Application Resource File
 Where do we go from here? Well the first thing to do is to add an
 application file. This file will tell the Erlang VM what the
 application is, where it begins and where it ends. This file lives on
-in the `ebin/` directory, along with all the compiled modules.
+in the ``ebin/`` directory, along with all the compiled modules.
 
-This file is usually named `<yourapp>.app` (in our case `ppool.app`)
-and contains a bunch of Erlang terms defining the application in terms
-the VM can understand (the VM is pretty bad at guessing stuff!)
+This file is usually named ``<yourapp>.app`` (in our case
+``ppool.app``) and contains a bunch of Erlang terms defining the
+application in terms the VM can understand (the VM is pretty bad at
+guessing stuff!)
 
-Note: some people prefer to keep this file outside of `ebin/` and
-instead have a file named `<myapp>.app.src` as part of `src/`.
-Whatever build system they use then copies this file over to `ebin/`
+Note: some people prefer to keep this file outside of ``ebin/`` and
+instead have a file named ``<myapp>.app.src`` as part of ``src/``.
+Whatever build system they use then copies this file over to ``ebin/``
 or even generates one in order to keep everything clean.
 
 The basic structure of the application file is simply:
@@ -128,8 +129,8 @@ The basic structure of the application file is simply:
 {application, ApplicationName, Properties}.
 ```````````````````````````````````````````
 
-Where ApplicationName is an atom and Properties is a list of `{Key,
-Value}` tuples describing the application. They're used by OTP to
+Where ApplicationName is an atom and Properties is a list of ``{Key,
+Value}`` tuples describing the application. They're used by OTP to
 figure out what your application does and whatnot, they're all
 optional, but might always be useful to carry around and necessary for
 some tools. In fact, we'll only look at a subset of them for now and
@@ -152,8 +153,8 @@ to read.
 
 Tells what's the version of your application. The string takes any
 format you want. It's usually a good idea to stick to a scheme of the
-form `<major>.<minor>.<patch>` or something like that. When we get to
-tools to help with upgrades and downgrades, the string is used to
+form ``<major>.<minor>.<patch>`` or something like that. When we get
+to tools to help with upgrades and downgrades, the string is used to
 identify your application's version.
 
 
@@ -188,12 +189,12 @@ so blind faith shouldn't be used in this case.
 
 This is a list of key/values that can be used as a configuration for
 your application. They can be obtained at run time by calling
-`application:get_env(Key)` or `application:get_env(AppName, Key)`. The
-first one will try to find the value in the application file of
+``application:get_env(Key)`` or ``application:get_env(AppName, Key)``.
+The first one will try to find the value in the application file of
 whatever application you are in at the moment of the call, the second
 allows you to specify an application in particular. This stuff can be
 overwritten as required (either at boot time or by using
-`application:set_env/3-4`.
+``application:set_env/3-4``.
 
 All in all this is a pretty useful place to store configuration data
 rather than having a bunch of config files to read in whatever format,
@@ -208,7 +209,7 @@ fan of using Erlang syntax in configuration files.
 
 This is the maximum time that the application can run, after which it
 will be shut down. This is a rather rarely used item and Milliseconds
-defaults to `infinity`, so you often don't need to bother with this
+defaults to ``infinity``, so you often don't need to bother with this
 one at all.
 
 
@@ -218,9 +219,9 @@ one at all.
 
 A list of applications on which yours depends. The application system
 of Erlang will make sure they were loaded and/or started before
-allowing yours to do so. All applications depend at least on `kernel`
-and `stdlib`, but if your application were to depend on `ppool` being
-started, then you should add `ppool` to the list.
+allowing yours to do so. All applications depend at least on
+``kernel`` and ``stdlib``, but if your application were to depend on
+``ppool`` being started, then you should add ``ppool`` to the list.
 
 Note: yes, the standard library and the VM's kernel are applications
 themselves, which means that Erlang is a language used to build OTP,
@@ -236,8 +237,8 @@ This gives you some idea of why the language is officially named
 Defines a callback module for the application, using the application
 behaviour (which we will see in the next section). This tells OTP that
 when starting your application, it should call
-`CallbackMod:start(normal, Args)`. It will also call
-`CallbackMod:stop(Args)` when stopping it. People will tend to name
+``CallbackMod:start(normal, Args)``. It will also call
+``CallbackMod:stop(Args)`` when stopping it. People will tend to name
 CallbackMod after their application.
 
 And this covers most of what we might need for now (and for most
@@ -248,7 +249,7 @@ applications you'll ever write).
 Converting the Pool
 ```````````````````
 
-How about we put this into practice? We'll turn the `ppool` set of
+How about we put this into practice? We'll turn the ``ppool`` set of
 processes from last chapter into a basic OTP application. The first
 step for this is to redistribute everything under the right directory
 structure. Just create five directories and distribute the files as
@@ -272,15 +273,15 @@ follows:
     	- ppool_nagger.erl
 
 
-You'll notice I moved the `ppool_nagger` to the test directory. This
+You'll notice I moved the ``ppool_nagger`` to the test directory. This
 is for a good reason — it was not much more than a demo case and would
 have nothing to do with our application, but is still necessary for
 the tests. We can actually try it later on once the app has all been
 packaged so we can make sure everything still works, but for the
 moment it's kind of useless.
 
-We'll add an Emakefile (appropriately named `Emakefile`, placed in the
-app's base directory) to help us compile and run things later on:
+We'll add an Emakefile (appropriately named ``Emakefile``, placed in
+the app's base directory) to help us compile and run things later on:
 
 
 ::
@@ -290,12 +291,12 @@ app's base directory) to help us compile and run things later on:
     {"test/*", [debug_info, {i,"include/"}, {outdir, "ebin/"}]}.
 
 
-This just tells the compiler to include `debug_info` for all files in
-`src/` and `test/`, tells it to go look in the `include/` directory
-(if it's ever needed) and then shove the files up its `ebin/`
-directory.
+This just tells the compiler to include ``debug_info`` for all files
+in ``src/`` and ``test/``, tells it to go look in the ``include/``
+directory (if it's ever needed) and then shove the files up its
+``ebin/`` directory.
 
-Speaking of which, let's add the app file in the `ebin/` directory:
+Speaking of which, let's add the app file in the ``ebin/`` directory:
 
 
 ::
@@ -309,14 +310,14 @@ Speaking of which, let's add the app file in the `ebin/` directory:
      ]}.
 
 
-This one only contains fields we find necessary; `env`, `maxT` and
-`applications` are not used. We now need to change how the callback
-module ( `ppool`) works. How do we do that exactly?
+This one only contains fields we find necessary; ``env``, ``maxT`` and
+``applications`` are not used. We now need to change how the callback
+module ( ``ppool``) works. How do we do that exactly?
 
 First, let's see the application behaviour.
 
-Note: even though all applications depend on the `kernel` and the
-`stdlib` applications, I haven't included them. `ppool` will still
+Note: even though all applications depend on the ``kernel`` and the
+``stdlib`` applications, I haven't included them. ``ppool`` will still
 work because starting the Erlang VM starts these applications
 automatically. You might feel like adding them for the sake of
 expliciteness, but there's no *need* for it right now.
@@ -343,7 +344,7 @@ the dots. In the case of applications, this generic part is quite
 complex and not nearly as simple as other behaviours.
 
 Whenever the VM first starts up, a process called the *application
-controller* is started (with the name `application_controller`). It
+controller* is started (with the name ``application_controller``). It
 starts all other applications and sits on top of most of them. In
 fact, you could say the application controller acts a bit like a
 supervisor for all applications. We'll see what kind of supervision
@@ -351,10 +352,11 @@ strategies there are in the From Chaos to Application section.
 
 Note: the Application Controller technically doesn't sit over all the
 applications. One exception is the kernel application, which itself
-starts a process named `user`. The `user` process in fact acts as a
-group leader to the application controller and the kernel application
-thus needs some special treatment. We don't have to care about this,
-but I felt like it should be included for the sake of precision.
+starts a process named ``user``. The ``user`` process in fact acts as
+a group leader to the application controller and the kernel
+application thus needs some special treatment. We don't have to care
+about this, but I felt like it should be included for the sake of
+precision.
 
 In Erlang, the IO system depends on a concept called a *group leader*.
 The group leader represents standard input and output and is inherited
@@ -389,18 +391,18 @@ An Erlang VM with a bunch of applications might look a bit like this:
 Up to now, we were still looking at the generic part of the behaviour,
 but what about the specific stuff? After all, this is all we actually
 have to program. Well the application callback module requires very
-few functions to be functional: `start/2` and `stop/1`.
+few functions to be functional: ``start/2`` and ``stop/1``.
 
-The first one takes the form `YourMod:start(Type, Args)`. For now, the
-Type will always be `normal` (the other possibilities accepted have to
-do with distributed applications, which we'll see at a later point).
-Args is what is coming from your app file. The function initialises
-everything for your app and only needs to return the Pid of the
-application's top-level supervisor in one of the two following forms:
-`{ok, Pid}` or `{ok, Pid, SomeState}`. If you don't return SomeState ,
-it simply defaults to `[]`.
+The first one takes the form ``YourMod:start(Type, Args)``. For now,
+the Type will always be ``normal`` (the other possibilities accepted
+have to do with distributed applications, which we'll see at a later
+point). Args is what is coming from your app file. The function
+initialises everything for your app and only needs to return the Pid
+of the application's top-level supervisor in one of the two following
+forms: ``{ok, Pid}`` or ``{ok, Pid, SomeState}``. If you don't return
+SomeState , it simply defaults to ``[]``.
 
-The `stop/1` function takes the state returned by `start/2` as an
+The ``stop/1`` function takes the state returned by ``start/2`` as an
 argument. It runs after the application is done running and only does
 the necessary cleanup.
 
@@ -409,7 +411,7 @@ that, because you wouldn't want to write the rest of things too often
 (just look at the source if you feel like it!) There are a few more
 functions that you can optionally use to have more control over the
 application, but we don't need them for now. This means we can move
-forward with our `ppool` application!
+forward with our ``ppool`` application!
 
 
 
@@ -453,7 +455,7 @@ To the following ones instead:
 We can then make sure the tests are still valid. Pick the old
 ppool_tests.erl file (I wrote it for the previous chapter and am
 bringing it back here) and replace the single call to
-`ppool:start_link/0` to `application:start(ppool)` as follows:
+``ppool:start_link/0`` to ``application:start(ppool)`` as follows:
 
 
 ::
@@ -466,9 +468,9 @@ bringing it back here) and replace the single call to
         Name.
 
 
-You should also take the time to remove `stop/0` from `ppool_supersup`
-(and remove the export), because the OTP application tools will take
-care of that for us.
+You should also take the time to remove ``stop/0`` from
+``ppool_supersup`` (and remove the export), because the OTP
+application tools will take care of that for us.
 
 We can finally recompile the code and run all the tests to make sure
 everything still works (we'll see how that *eunit* thing works later
@@ -498,7 +500,7 @@ on, don't worry):
     ok
 
 
-The tests take a while to run due to `timer:sleep(X)` being used to
+The tests take a while to run due to ``timer:sleep(X)`` being used to
 synchronise everything in a few places, but it should tell you
 everything works, as shown above. Good news, our app is healthy.
 
@@ -527,11 +529,11 @@ awesome callbacks:
     received down msg
 
 
-The magic command here is `application:start(ppool)`. This tells the
+The magic command here is ``application:start(ppool)``. This tells the
 application controller to launch our ppool application. It starts the
-`ppool_supersup` supervisor and from that point on, everything can be
-used as normal. We can see all the applications currently running by
-calling `application:which_applications()`:
+``ppool_supersup`` supervisor and from that point on, everything can
+be used as normal. We can see all the applications currently running
+by calling ``application:which_applications()``:
 
 
 ::
@@ -543,9 +545,9 @@ calling `application:which_applications()`:
      {kernel,"ERTS  CXC 138 10","2.14.4"}]
 
 
-What a surprise, `ppool` is running. As mentioned earlier, we can see
-that all applications depend on `kernel` and `stdlib`, which are both
-running. If we want to close the pool:
+What a surprise, ``ppool`` is running. As mentioned earlier, we can
+see that all applications depend on ``kernel`` and ``stdlib``, which
+are both running. If we want to close the pool:
 
 
 ::
@@ -564,32 +566,33 @@ And it is done. You should notice that we now get a clean shutdown
 with a little informative report rather than the messy ** exception
 exit: killed from last chapter.
 
-Note: You'll sometimes see people do something like `MyApp:start(...)`
-instead of `application:start(MyApp)`. While this works for testing
-purposes, it's ruining a lot of the advantages of actually having an
-application: it's no longer part of the VM's supervision tree, can not
-access its environment variables, will not check dependencies before
-being started, etc. Try to stick to `application:start/1` if possible.
+Note: You'll sometimes see people do something like
+``MyApp:start(...)`` instead of ``application:start(MyApp)``. While
+this works for testing purposes, it's ruining a lot of the advantages
+of actually having an application: it's no longer part of the VM's
+supervision tree, can not access its environment variables, will not
+check dependencies before being started, etc. Try to stick to
+``application:start/1`` if possible.
 
 Look at this! What's that thing about our app being *temporary*? We
 write Erlang and OTP stuff because it's supposed to run forever, not
 just for a while! How dare the VM say this? The secret is that we can
-give different arguments to `application:start`. Depending on the
+give different arguments to ``application:start``. Depending on the
 arguments, the VM will react differently to termination of one of its
 applications. In some cases, the VM will be a loving beast ready to
 die for its children. In other cases, it's rather a cold heartless and
 pragmatic machine willing to tolerate many of its children dying for
 the survival of its species.
 
-:Application started with: `application:start(AppName, temporary)`:
+:Application started with: ``application:start(AppName, temporary)``:
   Ends normally: Nothing special happens, the application has stopped.
 Ends abnormally: The error is reported, and the application terminates
   without restarting.
-:Application started with: `application:start(AppName, transient)`:
+:Application started with: ``application:start(AppName, transient)``:
   Ends normally: Nothing special happens, the application has stopped.
 Ends abnormally: The error is reported, all the other applications are
   stopped and the VM shuts down.
-:Application started with: `application:start(AppName, permanent)`:
+:Application started with: ``application:start(AppName, permanent)``:
   Ends normally: All other applications are terminated and the VM shuts
   down.
 Ends abnormally: Same; all applications are terminated, the VM shuts
@@ -606,8 +609,8 @@ while expecting different outcomes each time, the VM prefers to die
 sanely and just give up. Of course the real reason has to do with
 something being broken that needs to be fixed, but you catch my drift.
 Take note that all applications can be terminated by calling
-`application:stop(AppName)` without affecting others as if a crash had
-occurred.
+``application:stop(AppName)`` without affecting others as if a crash
+had occurred.
 
 
 
@@ -619,13 +622,13 @@ we have no process to start and thus no need for an application
 callback module?
 
 After pulling our hair and crying in rage for a few minutes, the only
-other thing left to do is to remove the tuple `{mod, {Module, Args}}`
-from the application file. That's it. This is called a *library
-application*. If you want an example of one, the Erlang `stdlib`
-(standard library) application is one of these.
+other thing left to do is to remove the tuple ``{mod, {Module,
+Args}}`` from the application file. That's it. This is called a
+*library application*. If you want an example of one, the Erlang
+``stdlib`` (standard library) application is one of these.
 
 If you have the source package of Erlang, you can go to
-`otp_src_<release>/lib/stdlib/src/stdlib.app.src` and see the
+``otp_src_<release>/lib/stdlib/src/stdlib.app.src`` and see the
 following:
 
 

@@ -165,7 +165,7 @@ message set:
 
 
 This adds an event to the event server. A confirmation is sent back
-under the form of the `ok` atom, unless something goes wrong (maybe
+under the form of the ``ok`` atom, unless something goes wrong (maybe
 the TimeOut is in the wrong format.) The inverse operation, removing
 events, can be done as follows:
 
@@ -255,29 +255,29 @@ structure, which looks like this:
     src/
 
 
-The `ebin/` directory is where files will go once they are compiled.
-The `include/` directory is used to store `.hrl` files that are to be
-included by other applications; the private `.hrl` files are usually
-just kept inside the `src/` directory. The `priv/` directory is used
-for executables that might have to interact with Erlang, such as
-specific drivers and whatnot. We won't actually use that directory for
-this project. Then the last one is the `src/` directory, where all
-`.erl` files stay.
+The ``ebin/`` directory is where files will go once they are compiled.
+The ``include/`` directory is used to store ``.hrl`` files that are to
+be included by other applications; the private ``.hrl`` files are
+usually just kept inside the ``src/`` directory. The ``priv/``
+directory is used for executables that might have to interact with
+Erlang, such as specific drivers and whatnot. We won't actually use
+that directory for this project. Then the last one is the ``src/``
+directory, where all ``.erl`` files stay.
 
 In standard Erlang projects, this directory structure can vary a
-little. A `conf/` directory can be added for specific configuration
-files, `doc/` for documentation and `lib/` for third party libraries
-required for your application to run. Different Erlang product on the
-market often use different names than these, but the four ones
-mentioned above usually stay the same given they're part of the
-standard OTP practices.
+little. A ``conf/`` directory can be added for specific configuration
+files, ``doc/`` for documentation and ``lib/`` for third party
+libraries required for your application to run. Different Erlang
+product on the market often use different names than these, but the
+four ones mentioned above usually stay the same given they're part of
+the standard OTP practices.
 
 
 
 An Event Module
 ~~~~~~~~~~~~~~~
 
-Get into the `src/` directory and start an event.erl module, which
+Get into the ``src/`` directory and start an event.erl module, which
 will implement the x, y and z events in the earlier drawings. I'm
 starting with this module because it's the one with the fewest
 dependencies: we'll be able to try to run it without having implement
@@ -287,13 +287,13 @@ Before really writing code, I have to mention that the protocol is
 incomplete. It helps represent what data will be sent from process to
 process, but not the intricacies of it: how the addressing works,
 whether we use references or names, etc. Most messages will be wrapped
-under the form `{Pid, Ref, Message}`, where Pid is the sender and Ref
-is a unique message identifier to help know what reply came from who.
-If we were to send many messages before looking for replies, we would
-not know what reply went with what message without a reference.
+under the form ``{Pid, Ref, Message}``, where Pid is the sender and
+Ref is a unique message identifier to help know what reply came from
+who. If we were to send many messages before looking for replies, we
+would not know what reply went with what message without a reference.
 
-So here we go. The core of the processes that will run `event.erl`'s
-code will be the function `loop/1`, which will look a bit like the
+So here we go. The core of the processes that will run ``event.erl``'s
+code will be the function ``loop/1``, which will look a bit like the
 following skeleton if you remember the protocol:
 
 
@@ -313,12 +313,12 @@ This shows the timeout we have to support to announce an event has
 come to term and the way a server can call for the cancellation of an
 event. You'll notice a variable State in the loop. The State variable
 will have to contain data such as the timeout value (in seconds) and
-the name of the event (in order to send the message `{done, Id}`.) It
-will also need to know the event server's pid in order to send it
+the name of the event (in order to send the message ``{done, Id}``.)
+It will also need to know the event server's pid in order to send it
 notifications.
 
 This is all stuff that's fit to be held in the loop's state. So let's
-declare a `state` record on the top of the file:
+declare a ``state`` record on the top of the file:
 
 
 ::
@@ -347,17 +347,17 @@ bit more:
         end.
 
 
-Here, the multiplication by a thousand is to change the `to_go` value
-from seconds to milliseconds.
+Here, the multiplication by a thousand is to change the ``to_go``
+value from seconds to milliseconds.
 
 Don't drink too much Kool-Aid:
 Language wart ahead! The reason why I bind the variable 'Server' in
 the function head is because it's used in pattern matching in the
 receive section. Remember, `records are hacks!`_ The expression
-`S#state.server` is secretly expanded to `element(2, S)`, which isn't
-a valid pattern to match on.
+``S#state.server`` is secretly expanded to ``element(2, S)``, which
+isn't a valid pattern to match on.
 
-This still works fine for `S#state.to_go` after the `after` part,
+This still works fine for ``S#state.to_go`` after the ``after`` part,
 because that one can be an expression left to be evaluated later.
 
 Now to test the loop:
@@ -388,22 +388,22 @@ Now to test the loop:
 
 
 Lots of stuff to see here. Well first of all, we import the record
-from the event module with `rr(Mod)`. Then, we spawn the event loop
-with the shell as the server ( `self()`). This event should fire after
-5 seconds. The 9th expression was run after 3 seconds, and the 10th
-one after 6 seconds. You can see we did receive the `{done, "test"}`
-message on the second try.
+from the event module with ``rr(Mod)``. Then, we spawn the event loop
+with the shell as the server ( ``self()``). This event should fire
+after 5 seconds. The 9th expression was run after 3 seconds, and the
+10th one after 6 seconds. You can see we did receive the ``{done,
+"test"}`` message on the second try.
 
 Right after that, I try the cancel feature (with an ample 500 seconds
 to type it). You can see I created the reference, sent the message and
-got a reply with the same reference so I know the `ok` I received was
-coming from this process and not any other on the system.
+got a reply with the same reference so I know the ``ok`` I received
+was coming from this process and not any other on the system.
 
 The reason why the cancel message is wrapped with a reference but the
-`done` message isn't is simply because we don't expect it to come from
-anywhere specific (any place will do, we won't match on the receive)
-nor should we want to reply to it. There's another test I want to do
-beforehand. What about an event happening next year?
+``done`` message isn't is simply because we don't expect it to come
+from anywhere specific (any place will do, we won't match on the
+receive) nor should we want to reply to it. There's another test I
+want to do beforehand. What about an event happening next year?
 
 ::
 
@@ -431,7 +431,7 @@ reasons:
 
 The fix I decided to apply for this one was to write a function that
 would split the timeout value into many parts if turns out to be too
-long. This will request some support from the `loop/1` function too.
+long. This will request some support from the ``loop/1`` function too.
 So yeah, the way to split the time is basically divide it in equal
 parts of 49 days (because the limit is about 50), and then put the
 remainder with all these equal parts. The sum of the list of seconds
@@ -448,12 +448,12 @@ should now be the original time:
         [N rem Limit | lists:duplicate(N div Limit, Limit)].
 
 
-The function `lists:duplicate/2` will take a given expression as a
+The function ``lists:duplicate/2`` will take a given expression as a
 second argument and reproduce it as many times as the value of the
-first argument ( `[a,a,a] = lists:duplicate(3, a)`). If we were to
-send `normalize/1` the value `98*24*60*60+4`, it would return
-`[4,4233600,4233600]`. The `loop/1` function should now look like this
-to accommodate the new format:
+first argument ( ``[a,a,a] = lists:duplicate(3, a)``). If we were to
+send ``normalize/1`` the value ``98*24*60*60+4``, it would return
+``[4,4233600,4233600]``. The ``loop/1`` function should now look like
+this to accommodate the new format:
 
 
 ::
@@ -476,18 +476,18 @@ to accommodate the new format:
 
 You can try it, it should work as normal, but now support years and
 years of timeout. How this works is that it takes the first element of
-the `to_go` list and waits for its whole duration. When this is done,
-the next element of the timeout list is verified. If it's empty, the
-timeout is over and the server is notified of it. Otherwise, the loop
-keeps going with the rest of the list until it's done.
+the ``to_go`` list and waits for its whole duration. When this is
+done, the next element of the timeout list is verified. If it's empty,
+the timeout is over and the server is notified of it. Otherwise, the
+loop keeps going with the rest of the list until it's done.
 
 It would be very annoying to have to manually call something like
-`event:normalize(N)` every time an event process is started,
+``event:normalize(N)`` every time an event process is started,
 especially since our workaround shouldn't be of concern to programmers
 using our code. The standard way to do this is to instead have an
-`init` function handling all initialization of data required for the
+``init`` function handling all initialization of data required for the
 loop function to work well. While we're at it, we'll add the standard
-`start` and `start_link` functions:
+``start`` and ``start_link`` functions:
 
 
 ::
@@ -529,11 +529,11 @@ interface function:
 
 Oh! A new trick! Here I'm using a monitor to see if the process is
 there or not. If the process is already dead, I avoid useless waiting
-time and return `ok` as specified in the protocol. If the process
+time and return ``ok`` as specified in the protocol. If the process
 replies with the reference, then I know it will soon die: I remove the
 reference to avoid receiving them when I no longer care about them.
-Note that I also supply the `flush` option, which will purge the
-`DOWN` message if it was sent before we had the time to demonitor.
+Note that I also supply the ``flush`` option, which will purge the
+``DOWN`` message if it was sent before we had the time to demonitor.
 
 Let's test these:
 
@@ -557,8 +557,8 @@ Let's test these:
 
 And it works! The last thing annoying with the event module is that we
 have to input the time left in seconds. It would be much better if we
-could use a standard format such as Erlang's datetime ( `{{Year,
-Month, Day}, {Hour, Minute, Second}}`). Just add the following
+could use a standard format such as Erlang's datetime ( ``{{Year,
+Month, Day}, {Hour, Minute, Second}}``). Just add the following
 function that will calculate the difference between the current time
 on your computer and the delay you inserted:
 
@@ -580,7 +580,7 @@ Oh, yeah. The calendar module has pretty funky function names. As
 noted above, this calculates the number of seconds between now and
 when the event is supposed to fire. If the event is in the past, we
 instead return 0 so it will notify the server as soon as it can. Now
-fix the init function to call this one instead of `normalize/1`. You
+fix the init function to call this one instead of ``normalize/1``. You
 can also rename Delay variables to say DateTime if you want the names
 to be more descriptive:
 
@@ -636,14 +636,14 @@ skeleton for that one should look a bit like this:
 
 
 You'll notice I have wrapped calls that require replies with the same
-`{Pid, Ref, Message}` format as earlier. Now, the server will need to
-keep two things in its state: a list of subscribing clients and a list
-of all the event processes it spawned. If you have noticed, the
+``{Pid, Ref, Message}`` format as earlier. Now, the server will need
+to keep two things in its state: a list of subscribing clients and a
+list of all the event processes it spawned. If you have noticed, the
 protocol says that when an event is done, the event server should
-receive `{done, Name}`, but send `{done, Name, Description}`. The idea
-here is to have as little traffic as necessary and only have the event
-processes care about what is strictly necessary. So yeah, list of
-clients and list of events:
+receive ``{done, Name}``, but send ``{done, Name, Description}``. The
+idea here is to have as little traffic as necessary and only have the
+event processes care about what is strictly necessary. So yeah, list
+of clients and list of events:
 
 
 ::
@@ -673,7 +673,7 @@ And the loop now has the record definition in its head:
 It would be nice if both events and clients were orddicts. We're
 unlikely to have many hundreds of them at once. If you recall the
 chapter on `data structures`_, orddicts fit that need very well. We'll
-write an `init` function to handle this:
+write an ``init`` function to handle this:
 
 
 ::
@@ -713,16 +713,16 @@ should look like this:
     :alt: Hand drawn RSS logo
 
 
-So what this section of `loop/1` does is start a monitor, and store
+So what this section of ``loop/1`` does is start a monitor, and store
 the client info in the orddict under the key Ref . The reason for this
 is simple: the only other time we'll need to fetch the client ID will
-be if we receive a monitor's `EXIT` message, which will contain the
+be if we receive a monitor's ``EXIT`` message, which will contain the
 reference (which will let us get rid of the orddict's entry).
 
 The next message to care about is the one where we add events. Now, it
 is possible to return an error status. The only validation we'll do is
 check the timestamps we accept. While it's easy to subscribe to the
-`{{Year,Month,Day}, {Hour,Minute,seconds}}` layout, we have to make
+``{{Year,Month,Day}, {Hour,Minute,seconds}}`` layout, we have to make
 sure we don't do things like accept events on February 29 when we're
 not in a leap year, or any other date that doesn't exist. Moreover, we
 don't want to accept impossible date values such as "5 hours, minus 1
@@ -730,11 +730,11 @@ minute and 75 seconds". A single function can take care of validating
 all of that.
 
 The first building block we'll use is the function
-`calendar:valid_date/1`. This one, as the name says, checks if the
+``calendar:valid_date/1``. This one, as the name says, checks if the
 date is valid or not. Sadly, the weirdness of the calendar module
 doesn't stop at funky names: there is actually no function to confirm
-that `{H,M,S}` has valid values. We'll have to implement that one too,
-following the funky naming scheme:
+that ``{H,M,S}`` has valid values. We'll have to implement that one
+too, following the funky naming scheme:
 
 
 ::
@@ -757,7 +757,7 @@ following the funky naming scheme:
     valid_time(_,_,_) -> false.
 
 
-The `valid_datetime/1` function can now be used in the part where we
+The ``valid_datetime/1`` function can now be used in the part where we
 try to add the message:
 
 
@@ -792,7 +792,7 @@ remember to update the protocol documentation!)
 The next message defined in our protocol is the one where we cancel an
 event. Canceling an event never fails on the client side, so the code
 is simpler there. Just check whether the event is in the process'
-state record. If it is, use the `event:cancel/1` function we defined
+state record. If it is, use the ``event:cancel/1`` function we defined
 to kill it and send ok. If it's not found, just tell the user
 everything went right anyway -- the event is not running and that's
 what the user wanted.
@@ -817,7 +817,7 @@ Good, good. So now all voluntary interaction coming from the client to
 the event server is covered. Let's deal with the stuff that's going
 between the server and the events themselves. There are two messages
 to handle: canceling the events (which is done), and the events timing
-out. That message is simply `{done, Name}`:
+out. That message is simply ``{done, Name}``:
 
 
 ::
@@ -837,7 +837,7 @@ out. That message is simply `{done, Name}`:
         end;
 
 
-And the function `send_to_clients/2` does as its name says and is
+And the function ``send_to_clients/2`` does as its name says and is
 defined as follows:
 
 
@@ -867,17 +867,17 @@ upgrades, etc. Here they come:
         loop(S)
 
 
-The first case ( `shutdown`) is pretty explicit. You get the kill
+The first case ( ``shutdown``) is pretty explicit. You get the kill
 message, let the process die. If you wanted to save state to disk,
 that could be a possible place to do it. If you wanted safer save/exit
-semantics, this could be done on every `add`, `cancel` or `done`
-message. Loading events from disk could then be done in the `init`
+semantics, this could be done on every ``add``, ``cancel`` or ``done``
+message. Loading events from disk could then be done in the ``init``
 function, spawning them as they come.
 
-The `'DOWN'` message's actions are also simple enough. It means a
+The ``'DOWN'`` message's actions are also simple enough. It means a
 client died, so we remove it from the client list in the state.
 
-Unknown messages will just be shown with `io:format/2` for debugging
+Unknown messages will just be shown with ``io:format/2`` for debugging
 purposes, although a real production application would likely use a
 dedicated logging module
 
@@ -894,14 +894,14 @@ server*. The code server is basically a VM process in charge of an ETS
 table (in-memory database table, native to the VM.) The code server
 can hold two versions of a single module in memory, and both versions
 can run at once. A new version of a module is automatically loaded
-when compiling it with `c(Module)`, loading with `l(Module)` or
+when compiling it with ``c(Module)``, loading with ``l(Module)`` or
 loading it with one of the many functions of the code module.
 
 A concept to understand is that Erlang has both *local* and *external*
 calls. Local calls are those function calls you can make with
 functions that might not be exported. They're just of the format
-`Atom(Args)`. An external call, on the other hand, can only be done
-with exported functions and has the form `Module:Function(Args)`.
+``Atom(Args)``. An external call, on the other hand, can only be done
+with exported functions and has the form ``Module:Function(Args)``.
 
 When there are two versions of a module loaded in the VM, all local
 calls are done through the currently running version in a process.
@@ -928,12 +928,12 @@ There are ways to bind yourself to a system module that will send
 messages whenever a new version of a module is loaded. By doing this,
 you can trigger a module reload only when receiving such a message,
 and always do it with a code upgrade function, say
-`MyModule:Upgrade(CurrentState)`, which will then be able to transform
-the state data structure according to the new version's specification.
-This 'subscription' handling is done automatically by the OTP
-framework, which we'll start studying soon enough. For the reminder
-application, we won't use the code server and will instead use a
-custom `code_change` message from the shell, doing very basic
+``MyModule:Upgrade(CurrentState)``, which will then be able to
+transform the state data structure according to the new version's
+specification. This 'subscription' handling is done automatically by
+the OTP framework, which we'll start studying soon enough. For the
+reminder application, we won't use the code server and will instead
+use a custom ``code_change`` message from the shell, doing very basic
 reloading. That's pretty much all you need to know to do hot code
 loading. Nevertheless, here's a more generic example:
 
@@ -958,7 +958,7 @@ loading. Nevertheless, here's a more generic example:
         %% transform and return the state here.
 
 
-As you can see, our `?MODULE:loop(S)` fits this pattern.
+As you can see, our ``?MODULE:loop(S)`` fits this pattern.
 
 
 
@@ -967,7 +967,7 @@ I Said, Hide Your Messages
 
 Hiding messages! If you expect people to build on your code and
 processes, you must hide the messages in interface functions. Here's
-what we used for the `evserv` module:
+what we used for the ``evserv`` module:
 
 
 ::
@@ -994,7 +994,7 @@ of this example app, this will be enough.
 The first message we wrote is the next we should abstract away: how to
 subscribe. The little protocol or specification I wrote above called
 for a monitor, so this one is added there. At any point, if the
-reference returned by the subscribe message is in a `DOWN` message,
+reference returned by the subscribe message is in a ``DOWN`` message,
 the client will know the server has gone down.
 
 
@@ -1030,11 +1030,12 @@ The next one is the event adding:
         end.
 
 
-Note that I choose to forward the `{error, bad_timeout}` message that
-could be received to the client. I could have also decided to crash
-the client by raising `erlang:error(bad_timeout)`. Whether crashing
-the client or forwarding the error message is the thing to do is still
-debated in the community. Here's the alternative crashing function:
+Note that I choose to forward the ``{error, bad_timeout}`` message
+that could be received to the client. I could have also decided to
+crash the client by raising ``erlang:error(bad_timeout)``. Whether
+crashing the client or forwarding the error message is the thing to do
+is still debated in the community. Here's the alternative crashing
+function:
 
 
 ::
@@ -1092,10 +1093,10 @@ A Test Drive
 
 You should now be able to compile the application and give it a test
 run. To make things a bit simpler, we'll write a specific Erlang
-makefile to build the project. Open a file named `Emakefile` and put
+makefile to build the project. Open a file named ``Emakefile`` and put
 it in the project's base directory. The file contains Erlang terms and
 gives the Erlang compiler the recipe to cook wonderful and crispy
-`.beam` files:
+``.beam`` files:
 
 
 .. image:: ../images/oven.png
@@ -1113,18 +1114,18 @@ gives the Erlang compiler the recipe to cook wonderful and crispy
 
 
 This tells the compiler to add debug_info to the files (this is rarely
-an option you want to give up), to look for files in the `src/` and
-`include/` directory and to output them in `ebin/`.
+an option you want to give up), to look for files in the ``src/`` and
+``include/`` directory and to output them in ``ebin/``.
 
-Now, by going in your command line and running `erl -make`, the files
-should all be compiled and put inside the `ebin/` directory for you.
-Start the Erlang shell by doing `erl -pa ebin/`. The `-pa <directory>`
-option tells the Erlang VM to add that path to the places it can look
-in for modules.
+Now, by going in your command line and running ``erl -make``, the
+files should all be compiled and put inside the ``ebin/`` directory
+for you. Start the Erlang shell by doing ``erl -pa ebin/``. The ``-pa
+<directory>`` option tells the Erlang VM to add that path to the
+places it can look in for modules.
 
 Another option is to start the shell as usual and call
-`make:all([load])`. This will look for a file named 'Emakefile' in the
-current directory, recompile it (if it changed) and load the new
+``make:all([load])``. This will look for a file named 'Emakefile' in
+the current directory, recompile it (if it changed) and load the new
 files.
 
 You should now be able to track thousands of events (just replace the
@@ -1192,7 +1193,7 @@ sup.erl where our supervisor will be:
 
 This is somewhat similar to the 'restarter', although this one is a
 tad more generic. It can take any module, as long as it has a
-`start_link` function. It will restart the process it watches
+``start_link`` function. It will restart the process it watches
 indefinitely, unless the supervisor itself is terminated with a
 shutdown exit signal. Here it is in use:
 
@@ -1238,15 +1239,15 @@ Namespaces (or lack thereof)
 
 Because Erlang has a flat module structure (there is no hierarchy), It
 is frequent for some applications to enter in conflict. One example of
-this is the frequently used `user` module that almost every project
-attempts to define at least once. This clashes with the `user` module
-shipped with Erlang. You can test for any clashes with the function
-`code:clash/0`.
+this is the frequently used ``user`` module that almost every project
+attempts to define at least once. This clashes with the ``user``
+module shipped with Erlang. You can test for any clashes with the
+function ``code:clash/0``.
 
 Because of this, the common pattern is to prefix every module name
 with the name of your project. In this case, our reminder
-application's modules should be renamed to `reminder_evserv`,
-`reminder_sup` and `reminder_event`.
+application's modules should be renamed to ``reminder_evserv``,
+``reminder_sup`` and ``reminder_event``.
 
 Some programmers then decide to add a module, named after the
 application itself, which wraps common calls that programmers could

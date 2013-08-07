@@ -50,7 +50,7 @@ common compile-time error messages and potential resolutions in case
 you encounter them:
 
 :module.beam: Module name 'madule' does not match file name 'module':
-  The module name you've entered in the `-module` attribute doesn't
+  The module name you've entered in the ``-module`` attribute doesn't
   match the filename.
 :./module.erl:2: Warning: function some_function/0 is unused: You have
   not exported a function, or the place where it's used has the wrong
@@ -58,13 +58,14 @@ you encounter them:
   is no longer needed. Check your code!
 :./module.erl:2: function some_function/1 undefined: The function does
   not exist. You've written the wrong name or arity either in the
-  `-export` attribute or when declaring the function. This error is also
-  output when the given function could not be compiled, usually because
-  of a syntax error like forgetting to end a function with a period.
+  ``-export`` attribute or when declaring the function. This error is
+  also output when the given function could not be compiled, usually
+  because of a syntax error like forgetting to end a function with a
+  period.
 :./module.erl:5: syntax error before: 'SomeCharacterOrWord': This
   happens for a variety of reason, namely unclosed parentheses, tuples
   or wrong expression termination (like closing the last branch of a
-  `case` with a comma). Other reasons might include the use of a
+  ``case`` with a comma). Other reasons might include the use of a
   reserved atom in your code or unicode characters getting weirdly
   converted between different encodings (I've seen it happen!)
 :./module.erl:5: syntax error before: : All right, that one is
@@ -74,12 +75,12 @@ you encounter them:
 :./module.erl:5: Warning: this expression will fail with a 'badarith'
   exception: Erlang is all about dynamic typing, but remember that the
   types are strong. In this case, the compiler is smart enough to find
-  that one of your arithmetic expressions will fail (say, `llama + 5`).
-  It won't find type errors much more complex than that, though.
+  that one of your arithmetic expressions will fail (say, ``llama +
+  5``). It won't find type errors much more complex than that, though.
 :./module.erl:5: Warning: variable 'Var' is unused: You declared a
   variable and never use it afterwards. This might be a bug with your
   code, so double-check what you have written. Otherwise, you might want
-  to switch the variable name to `_` or just prefix it with an
+  to switch the variable name to ``_`` or just prefix it with an
   underscore (something like _Var ) if you feel the name helps make the
   code readable.
 :./module.erl:5: Warning: a term is constructed, but never used: In
@@ -98,9 +99,9 @@ you encounter them:
   a specific clause defined after a catch-all one. As such, the compiler
   can warn you that you'll never even need to go to the other branch.
 :./module.erl:9: variable 'A' unsafe in 'case' (line 5): You're using
-  a variable declared within one of the branches of a `case ... of`
+  a variable declared within one of the branches of a ``case ... of``
   outside of it. This is considered unsafe. If you want to use such
-  variables, you'd be better of doing `MyVar = case ... of`...
+  variables, you'd be better of doing ``MyVar = case ... of``...
 
 
 This should cover most errors you get at compile-time at this point.
@@ -178,7 +179,7 @@ All the guard clauses of a function failed, or none of the function
             
 
 
-Looks like someone has forgotten a specific pattern in their `case`,
+Looks like someone has forgotten a specific pattern in their ``case``,
   sent in the wrong kind of data, or needed a catch-all clause!
 :if_clause:
 
@@ -192,9 +193,9 @@ Looks like someone has forgotten a specific pattern in their `case`,
             
 
 
-This is pretty similar to `case_clause` errors: it can not find a
-  branch that evaluates to `true`. Ensuring you consider all cases or
-  add the catch-all `true` clause might be what you need.
+This is pretty similar to ``case_clause`` errors: it can not find a
+  branch that evaluates to ``true``. Ensuring you consider all cases or
+  add the catch-all ``true`` clause might be what you need.
 :badmatch:
 
 ::
@@ -208,10 +209,10 @@ This is pretty similar to `case_clause` errors: it can not find a
 Badmatch errors happen whenever pattern matching fails. This most
   likely means you're trying to do impossible pattern matches (such as
   above), trying to bind a variable for the second time, or just
-  anything that isn't equal on both sides of the `=` operator (which is
-  pretty much what makes rebinding a variable fail!). Note that this
+  anything that isn't equal on both sides of the ``=`` operator (which
+  is pretty much what makes rebinding a variable fail!). Note that this
   error sometimes happens because the programmer believes that a
-  variable of the form _MyVar is the same as `_`. Variables with an
+  variable of the form _MyVar is the same as ``_``. Variables with an
   underscore are normal variables, except the compiler won't complain if
   they're not used. It is not possible to bind them more than once.
 :badarg:
@@ -226,11 +227,12 @@ Badmatch errors happen whenever pattern matching fails. This most
             
 
 
-This one is really similar to `function_clause` as it's about calling
-  functions with incorrect arguments. The main difference here is that
-  this error is usually triggered by the programmer after validating the
-  arguments from within the function, outside of the guard clauses. I'll
-  show how to throw such errors later in this chapter.
+This one is really similar to ``function_clause`` as it's about
+  calling functions with incorrect arguments. The main difference here
+  is that this error is usually triggered by the programmer after
+  validating the arguments from within the function, outside of the
+  guard clauses. I'll show how to throw such errors later in this
+  chapter.
 :undef:
 
 ::
@@ -248,8 +250,8 @@ This happens when you call a function that doesn't exist. Make sure
   correctly. Another reason to get the message is when the module is not
   in Erlang's search path. By default, Erlang's search path is set to be
   in the current directory. You can add paths by using
-  `code:add_patha/1` or `code:add_pathz/1`. If this still doesn't work,
-  make sure you compiled the module to begin with!
+  ``code:add_patha/1`` or ``code:add_pathz/1``. If this still doesn't
+  work, make sure you compiled the module to begin with!
 :badarith:
 
 ::
@@ -277,9 +279,9 @@ This happens when you try to do arithmetic that doesn't exist, like
 
 The most frequent reason why this error occurs is when you use
   variables as functions, but the variable's value is not a function. In
-  the example above, I'm using the `hhfuns` function from the `previous
-  chapter`_ and using two atoms as functions. This doesn't work and
-  `badfun` is thrown.
+  the example above, I'm using the ``hhfuns`` function from the
+  `previous chapter`_ and using two atoms as functions. This doesn't
+  work and ``badfun`` is thrown.
 :badarity:
 
 ::
@@ -292,10 +294,10 @@ The most frequent reason why this error occurs is when you use
             
 
 
-The `badarity` error is a specific case of `badfun`: it happens when
-  you use higher order functions, but you pass them more (or fewer)
+The ``badarity`` error is a specific case of ``badfun``: it happens
+  when you use higher order functions, but you pass them more (or fewer)
   arguments than they can handle.
-:system_limit: There are many reasons why a `system_limit` error can
+:system_limit: There are many reasons why a ``system_limit`` error can
   be thrown: too many processes (we'll get there), atoms that are too
   long, too many arguments in a function, number of atoms too large, too
   many nodes connected, etc. To get a full list in details, read the
@@ -324,22 +326,23 @@ There are three kinds of exceptions in Erlang: *errors*, *throws* and
 Errors
 ``````
 
-Calling `erlang:error(Reason)` will end the execution in the current
+Calling ``erlang:error(Reason)`` will end the execution in the current
 process and include a stack trace of the last functions called with
 their arguments when you catch it. These are the kind of exceptions
 that provoke the run-time errors above.
 
 Errors are the means for a function to stop its execution when you
 can't expect the calling code to handle what just happened. If you get
-an `if_clause` error, what can you do? Change the code and recompile,
-that's what you can do (other than just displaying a pretty error
-message). An example of when not to use errors could be our tree
+an ``if_clause`` error, what can you do? Change the code and
+recompile, that's what you can do (other than just displaying a pretty
+error message). An example of when not to use errors could be our tree
 module from the `recursion chapter`_. That module might not always be
 able to find a specific key in a tree when doing a lookup. In this
 case, it makes sense to expect the user to deal with unknown results:
 they could use a default value, check to insert a new one, delete the
 tree, etc. This is when it's appropriate to return a tuple of the form
-`{ok, Value}` or an atom like `undefined` rather than raising errors.
+``{ok, Value}`` or an atom like ``undefined`` rather than raising
+errors.
 
 Now, errors aren't limited to the examples above. You can define your
 own kind of errors too:
@@ -354,10 +357,10 @@ own kind of errors too:
     ** exception error: custom_error
 
 
-Here, `custom_error` is not recognized by the Erlang shell and it has
-no custom translation such as "bad argument in ...", but it's usable
-in the same way and can be handled by the programmer in an identical
-manner (we'll see how to do that soon).
+Here, ``custom_error`` is not recognized by the Erlang shell and it
+has no custom translation such as "bad argument in ...", but it's
+usable in the same way and can be handled by the programmer in an
+identical manner (we'll see how to do that soon).
 
 
 
@@ -365,14 +368,14 @@ Exits
 `````
 
 There are two kinds of exits: 'internal' exits and 'external' exits.
-Internal exits are triggered by calling the function `exit/1` and make
-the current process stop its execution. External exits are called with
-`exit/2` and have to do with multiple processes in the concurrent
-aspect of Erlang; as such, we'll mainly focus on internal exits and
-will visit the external kind later on.
+Internal exits are triggered by calling the function ``exit/1`` and
+make the current process stop its execution. External exits are called
+with ``exit/2`` and have to do with multiple processes in the
+concurrent aspect of Erlang; as such, we'll mainly focus on internal
+exits and will visit the external kind later on.
 
 Internal exits are pretty similar to errors. In fact, historically
-speaking, they were the same and only `exit/1` existed. They've got
+speaking, they were the same and only ``exit/1`` existed. They've got
 roughly the same use cases. So how to choose one? Well the choice is
 not obvious. To understand when to use one or the other, there's no
 choice but to start looking at the concepts of actors and processes
@@ -410,16 +413,16 @@ restarting the process that died, etc.
     :alt: A dead process (a bursting bubble) sending 'I'm dead' to a process 'B'
 
 
-With this concept explained, the difference in using `erlang:error/1`
-and `exit/1` is easier to understand. While both can be used in an
-extremely similar manner, the real difference is in the intent. You
-can then decide whether what you've got is 'simply' an error or a
-condition worthy of killing the current process. This point is made
-stronger by the fact that `erlang:error/1` returns a stack trace and
-`exit/1` doesn't. If you were to have a pretty large stack trace or
-lots of arguments to the current function, copying the exit message to
-every listening process would mean copying the data. In some cases,
-this could become unpractical.
+With this concept explained, the difference in using
+``erlang:error/1`` and ``exit/1`` is easier to understand. While both
+can be used in an extremely similar manner, the real difference is in
+the intent. You can then decide whether what you've got is 'simply' an
+error or a condition worthy of killing the current process. This point
+is made stronger by the fact that ``erlang:error/1`` returns a stack
+trace and ``exit/1`` doesn't. If you were to have a pretty large stack
+trace or lots of arguments to the current function, copying the exit
+message to every listening process would mean copying the data. In
+some cases, this could become unpractical.
 
 
 
@@ -443,21 +446,21 @@ The syntax to throw an exception is:
     ** exception throw: permission_denied
 
 
-Where you can replace `permission_denied` by anything you want
-(including `'everything is fine'`, but that is not helpful and you
+Where you can replace ``permission_denied`` by anything you want
+(including ``'everything is fine'``, but that is not helpful and you
 will lose friends).
 
 Throws can also be used for non-local returns when in deep recursion.
-An example of that is the `ssl` module which uses `throw/1` as a way
-to push `{error, Reason}` tuples back to a top-level function. This
-function then simply returns that tuple to the user. This lets the
-implementer only write for the successful cases and have one function
-deal with the exceptions on top of it all.
+An example of that is the ``ssl`` module which uses ``throw/1`` as a
+way to push ``{error, Reason}`` tuples back to a top-level function.
+This function then simply returns that tuple to the user. This lets
+the implementer only write for the successful cases and have one
+function deal with the exceptions on top of it all.
 
 Another example could be the array module, where there is a lookup
 function that can return a user-supplied default value if it can't
 find the element needed. When the element can't be found, the value
-`default` is thrown as an exception, and the top-level function
+``default`` is thrown as an exception, and the top-level function
 handles that and substitutes it with the user-supplied default value.
 This keeps the programmer of the module from needing to pass the
 default value as a parameter of every function of the lookup
@@ -479,11 +482,11 @@ Dealing with Exceptions
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 I've already mentioned quite a few times that throws, errors and exits
-can be handled. The way to do this is by using a `try ... catch`
+can be handled. The way to do this is by using a ``try ... catch``
 expression.
 
-A `try ... catch` is a way to evaluate an expression while letting you
-handle the successful case as well as the errors encountered. The
+A ``try ... catch`` is a way to evaluate an expression while letting
+you handle the successful case as well as the errors encountered. The
 general syntax for such an expression is:
 
 
@@ -503,17 +506,17 @@ general syntax for such an expression is:
     end.
 
 
-The Expression in between `try` and `of` is said to be *protected*.
-This means that any kind of exception happening within that call will
-be caught. The patterns and expressions in between the `try ... of`
-and `catch` behave in exactly the same manner as a `case ... of`.
-Finally, the `catch` part: here, you can replace TypeOfError by either
-`error`, `throw` or `exit`, for each respective type we've seen in
-this chapter. If no type is provided, a `throw` is assumed. So let's
-put this in practice.
+The Expression in between ``try`` and ``of`` is said to be
+*protected*. This means that any kind of exception happening within
+that call will be caught. The patterns and expressions in between the
+``try ... of`` and ``catch`` behave in exactly the same manner as a
+``case ... of``. Finally, the ``catch`` part: here, you can replace
+TypeOfError by either ``error``, ``throw`` or ``exit``, for each
+respective type we've seen in this chapter. If no type is provided, a
+``throw`` is assumed. So let's put this in practice.
 
-First of all, let's start a module named `exceptions`. We're going for
-simple here:
+First of all, let's start a module named ``exceptions``. We're going
+for simple here:
 
 
 ::
@@ -544,7 +547,7 @@ We can compile it and try it with different kinds of exceptions:
     ** exception error: pang
 
 
-As you can see, this `try ... catch` is only receiving throws. As
+As you can see, this ``try ... catch`` is only receiving throws. As
 stated earlier, this is because when no type is mentioned, a throw is
 assumed. Then we have functions with catch clauses of each type:
 
@@ -582,8 +585,8 @@ And to try them:
 
 
 The next example on the menu shows how to combine all the types of
-exceptions in a single `try ... catch`. We'll first declare a function
-to generate all the exceptions we need:
+exceptions in a single ``try ... catch``. We'll first declare a
+function to generate all the exceptions we need:
 
 
 ::
@@ -606,8 +609,8 @@ to generate all the exceptions we need:
         end.
 
 
-Here `is_function/2` is a BIF which makes sure the variable Attack is
-a function of arity 0. Then we add this one for good measure:
+Here ``is_function/2`` is a BIF which makes sure the variable Attack
+is a function of arity 0. Then we add this one for good measure:
 
 
 ::
@@ -649,17 +652,17 @@ The expression on line 9 demonstrates normal behavior for the black
 knight, when function execution happens normally. Each line that
 follows that one demonstrates pattern matching on exceptions according
 to their class (throw, error, exit) and the reason associated with
-them ( `slice`, `cut_arm`, `cut_leg`).
+them ( ``slice``, ``cut_arm``, ``cut_leg``).
 
 One thing shown here on expressions 13 and 14 is a catch-all clause
-for exceptions. The `_:_` pattern is what you need to use to make sure
-to catch any exception of any type. In practice, you should be careful
-when using the catch-all patterns: try to protect your code from what
-you can handle, but not any more than that. Erlang has other
+for exceptions. The ``_:_`` pattern is what you need to use to make
+sure to catch any exception of any type. In practice, you should be
+careful when using the catch-all patterns: try to protect your code
+from what you can handle, but not any more than that. Erlang has other
 facilities in place to take care of the rest.
 
-There's also an additional clause that can be added after a `try ...
-catch` that will always be executed. This is equivalent to the
+There's also an additional clause that can be added after a ``try ...
+catch`` that will always be executed. This is equivalent to the
 'finally' block in many other languages:
 
 
@@ -676,16 +679,16 @@ catch` that will always be executed. This is equivalent to the
 
 
 No matter if there are errors or not, the expressions inside the
-`after` part are guaranteed to run. However, you can not get any
-return value out of the `after` construct. Therefore, `after` is
+``after`` part are guaranteed to run. However, you can not get any
+return value out of the ``after`` construct. Therefore, ``after`` is
 mostly used to run code with side effects. The canonical use of this
 is when you want to make sure a file you were reading gets closed
 whether exceptions are raised or not.
 
 We now know how to handle the 3 classes of exceptions in Erlang with
 catch blocks. However, I've hidden information from you: it's actually
-possible to have more than one expression between the `try` and the
-`of`!
+possible to have more than one expression between the ``try`` and the
+``of``!
 
 
 ::
@@ -705,14 +708,15 @@ possible to have more than one expression between the `try` and the
         end.
 
 
-By calling `exceptions:whoa()`, we'll get the obvious `{caught, throw,
-up}`, because of `throw(up)`. So yeah, it's possible to have more than
-one expression between `try` and `of`...
+By calling ``exceptions:whoa()``, we'll get the obvious ``{caught,
+throw, up}``, because of ``throw(up)``. So yeah, it's possible to have
+more than one expression between ``try`` and ``of``...
 
-What I just highlighted in `exceptions:whoa/0` and that you might have
-not noticed is that when we use many expressions in that manner, we
-might not always care about what the return value is. The `of` part
-thus becomes a bit useless. Well good news, you can just give it up:
+What I just highlighted in ``exceptions:whoa/0`` and that you might
+have not noticed is that when we use many expressions in that manner,
+we might not always care about what the return value is. The ``of``
+part thus becomes a bit useless. Well good news, you can just give it
+up:
 
 
 ::
@@ -736,18 +740,19 @@ Note: It is important to know that the protected part of an exception
 can't be tail recursive. The VM must always keep a reference there in
 case there's an exception popping up.
 
-Because the `try ... catch` construct without the `of` part has
+Because the ``try ... catch`` construct without the ``of`` part has
 nothing but a protected part, calling a recursive function from there
 might be dangerous for programs supposed to run for a long time (which
 is Erlang's niche). After enough iterations, you'll go out of memory
 or your program will get slower without really knowing why. By putting
-your recursive calls between the `of` and `catch`, you are not in a
-protected part and you will benefit from Last Call Optimisation.
+your recursive calls between the ``of`` and ``catch``, you are not in
+a protected part and you will benefit from Last Call Optimisation.
 
-Some people use `try ... of ... catch` rather than `try ... catch` by
-default to avoid unexpected errors of that kind, except for obviously
-non-recursive code with results that won't be used by anything. You're
-most likely able to make your own decision on what to do!
+Some people use ``try ... of ... catch`` rather than ``try ... catch``
+by default to avoid unexpected errors of that kind, except for
+obviously non-recursive code with results that won't be used by
+anything. You're most likely able to make your own decision on what to
+do!
 
 
 
@@ -756,7 +761,7 @@ Wait, there's more!
 
 As if it wasn't enough to be on par with most languages already,
 Erlang's got yet another error handling structure. That structure is
-defined as the keyword `catch` and basically captures all types of
+defined as the keyword ``catch`` and basically captures all types of
 exceptions on top of the good results. It's a bit of a weird one
 because it displays a different representation of exceptions:
 
@@ -780,7 +785,7 @@ because it displays a different representation of exceptions:
 
 
 What we can see from this is that throws remain the same, but that
-exits and errors are both represented as `{'EXIT', Reason}`. That's
+exits and errors are both represented as ``{'EXIT', Reason}``. That's
 due to errors being bolted to the language after exits (they kept a
 similar representation for backwards compatibility).
 
@@ -800,22 +805,22 @@ The way to read this stack trace is as follows:
 
 
 
-+ The type of error is `undef`, which means the function you called is
-  not defined (see the list at the beginning of this chapter)
++ The type of error is ``undef``, which means the function you called
+  is not defined (see the list at the beginning of this chapter)
 + The list right after the type of error is a stack trace
 + The tuple on top of the stack trace represents the last function to
-  be called ( `{Module, Function, Arguments}`). That's your undefined
+  be called ( ``{Module, Function, Arguments}``). That's your undefined
   function.
 + The tuples after that are the functions called before the error.
-  This time they're of the form `{Module, Function, Arity}`.
+  This time they're of the form ``{Module, Function, Arity}``.
 + That's all there is to it, really.
 
 
 You can also manually get a stack trace by calling
-`erlang:get_stacktrace/0` in the process that crashed.
+``erlang:get_stacktrace/0`` in the process that crashed.
 
-You'll often see `catch` written in the following manner (we're still
-in exceptions.erl):
+You'll often see ``catch`` written in the following manner (we're
+still in exceptions.erl):
 
 
 ::
@@ -845,7 +850,7 @@ And as expected:
 
 
 This sounds compact and easy to catch exceptions, but there are a few
-problems with `catch`. The first of it is operator precedence:
+problems with ``catch``. The first of it is operator precedence:
 
 
 ::
@@ -858,8 +863,8 @@ problems with `catch`. The first of it is operator precedence:
 
 
 That's not exactly intuitive given that most expressions do not need
-to be wrapped in parentheses this way. Another problem with `catch` is
-that you can't see the difference between what looks like the
+to be wrapped in parentheses this way. Another problem with ``catch``
+is that you can't see the difference between what looks like the
 underlying representation of an exception and a real exception:
 
 
@@ -883,9 +888,9 @@ underlying representation of an exception and a real exception:
 
 
 And you can't know the difference between an error and an actual exit.
-You could also have used `throw/1` to generate the above exception. In
-fact, a `throw/1` in a `catch` might also be problematic in another
-scenario:
+You could also have used ``throw/1`` to generate the above exception.
+In fact, a ``throw/1`` in a ``catch`` might also be problematic in
+another scenario:
 
 
 ::
@@ -909,11 +914,11 @@ And now the killer problem:
     return
 
 
-Because we're behind a `catch`, we can never know if the function
+Because we're behind a ``catch``, we can never know if the function
 threw an exception or if it returned an actual value! This might not
 really happen a whole lot in practice, but it's still a wart big
-enough to have warranted the addition of the `try ... catch` construct
-in the R10B release.
+enough to have warranted the addition of the ``try ... catch``
+construct in the R10B release.
 
 
 
@@ -921,17 +926,17 @@ Try a try in a tree
 ~~~~~~~~~~~~~~~~~~~
 
 To put exceptions in practice, we'll do a little exercise requiring us
-to dig for our `tree` module. We're going to add a function that lets
-us do a lookup in the tree to find out whether a value is already
+to dig for our ``tree`` module. We're going to add a function that
+lets us do a lookup in the tree to find out whether a value is already
 present in there or not. Because the tree is ordered by its keys and
 in this case we do not care about the keys, we'll need to traverse the
 whole thing until we find the value.
 
 The traversal of the tree will be roughly similar to what we did in
-`tree:lookup/2`, except this time we will always search down both the
-left branch and the right branch. To write the function, you'll just
-need to remember that a tree node is either `{node, {Key, Value,
-NodeLeft, NodeRight}}` or `{node, 'nil'}` when empty. With this in
+``tree:lookup/2``, except this time we will always search down both
+the left branch and the right branch. To write the function, you'll
+just need to remember that a tree node is either ``{node, {Key, Value,
+NodeLeft, NodeRight}}`` or ``{node, 'nil'}`` when empty. With this in
 hand, we can write a basic implementation without exceptions:
 
 
@@ -985,8 +990,8 @@ The execution of the code above is similar to the previous version,
 except that we never need to check for the return value: we don't care
 about it at all. In this version, only a throw means the value was
 found. When this happens, the tree evaluation stops and it falls back
-to the `catch` on top. Otherwise, the execution keeps going until the
-last false is returned and that's what the user sees:
+to the ``catch`` on top. Otherwise, the execution keeps going until
+the last false is returned and that's what the user sees:
 
 
 .. image:: ../images/tree-throw.png

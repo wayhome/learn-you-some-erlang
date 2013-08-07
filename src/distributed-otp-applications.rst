@@ -103,15 +103,15 @@ first one is running a given application:
     :alt: Three nodes, A, B and C, and the application runs under A
 
 
-The nodes `B` and `C` are declared to be backup nodes in case `A`
-dies, which we pretend just happened:
+The nodes ``B`` and ``C`` are declared to be backup nodes in case
+``A`` dies, which we pretend just happened:
 
 
 .. image:: ../images/failover2.png
     :alt: Two nodes, B and C, and no application
 
 
-For a brief moment, there's nothing running. After a while, `B`
+For a brief moment, there's nothing running. After a while, ``B``
 realizes this and decides to take over the application:
 
 
@@ -119,18 +119,18 @@ realizes this and decides to take over the application:
     :alt: Two nodes, B and C, and the application runs under B
 
 
-That's a failover. Then, if `B` dies, the application gets restarted
-on `C`:
+That's a failover. Then, if ``B`` dies, the application gets restarted
+on ``C``:
 
 
 .. image:: ../images/failover4.png
     :alt: Node C with an application running under it
 
 
-Another failover and all is well and good. Now, suppose that `A` comes
-back up. `C` is now running the app happily, but `A` is the node we
-defined to be the main one. This is when a takeover occurs: the app is
-willingly shut down on `C` and restarted on `A`:
+Another failover and all is well and good. Now, suppose that ``A``
+comes back up. ``C`` is now running the app happily, but ``A`` is the
+node we defined to be the main one. This is when a takeover occurs:
+the app is willingly shut down on ``C`` and restarted on ``A``:
 
 
 .. image:: ../images/failover5.png
@@ -166,9 +166,9 @@ use it as an example for fault-tolerance.
 Our implementation won't make use of real-life switching mechanisms
 used to automatically find servers such as DNS round-robins or load
 balancers. We'll rather stay within pure Erlang and have three nodes
-(denoted below as `A`, `B`, and `C`) part of a distributed OTP
-application. The `A` node will represent the main node running the
-magic 8-ball server, and the `B` and `C` nodes will be the backup
+(denoted below as ``A``, ``B``, and ``C``) part of a distributed OTP
+application. The ``A`` node will represent the main node running the
+magic 8-ball server, and the ``B`` and ``C`` nodes will be the backup
 nodes:
 
 
@@ -176,8 +176,8 @@ nodes:
     :alt: three nodes, A, B, and C, connected together
 
 
-Whenever `A` fails, the 8-ball application should be restarted on
-either `B` or `C`, and both nodes will still be able to use it
+Whenever ``A`` fails, the 8-ball application should be restarted on
+either ``B`` or ``C``, and both nodes will still be able to use it
 transparently.
 
 Before setting things up for distributed OTP applications, we'll first
@@ -191,8 +191,8 @@ in its design:
 
 And in total we'll have 3 modules: the supervisor, the server, and the
 application callback module to start things. The supervisor will be
-rather trivial. We'll call it `m8ball_sup` (as in *Magic 8 Ball
-Supervisor*) and we'll put it in the `src/` directory of a standard
+rather trivial. We'll call it ``m8ball_sup`` (as in *Magic 8 Ball
+Supervisor*) and we'll put it in the ``src/`` directory of a standard
 OTP application:
 
 
@@ -218,8 +218,8 @@ OTP application:
 
 
 This is a supervisor that will start a single server (
-`m8ball_server`), a permanent worker process. It's allowed one failure
-every 10 seconds.
+``m8ball_server``), a permanent worker process. It's allowed one
+failure every 10 seconds.
 
 The magic 8-ball server will be a little bit more complex. We'll build
 it as a gen_server with the following interface:
@@ -247,9 +247,10 @@ it as a gen_server with the following interface:
         gen_server:call({global, ?MODULE}, question).
 
 
-Notice how the server is started using `{global, ?MODULE}` as a name
+Notice how the server is started using ``{global, ?MODULE}`` as a name
 and how it's accessed with the same tuple for each call. That's the
-`global` module we've seen in the last chapter, applied to behaviours.
+``global`` module we've seen in the last chapter, applied to
+behaviours.
 
 Next come the callbacks, the real implementation. Before I show how we
 build it, I'll mention how I want it to work. The magic 8-ball should
@@ -275,12 +276,12 @@ some randomness as part of our init function:
 
 We've seen that pattern before in the `Sockets chapter`_: we're using
 12 random bytes to set up the initial random seed to be used with the
-`random:uniform/1` function.
+``random:uniform/1`` function.
 
 The next step is to read the answers from the configuration file and
 pick one. If you recall the `OTP application chapter`_, the easiest
-way to set up some configuration is to use the `app` file to do it (in
-the `env` tuple). Here's how we're gonna do this:
+way to set up some configuration is to use the ``app`` file to do it
+(in the ``env`` tuple). Here's how we're gonna do this:
 
 
 ::
@@ -297,15 +298,16 @@ the `env` tuple). Here's how we're gonna do this:
 
 
 The first clause shows what we want to do. I expect to have a tuple
-with all the possible answers within the `answers` value of the `env`
-tuple. Why a tuple? Simply because accessing elements of a tuple is a
-constant time operation while obtaining it from a list is linear (and
-thus takes longer on larger lists). We then send the answer back.
+with all the possible answers within the ``answers`` value of the
+``env`` tuple. Why a tuple? Simply because accessing elements of a
+tuple is a constant time operation while obtaining it from a list is
+linear (and thus takes longer on larger lists). We then send the
+answer back.
 
-Note: the server reads the answers with `application:get_env(m8ball,
-answers)` on each question asked. If you were to set new answers with
-a call like `application:set_env(m8ball, answers,
-{"yes","no","maybe"})`, the three answers would instantly be the
+Note: the server reads the answers with ``application:get_env(m8ball,
+answers)`` on each question asked. If you were to set new answers with
+a call like ``application:set_env(m8ball, answers,
+{"yes","no","maybe"})``, the three answers would instantly be the
 possible choices for future calls.
 
 Reading them once at startup should be somewhat more efficient in the
@@ -342,7 +344,7 @@ gen_server doing nothing:
 
 
 Now we can get to the more serious stuff, namely the application file
-and the callback module. We'll begin with the latter, `m8ball.erl`:
+and the callback module. We'll begin with the latter, ``m8ball.erl``:
 
 
 ::
@@ -370,7 +372,7 @@ and the callback module. We'll begin with the latter, `m8ball.erl`:
         m8ball_server:ask(Question).
 
 
-That was easy. Here's the associated `.app` file, `m8ball.app`:
+That was easy. Here's the associated ``.app`` file, ``m8ball.app``:
 
 
 ::
@@ -391,8 +393,8 @@ That was easy. Here's the associated `.app` file, `m8ball.app`:
      ]}.
 
 
-We depend on `stdlib` and `kernel`, like all OTP applications, and
-also on `crypto` for our random seeds in the server. Note how the
+We depend on ``stdlib`` and ``kernel``, like all OTP applications, and
+also on ``crypto`` for our random seeds in the server. Note how the
 answers are all in a tuple: that matches the tuples required in the
 server. In this case, the answers are all binaries, but the string
 format doesn't really matter — a list would work as well.
@@ -405,7 +407,7 @@ Making the Application Distributed
 So far, everything was like a perfectly normal OTP application. We
 have very few changes to add to our files to make it work for a
 distributed OTP application; in fact, only one function clause to add,
-back in the `m8ball.erl` module:
+back in the ``m8ball.erl`` module:
 
 
 ::
@@ -421,7 +423,7 @@ back in the `m8ball.erl` module:
         m8ball_sup:start_link().
 
 
-The `{takeover, OtherNode}` argument is passed to `start/2` when a
+The ``{takeover, OtherNode}`` argument is passed to ``start/2`` when a
 more important node takes over a backup node. In the case of the magic
 8-ball app, it doesn't really change anything and we can just start
 the supervisor all the same.
@@ -429,9 +431,9 @@ the supervisor all the same.
 Recompile your code and it's pretty much ready. But hold on, how do we
 define what nodes are the main ones and which ones are backups? The
 answer is in configuration files. Because we want a system with three
-nodes ( `a`, `b`, and `c`), we'll need three configuration files (I
-named them a.config, b.config, and c.config, then put them all in
-`config/` inside the application directory):
+nodes ( ``a``, ``b``, and ``c``), we'll need three configuration files
+(I named them a.config, b.config, and c.config, then put them all in
+``config/`` inside the application directory):
 
 
 ::
@@ -488,19 +490,19 @@ The general structure is always the same:
      ]}].
 
 
-The NodeList value can usually take a form like `[A, B, C, D]` for A
+The NodeList value can usually take a form like ``[A, B, C, D]`` for A
 to be the main one, B being the first backup, and C being the next
-one, and so on. Another syntax is possible, giving a list of like `[A,
-{B, C}, D]`, so A is still the main node, B and C are equal secondary
-backups, then the other ones, etc.
+one, and so on. Another syntax is possible, giving a list of like
+``[A, {B, C}, D]``, so A is still the main node, B and C are equal
+secondary backups, then the other ones, etc.
 
 
 .. image:: ../images/magic-8-ball.png
     :alt: A magic 8-ball showing 'I don't think so'
 
 
-The `sync_nodes_mandatory` tuple will work in conjunction with
-`sync_nodes_timeout`. When you start a distributed virtual machine
+The ``sync_nodes_mandatory`` tuple will work in conjunction with
+``sync_nodes_timeout``. When you start a distributed virtual machine
 with values set for this, it will stay locked up until all the
 mandatory nodes are also up and locked. Then they get synchronized and
 things start going. If it takes more than MaxTime to get all the nodes
@@ -509,9 +511,9 @@ up, then they will all crash before starting.
 There are way more options available, and I recommend looking into the
 kernel application documentation if you want to know more about them.
 
-We'll try things with the `m8ball` application now. If you're not sure
-30 seconds is enough to boot all three VMs, you can increase the
-`sync_nodes_timeout` as you wish. Then, start three VMs:
+We'll try things with the ``m8ball`` application now. If you're not
+sure 30 seconds is enough to boot all three VMs, you can increase the
+``sync_nodes_timeout`` as you wish. Then, start three VMs:
 
 
 ::
@@ -536,7 +538,7 @@ We'll try things with the `m8ball` application now. If you're not sure
 
 As you start the third VM, they should all unlock at once. Go into
 each of the three virtual machines, and turn by turn, start both
-`crypto` and `m8ball` with `application:start(AppName)`.
+``crypto`` and ``m8ball`` with ``application:start(AppName)``.
 
 You should then be able to call the magic 8-ball from any of the
 connected nodes:
@@ -560,8 +562,8 @@ connected nodes:
 
 
 How motivational. To see how things are, call
-`application:which_applications()` on all nodes. Only node `a` should
-be running it:
+``application:which_applications()`` on all nodes. Only node ``a``
+should be running it:
 
 
 ::
@@ -584,10 +586,10 @@ be running it:
      {kernel,"ERTS  CXC 138 10","2.15"}]
 
 
-The `c` node should show the same thing as the `b` node in that case.
-Now if you kill the `a` node (just ungracefully close the window that
-holds the Erlang shell), the application should obviously no longer be
-running there. Let's see where it is instead:
+The ``c`` node should show the same thing as the ``b`` node in that
+case. Now if you kill the ``a`` node (just ungracefully close the
+window that holds the Erlang shell), the application should obviously
+no longer be running there. Let's see where it is instead:
 
 
 ::
@@ -601,8 +603,8 @@ running there. Let's see where it is instead:
     <<"I don't like your tone">>
 
 
-That's expected, as `b` is higher in the priorities. After 5 seconds
-(we set the timeout to 5000 milliseconds), `b` should be showing the
+That's expected, as ``b`` is higher in the priorities. After 5 seconds
+(we set the timeout to 5000 milliseconds), ``b`` should be showing the
 application as running:
 
 
@@ -616,9 +618,9 @@ application as running:
      {kernel,"ERTS  CXC 138 10","2.15"}]
 
 
-It runs fine, still. Now kill `b` in the same barbaric manner that you
-used to get rid of `a`, and `c` should be running the application
-after 5 seconds:
+It runs fine, still. Now kill ``b`` in the same barbaric manner that
+you used to get rid of ``a``, and ``c`` should be running the
+application after 5 seconds:
 
 
 ::
@@ -631,11 +633,12 @@ after 5 seconds:
      {kernel,"ERTS  CXC 138 10","2.15"}]
 
 
-If you restart the node `a` with the same command we had before, it
-will hang. The config file specifies we need `b` back for `a` to work.
-If you can't expect nodes to all be up that way, you'll need to make
-maybe `b` or `c` optional, for example. So if we start both `a` and
-`b`, then the application should automatically come back, right?
+If you restart the node ``a`` with the same command we had before, it
+will hang. The config file specifies we need ``b`` back for ``a`` to
+work. If you can't expect nodes to all be up that way, you'll need to
+make maybe ``b`` or ``c`` optional, for example. So if we start both
+``a`` and ``b``, then the application should automatically come back,
+right?
 
 
 ::
@@ -651,7 +654,7 @@ maybe `b` or `c` optional, for example. So if we start both `a` and
 
 Aw, shucks. The thing is, for the mechanism to work, the application
 needs to be started *as part of the boot procedure of the node*. You
-could, for instance, start `a` that way for things to work:
+could, for instance, start ``a`` that way for things to work:
 
 
 ::
@@ -666,7 +669,7 @@ could, for instance, start `a` that way for things to work:
      {kernel,"ERTS  CXC 138 10","2.15"}]
 
 
-And from `c`'s side:
+And from ``c``'s side:
 
 
 ::
@@ -678,7 +681,7 @@ And from `c`'s side:
         type: temporary
 
 
-That's because the `-eval` option gets evaluated as part of the boot
+That's because the ``-eval`` option gets evaluated as part of the boot
 procedure of the VM. Obviously, a cleaner way to do it would be to use
 releases to set things up right, but the example would be pretty
 cumbersome if it had to combine everything we had seen before.

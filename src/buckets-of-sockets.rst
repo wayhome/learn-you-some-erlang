@@ -28,8 +28,8 @@ IO Lists
 I've mentioned earlier in this guide that for text, we could use
 either strings (lists of integers) or binaries (a binary data
 structure holding data). Sending things over the wire such as "Hello
-World" can be done as a string as `"Hello World"`, and as a binary as
-`<<"Hello World">>`. Similar notation, similar results.
+World" can be done as a string as ``"Hello World"``, and as a binary
+as ``<<"Hello World">>``. Similar notation, similar results.
 
 The difference lies in how you can assemble things. A string is a bit
 like a linked list of integers: for each character, you've got to
@@ -50,10 +50,10 @@ you prepend, however:
 
 In the case of prepending, as above, whatever is held into A or B or C
 never needs to be rewritten. The representation of C can be seen as
-either `[c,b,a]`, `[c|B]` or `[c,|[b|[a]]]`, among others. In the last
-case, you can see that the shape of A is the same at the end of the
-list as when it was declared. Similarly for B . Here's how it looks
-with appending:
+either ``[c,b,a]``, ``[c|B]`` or ``[c,|[b|[a]]]``, among others. In
+the last case, you can see that the shape of A is the same at the end
+of the list as when it was declared. Similarly for B . Here's how it
+looks with appending:
 
 
 ::
@@ -65,11 +65,11 @@ with appending:
 
 
 Do you see all that rewriting? When we create B , we have to rewrite A
-. When we write C , we have to rewrite B (including the `[a|...]` part
-it contains). If we were to add D in a similar manner, we would need
-to rewrite C . Over long strings, this becomes way too inefficient,
-and it creates a lot of garbage left to be cleaned up by the Erlang
-VM.
+. When we write C , we have to rewrite B (including the ``[a|...]``
+part it contains). If we were to add D in a similar manner, we would
+need to rewrite C . Over long strings, this becomes way too
+inefficient, and it creates a lot of garbage left to be cleaned up by
+the Erlang VM.
 
 With binaries, things are not exactly as bad:
 
@@ -97,10 +97,10 @@ hassle.
 In these cases, *IO lists* are our saviour. IO lists are a weird type
 of data structure. They are lists of either bytes (integers from 0 to
 255), binaries, or other IO lists. This means that functions that
-accept IO lists can accept items such as `[$H, $e, [$l, <<"lo">>, "
-"], [[["W","o"], <<"rl">>]] | [<<"d">>]]`. When this happens, the
+accept IO lists can accept items such as ``[$H, $e, [$l, <<"lo">>, "
+"], [[["W","o"], <<"rl">>]] | [<<"d">>]]``. When this happens, the
 Erlang VM will just flatten the list as it needs to do it to obtain
-the sequence of characters `Hello World`.
+the sequence of characters ``Hello World``.
 
 What are the functions that accept such IO Lists? Most of the
 functions that have to do with outputting data do. Any function from
@@ -110,7 +110,7 @@ module and all of the functions from the re (for *r*egular
 *e*xpressions) module will also handle them, to name a few.
 
 Try the previous Hello World IO List in the shell with
-`io:format("~s~n", [IoList])` just to see. It should work without a
+``io:format("~s~n", [IoList])`` just to see. It should work without a
 problem.
 
 
@@ -204,8 +204,8 @@ possibilities are a bit like this:
 
 
 The first operation, no matter what, is to open a socket. This is done
-by calling `gen_udp:open/1-2`. The simplest form is done by calling
-`{ok, Socket} = gen_udp:open(PortNumber)`.
+by calling ``gen_udp:open/1-2``. The simplest form is done by calling
+``{ok, Socket} = gen_udp:open(PortNumber)``.
 
 The port number will be any integer between 1 and 65535. From 0 to
 1023, the ports are known as *system ports*. Most of the time, your
@@ -218,17 +218,17 @@ They're frequently used for *ephemeral ports*. For our tests, we'll
 take port numbers that are somewhat safe, such as 8789 , unlikely to
 be taken.
 
-But before that, what about `gen_udp:open/2`? The second argument can
-be a list of options, specifying in what type we want to receive data
-( `list` or `binary`), how we want them received; as messages (
-`{active, true}`) or as results of a function call ( `{active,
-false}`). There are more options such as whether the socket should be
-set with IPv4 ( `inet4`) or IPv6 ( `inet6`), whether the UDP socket
-can be used to broadcast information ( `{broadcast, true | false}`),
-the size of buffers, etc. There are more options available, but we'll
-stick to the simple stuff for now because understanding the rest is
-rather up to you to learn. The topic can become complex fast and this
-guide is about Erlang, not TCP and UDP, unfortunately.
+But before that, what about ``gen_udp:open/2``? The second argument
+can be a list of options, specifying in what type we want to receive
+data ( ``list`` or ``binary``), how we want them received; as messages
+( ``{active, true}``) or as results of a function call ( ``{active,
+false}``). There are more options such as whether the socket should be
+set with IPv4 ( ``inet4``) or IPv6 ( ``inet6``), whether the UDP
+socket can be used to broadcast information ( ``{broadcast, true |
+false}``), the size of buffers, etc. There are more options available,
+but we'll stick to the simple stuff for now because understanding the
+rest is rather up to you to learn. The topic can become complex fast
+and this guide is about Erlang, not TCP and UDP, unfortunately.
 
 So let's open a socket. First start a given Erlang shell:
 
@@ -244,12 +244,12 @@ So let's open a socket. First start a given Erlang shell:
 
 In the first command, I open the socket, order it to return me binary
 data, and I want it to be active. You can see a new data structure
-being returned: `#Port<0.676>`. This is the representation of the
+being returned: ``#Port<0.676>``. This is the representation of the
 socket we have just opened. They can be used a lot like Pids: you can
 even set up links to them so that failure is propagated to the sockets
 in case of a crash! The second function call tries to open the same
-socket over again, which is impossible. That's why `{error,
-eaddrinuse}` is returned. Fortunately, the first Socket socket is
+socket over again, which is impossible. That's why ``{error,
+eaddrinuse}`` is returned. Fortunately, the first Socket socket is
 still open.
 
 In any case, we'll start a second Erlang shell. In that one we'll open
@@ -265,10 +265,10 @@ a second UDP socket, with a different port number:
     ok
 
 
-Ah, a new function! In the second call, `gen_udp:send/4` is used to
+Ah, a new function! In the second call, ``gen_udp:send/4`` is used to
 send messages (what a wonderfully descriptive name). The arguments
-are, in order: `gen_udp:send(OwnSocket, RemoteAddress, RemotePort,
-Message)`. The RemoteAddress can be either a string or an atom
+are, in order: ``gen_udp:send(OwnSocket, RemoteAddress, RemotePort,
+Message)``. The RemoteAddress can be either a string or an atom
 containing a domain name ("example.org"), a 4-tuple describing an IPv4
 address or a 8-tuple describing an IPv6 address. Then we specify the
 receiver's port number (in what mailbox are we going to drop our slip
@@ -288,7 +288,7 @@ flush the data:
 
 
 Fantastic. The process that opened the socket will receive messages of
-the form `{udp, Socket, FromIp, FromPort, Message}`. Using these
+the form ``{udp, Socket, FromIp, FromPort, Message}``. Using these
 fields, we'll be able to know where a message is from, what socket it
 went through, and what the contents were. So we've covered opening
 sockets, sending data, and receiving it in an active mode. What about
@@ -319,13 +319,13 @@ message back, try the following:
     
 
 
-And your shell should be stuck. The function here is `recv/2`. This is
-the function used to poll a passive socket for messages. The `0` here
-is the length of the message we want. The funny thing is that the
-length is completely ignored with `gen_udp`. `gen_tcp` has a similar
-function, and in that case, it does have an impact. Anyway, if we
-never send a message, `recv/2` is never going to return. Get back to
-the second shell and send a new message:
+And your shell should be stuck. The function here is ``recv/2``. This
+is the function used to poll a passive socket for messages. The ``0``
+here is the length of the message we want. The funny thing is that the
+length is completely ignored with ``gen_udp``. ``gen_tcp`` has a
+similar function, and in that case, it does have an impact. Anyway, if
+we never send a message, ``recv/2`` is never going to return. Get back
+to the second shell and send a new message:
 
 
 ::
@@ -335,9 +335,9 @@ the second shell and send a new message:
     ok
 
 
-Then the first shell should have printed `{ok,{{127,0,0,1},8790,<<"hey
-there!">>}}` as the return value. What if you don't want to wait
-forever? Just add a time out value:
+Then the first shell should have printed
+``{ok,{{127,0,0,1},8790,<<"hey there!">>}}`` as the return value. What
+if you don't want to wait forever? Just add a time out value:
 
 
 ::
@@ -377,7 +377,7 @@ serving, however, we have one new mode there: listening. That's
 because of how TCP works to set sessions up.
 
 First of all, we open a new shell and start something called a *listen
-socket* with `gen_tcp:listen(Port, Options)`:
+socket* with ``gen_tcp:listen(Port, Options)``:
 
 
 ::
@@ -391,10 +391,10 @@ The listen socket is just in charge of waiting for connection
 requests. You can see that I used similar options as I did with
 gen_udp. That's because most options are going to be similar for all
 IP sockets. The TCP ones do have a few more specific options,
-including a connection backlog ( `{backlog, N}`), keepalive sockets (
-`{keepalive, true | false}`), packet packaging ( `{packet, N}`, where
-N is the length of each packet's header to be stripped and parsed for
-you), etc.
+including a connection backlog ( ``{backlog, N}``), keepalive sockets
+( ``{keepalive, true | false}``), packet packaging ( ``{packet, N}``,
+where N is the length of each packet's header to be stripped and
+parsed for you), etc.
 
 Once the listen socket is open, any process (and more than one) can
 take the listen socket and fall into an 'accepting' state, locked up
@@ -438,9 +438,9 @@ And then the process is locked. Great! Let's open a second shell:
 This one still takes the same options as usual, and you can add a
 Timeout argument in the last position if you don't want to wait
 forever. If you look back to the first shell, it should have returned
-with `{ok, SocketNumber}`. From that point on, the accept socket and
+with ``{ok, SocketNumber}``. From that point on, the accept socket and
 the client socket can communicate on a one-on-one basis, similarly to
-`gen_udp`. Take the second shell and send messages to the first one:
+``gen_udp``. Take the second shell and send messages to the first one:
 
 
 ::
@@ -462,9 +462,9 @@ And from the first shell:
 
 
 Both sockets can send messages in the same way, and can then be closed
-with `gen_tcp:close(Socket)`. Note that closing an accept socket will
-close that socket alone, and closing a listen socket will close all of
-the related accept sockets.
+with ``gen_tcp:close(Socket)``. Note that closing an accept socket
+will close that socket alone, and closing a listen socket will close
+all of the related accept sockets.
 
 That's it for most of TCP sockets in Erlang! But is it really?
 
@@ -511,8 +511,8 @@ process to run the task. The tricky part here is giving away the
 ownership of the socket.
 
 Here's the trick. Both gen_tcp and gen_udp contain a function called
-`controlling_process(Socket, Pid)`. This function has to be called by
-the current socket owner. Then the process tells Erlang 'you know
+``controlling_process(Socket, Pid)``. This function has to be called
+by the current socket owner. Then the process tells Erlang 'you know
 what? Just let this Pid guy take over my socket. I give up'. From now
 on, the Pid in the function is the one that can read and receive
 messages from the socket. That's it.
@@ -530,19 +530,21 @@ flushed variables and went on. This is rather unpractical, especially
 when we desire to do the same while using TCP because we'd have to
 break an active session.
 
-Fortunately, there's a module named `inet` that takes care of handling
-all operations that can be common to both gen_tcp and gen_udp sockets.
-For our problem at hand, which was changing between active and passive
-modes, there's a function named `inet:setopts(Socket, Options)`. The
-option list can contain any terms used at the setup of a socket.
+Fortunately, there's a module named ``inet`` that takes care of
+handling all operations that can be common to both gen_tcp and gen_udp
+sockets. For our problem at hand, which was changing between active
+and passive modes, there's a function named ``inet:setopts(Socket,
+Options)``. The option list can contain any terms used at the setup of
+a socket.
 
-Note: be careful! There exists a module named `inet` and a module
-named `inets`. `inet` is the module we want here. `inets` is an OTP
-application that contains a bunch of pre-written services and servers
-(including FTP, Trivial FTP (TFTP), HTTP, etc.)
+Note: be careful! There exists a module named ``inet`` and a module
+named ``inets``. ``inet`` is the module we want here. ``inets`` is an
+OTP application that contains a bunch of pre-written services and
+servers (including FTP, Trivial FTP (TFTP), HTTP, etc.)
 
-An easy trick to differentiate them is that `inets` is about s ervices
-built on top of `inet`, or if you prefer, `inet` + s (ervices).
+An easy trick to differentiate them is that ``inets`` is about s
+ervices built on top of ``inet``, or if you prefer, ``inet`` + s
+(ervices).
 
 Start a shell to be a TCP server:
 
@@ -602,15 +604,15 @@ ours. How do we pick between active and passive modes?
 Well there are many points. In general, if you're waiting for a
 message right away, passive mode will be much faster. Erlang won't
 have to toy with your process' mailbox to handle things, you won't
-have to scan said mailbox, fetch messages, etc. Using `recv` will be
-more efficient. However, `recv` changes your process from something
+have to scan said mailbox, fetch messages, etc. Using ``recv`` will be
+more efficient. However, ``recv`` changes your process from something
 event-driven to active polling — if you've got to play middle-man
 between a socket and some other Erlang code, this might make things a
 bit complex.
 
 In that case, switching to active mode will be a good idea. If packets
 are sent as messages, you just have to wait in a receive (or a
-gen_server's `handle_info` function) and play with messages. The
+gen_server's ``handle_info`` function) and play with messages. The
 downside of this, apart from speed, has to do with rate limiting.
 
 The idea is that if all packets coming from the outside world are
@@ -624,7 +626,7 @@ So what if we need active mode for the semantics, but passive mode for
 the safety? We could try to quickly switch between passive and active
 with inet:setopts/2, but that would be rather risky for race
 conditions. Instead, there's a mode called *active once*, with the
-option `{active, once}`. Let's try it to see how it works.
+option ``{active, once}``. Let's try it to see how it works.
 
 Keep the shell with the server from earlier:
 
@@ -636,7 +638,7 @@ Keep the shell with the server from earlier:
     ok
 
 
-Now get to the client shell and run two more `send/2` calls:
+Now get to the client shell and run two more ``send/2`` calls:
 
 
 ::
@@ -666,9 +668,9 @@ And back to server shell:
     ok
 
 
-See? Until we ask for `{active, once}` a second time, the message
-`"two"` hasn't been converted to a message, which means the socket was
-back to passive mode. So the active once mode allows us to do that
+See? Until we ask for ``{active, once}`` a second time, the message
+``"two"`` hasn't been converted to a message, which means the socket
+was back to passive mode. So the active once mode allows us to do that
 back-and-forth switch between active and passive in a safe way. Nice
 semantics, plus the safety.
 
@@ -743,7 +745,7 @@ be helpful:
     :alt: A diagram showing the first process (P1) spawning a listen socket and a first acceptor process (P2). The first acceptor can accept request, handle messages, and then spawn a new acceptor process (P3) that does the same as P2
 
 
-So the `start_server` function opens a listen socket, spawns an
+So the ``start_server`` function opens a listen socket, spawns an
 acceptor and then just idles forever. The idling is necessary because
 the listen socket is bound to the process that opened it, so that one
 needs to remain alive as long as we want to handle connections. Each
@@ -751,15 +753,15 @@ acceptor process waits for a connection to accept. Once one connection
 comes in, the acceptor process starts a new similar process and shares
 the listen socket to it. Then it can move on and do some processing
 while the new guy's working. Each handler will repeat all messages it
-gets until one of them starts with `"quit"` — then the connection is
+gets until one of them starts with ``"quit"`` — then the connection is
 closed.
 
-Note: the pattern `<<"quit", _/binary>>` means that we first want to
-match on a binary string containing the characters `q`, `u`, `i`, and
-`t`, plus some binary data we don't care about ( `_`).
+Note: the pattern ``<<"quit", _/binary>>`` means that we first want to
+match on a binary string containing the characters ``q``, ``u``,
+``i``, and ``t``, plus some binary data we don't care about ( ``_``).
 
 Start the server in an Erlang shell by doing
-`naive_tcp:start_server(8091).` Then open up a telnet client
+``naive_tcp:start_server(8091).`` Then open up a telnet client
 (remember, telnet clients are technically not for raw TCP, but act as
 good clients to test servers without having to write one) to localhost
 and you can see the following taking place:
@@ -829,19 +831,19 @@ accepting things.
 
 How do we write a supervisor that can share things across all workers?
 There is no way to do it with regular supervision: all children are
-entirely independent, no matter if you use `one_for_one`,
-`one_for_all` or `rest_for_one` supervision. A natural reflex could be
-to turn to some global state: a registered process that just holds the
-listen socket and hands it over to the handlers. You must fight this
-reflex and be clever. Use the force (and the ability to read back into
-the `supervisors chapter`_). You've got 2 minutes to think of a
-solution (the timing of the two minutes is based on the honor system.
-Time it yourself.)
+entirely independent, no matter if you use ``one_for_one``,
+``one_for_all`` or ``rest_for_one`` supervision. A natural reflex
+could be to turn to some global state: a registered process that just
+holds the listen socket and hands it over to the handlers. You must
+fight this reflex and be clever. Use the force (and the ability to
+read back into the `supervisors chapter`_). You've got 2 minutes to
+think of a solution (the timing of the two minutes is based on the
+honor system. Time it yourself.)
 
-The secret is in using a `simple_one_for_one` supervisor. Because the
-`simple_one_for_one` supervisors share the child specification with
-all of its children, all we need to do is shove the listen socket in
-there for all the children to access it!
+The secret is in using a ``simple_one_for_one`` supervisor. Because
+the ``simple_one_for_one`` supervisors share the child specification
+with all of its children, all we need to do is shove the listen socket
+in there for all the children to access it!
 
 So here's the supervisor in all its glory:
 
@@ -883,24 +885,24 @@ So here's the supervisor in all its glory:
         ok.
 
 
-So what is going on in here. The standard `start_link/0` and `init/1`
-functions are there. You can see sockserv getting the
-`simple_one_for_one` restart strategy, and the child specification
+So what is going on in here. The standard ``start_link/0`` and
+``init/1`` functions are there. You can see sockserv getting the
+``simple_one_for_one`` restart strategy, and the child specification
 having ListenSocket passed around. Every child started with
-`start_socket/0` will have it as an argument by default. Magic!
+``start_socket/0`` will have it as an argument by default. Magic!
 
 Just having that won't be enough. We want the application to be able
 to serve queries as soon as possible. That's why I added that call to
-`spawn_link(fun empty_listeners/0)`. The `empty_listeners/0` function
-will start 20 handlers to be locked and waiting for incoming
-connections. I've put it inside a `spawn_link/1` call for a simple
-reason: the supervisor process is in its `init/1` phase and cannot
+``spawn_link(fun empty_listeners/0)``. The ``empty_listeners/0``
+function will start 20 handlers to be locked and waiting for incoming
+connections. I've put it inside a ``spawn_link/1`` call for a simple
+reason: the supervisor process is in its ``init/1`` phase and cannot
 answer any messages. If we were to call ourselves from within the init
 function, the process would deadlock and never finish running. An
 external process is needed just for this reason.
 
-Note: In the snippet above, you'll notice I pass the option `{packet,
-line}` to gen_tcp. This option will make it so all received packets
+Note: In the snippet above, you'll notice I pass the option ``{packet,
+line}`` to gen_tcp. This option will make it so all received packets
 will be broken into separate lines and queued up based on that (the
 line ends will still be part of the received strings). This will help
 make sure things work better with telnet clients in our case. Be
@@ -926,16 +928,16 @@ went this way:
     #. the user accepts, go to point 6
 
 #. The game sends event to the player, until:
-#. The user sends `quit` to the server or the socket is forced close
+#. The user sends ``quit`` to the server or the socket is forced close
 
 
 This means we will have two kinds of input to our server processes:
 input coming from the Process Quest application and input coming from
 the user. Data coming from the user will be doing so from a socket and
-so will be handled in our gen_server's `handle_info/2` function. Data
-coming from Process Quest can be sent in a way we control, and so a
-cast handled by `handle_cast` will make sense there. First, we must
-start the server:
+so will be handled in our gen_server's ``handle_info/2`` function.
+Data coming from Process Quest can be sent in a way we control, and so
+a cast handled by ``handle_cast`` will make sense there. First, we
+must start the server:
 
 
 ::
@@ -955,7 +957,7 @@ start the server:
 
 First of all is a pretty standard gen_server callback module. The only
 special thing here is the state containing the character's name, the
-socket, and a field called `next`. The `next` part is a bit of a
+socket, and a field called ``next``. The ``next`` part is a bit of a
 catch-all field to store temporary information related to the state of
 the server. A gen_fsm could have possibly been used here without too
 much trouble.
@@ -991,35 +993,35 @@ that make it possible to set the baseline delay between actions (800
 milliseconds) and the amount of experience required to reach the
 second level (50, doubled after each level).
 
-You'll notice that the `start_link/1` function takes a socket. That's
-the listen socket passed in from `sockserv_sup`.
+You'll notice that the ``start_link/1`` function takes a socket.
+That's the listen socket passed in from ``sockserv_sup``.
 
 The first bit about the random seed is about making sure a process is
 properly seeded to later generate character statistics. Otherwise,
 some default value will be used across many processes and we don't
-want that. The reason why we're initializing in the `init/1` function
-rather than in whatever library that uses random numbers is because
-seeds are stored at a process-level (damn it! mutable state!) and we
-wouldn't want to set a new seed on each library call.
+want that. The reason why we're initializing in the ``init/1``
+function rather than in whatever library that uses random numbers is
+because seeds are stored at a process-level (damn it! mutable state!)
+and we wouldn't want to set a new seed on each library call.
 
 In any case, the real important bit there is that we're casting a
-message to ourselves. The reason for this is that `gen_tcp:accept/1-2`
-is a blocking operation, combined with the fact that all `init`
-functions are synchronous. If we wait 30 seconds to accept a
-connection, the supervisor starting the process will also be locked 30
-seconds. So yeah, we cast a message to ourselves, then add the listen
-socket to the state's `socket` field.
+message to ourselves. The reason for this is that
+``gen_tcp:accept/1-2`` is a blocking operation, combined with the fact
+that all ``init`` functions are synchronous. If we wait 30 seconds to
+accept a connection, the supervisor starting the process will also be
+locked 30 seconds. So yeah, we cast a message to ourselves, then add
+the listen socket to the state's ``socket`` field.
 
 Don't Drink Too Much Kool-Aid:
 If you read code from other people, you will often see people calling
-`random:seed/1` with the result of `now()`. `now()` is a nice function
-because it returns monotonic time (always increasing, never twice the
-same). However, it's a bad seed value for the random algorithm used in
-Erlang. For this reason, it's better to use `crypto:rand_bytes(12)` to
-generate 12 crypto-safe random bytes (use
-`crypto:strong_rand_bytes(12)` if you're on R14B03+). By doing
-`<<A:32, B:32, C:32>>`, we're casting the 12 bytes to 3 integers to be
-passed in.
+``random:seed/1`` with the result of ``now()``. ``now()`` is a nice
+function because it returns monotonic time (always increasing, never
+twice the same). However, it's a bad seed value for the random
+algorithm used in Erlang. For this reason, it's better to use
+``crypto:rand_bytes(12)`` to generate 12 crypto-safe random bytes (use
+``crypto:strong_rand_bytes(12)`` if you're on R14B03+). By doing
+``<<A:32, B:32, C:32>>``, we're casting the 12 bytes to 3 integers to
+be passed in.
 
 We need to accept that connection. Enough fooling around:
 
@@ -1043,7 +1045,7 @@ the next message we receive through a socket is about a name with the
 'next' field.
 
 But before moving on, we send a question to the client through the
-`send` function, defined as follows:
+``send`` function, defined as follows:
 
 
 ::
@@ -1074,11 +1076,11 @@ coming from the socket:
 
 
 We have no idea what's going to be in the Str string, but that's
-alright because the `next` field of the state lets us know whatever we
-receive is a name. Because I was expecting users to use telnet for the
-demo application, all bits of text we're going to receive will contain
-line ends. The `line/1` function, defined as follows, strips them
-away:
+alright because the ``next`` field of the state lets us know whatever
+we receive is a name. Because I was expecting users to use telnet for
+the demo application, all bits of text we're going to receive will
+contain line ends. The ``line/1`` function, defined as follows, strips
+them away:
 
 
 ::
@@ -1091,16 +1093,16 @@ away:
 
 
 Once we've received that name, we store it and then cast a message to
-ourselves ( `roll_stats`) to generate stats for the player, the next
+ourselves ( ``roll_stats``) to generate stats for the player, the next
 step in line.
 
 Note: if you look in the file, you'll see that instead of matching on
-entire messages, I've used a shorter `?SOCK(Var)` macro. The macro is
-defined as `-define(SOCK(Msg), {tcp, _Port, Msg}).` and is just a
+entire messages, I've used a shorter ``?SOCK(Var)`` macro. The macro
+is defined as ``-define(SOCK(Msg), {tcp, _Port, Msg}).`` and is just a
 quick way for someone as lazy as I am to match on strings with
 slightly less typing.
 
-The stats rolling comes back into a `handle_cast` clause:
+The stats rolling comes back into a ``handle_cast`` clause:
 
 
 ::
@@ -1127,14 +1129,14 @@ The stats rolling comes back into a `handle_cast` clause:
 
 
 The pq_stats module contains functions to roll stats, and the whole
-clause is only being used to output the stats there. The `~B` format
-parameters means we want an integer to be printed out. The `next` part
-of the state is a bit overloaded here. Because we ask the user whether
-they agree or not, we will have to wait for them to tell us so, and
-either drop the stats and generate new ones, or pass them to the
-Process Quest character we'll no doubt start very soon.
+clause is only being used to output the stats there. The ``~B`` format
+parameters means we want an integer to be printed out. The ``next``
+part of the state is a bit overloaded here. Because we ask the user
+whether they agree or not, we will have to wait for them to tell us
+so, and either drop the stats and generate new ones, or pass them to
+the Process Quest character we'll no doubt start very soon.
 
-Let's listen to the user input, this time in the `handle_info`
+Let's listen to the user input, this time in the ``handle_info``
 function:
 
 
@@ -1154,11 +1156,12 @@ function:
 
 
 It would have been tempting to start the character in this direct
-function clause, but I decided against it: `handle_info` is to handle
-user input, `handle_cast` for Process Quest things. Separation of
-concerns! If the user denies the stats, we just call `roll_stats`
-again. Nothing new. When the user accepts, then we can start the
-Process Quest character and start waiting for events from there:
+function clause, but I decided against it: ``handle_info`` is to
+handle user input, ``handle_cast`` for Process Quest things.
+Separation of concerns! If the user denies the stats, we just call
+``roll_stats`` again. Nothing new. When the user accepts, then we can
+start the Process Quest character and start waiting for events from
+there:
 
 
 ::
@@ -1174,7 +1177,7 @@ Process Quest character and start waiting for events from there:
 
 Those are regular calls I defined for the game. You start a player,
 and subscribe to the events with the sockserv_pq_events event handler.
-The next state is `playing`, which means that all messages received
+The next state is ``playing``, which means that all messages received
 are more than likely to be from the game:
 
 
@@ -1193,14 +1196,14 @@ are more than likely to be from the game:
 
 
 I won't get into the details of how this works too much. Just know
-that `sockserv_trans:to_str(Event)` convert some game event to lists
-of IO lists or `{wait, Time}` tuples that represent delays to wait
+that ``sockserv_trans:to_str(Event)`` convert some game event to lists
+of IO lists or ``{wait, Time}`` tuples that represent delays to wait
 between parts of events (we print executing a ... messages a bit
 before showing what the item dropped by the enemy is).
 
 If you recall the list of steps to follow, we've covered them all
 except one. Quitting when a user tells us they want to. Put the
-following clause as the top one in `handle_info`:
+following clause as the top one in ``handle_info``:
 
 
 ::
@@ -1231,7 +1234,7 @@ client:
 
 I also added an extra clause to handle unknown messages. If the user
 types in something we don't expect, we don't want to crash. Only the
-`terminate/2` and `code_change/3` functions are left to do:
+``terminate/2`` and ``code_change/3`` functions are left to do:
 
 
 ::

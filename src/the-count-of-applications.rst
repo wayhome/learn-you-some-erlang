@@ -18,15 +18,15 @@ Our ppool app has become a valid OTP application and we are now able
 to understand what this means. It would be nice to build something
 that actually uses our process pool to do anything useful, though. To
 push our knowledge of applications a bit further, we will write a
-second application. This one will depend on `ppool`, but will be able
-to benefit from some more automation than our 'nagger'.
+second application. This one will depend on ``ppool``, but will be
+able to benefit from some more automation than our 'nagger'.
 
-This application, that I will name `erlcount`, will have a somewhat
+This application, that I will name ``erlcount``, will have a somewhat
 simple objective: recursively look into some directory, find all
-Erlang files (ending in `.erl`) and then run a regular expression over
-it to count all instances of a given string within the modules. The
-results are then accumulated to give the final result, which will be
-output to the screen.
+Erlang files (ending in ``.erl``) and then run a regular expression
+over it to count all instances of a given string within the modules.
+The results are then accumulated to give the final result, which will
+be output to the screen.
 
 This specific application will be relatively simple, relying heavily
 on our process pool instead. It will have a structure as follows:
@@ -36,17 +36,18 @@ on our process pool instead. It will have a structure as follows:
     :alt: 'erlcount_sup' supervises 'erlcount_dispatch', and 'ppool' stands in a cloudy shape, supervising 'erlcount_counter'
 
 
-In the diagram above, `ppool` represents the whole application, but
-only means to show that `erlcount_counter` will be the worker for the
-process pool. This one will open files, run the regular expression and
-return the count. The process/module `erlcount_sup` will be our
-supervisor, and `erlcount_dispatch` will be a single server in charge
-of browsing the directories, asking `ppool` to schedule workers and
-compiling the results. We'll also add an `erlcount_lib` module, taking
-charge of hosting all the functions to read directories, compile data
-and whatnot, leaving the other modules with the responsibility of
-coordinating these calls. Last will be an `erlcount` module with the
-single purpose of being the application callback module.
+In the diagram above, ``ppool`` represents the whole application, but
+only means to show that ``erlcount_counter`` will be the worker for
+the process pool. This one will open files, run the regular expression
+and return the count. The process/module ``erlcount_sup`` will be our
+supervisor, and ``erlcount_dispatch`` will be a single server in
+charge of browsing the directories, asking ``ppool`` to schedule
+workers and compiling the results. We'll also add an ``erlcount_lib``
+module, taking charge of hosting all the functions to read
+directories, compile data and whatnot, leaving the other modules with
+the responsibility of coordinating these calls. Last will be an
+``erlcount`` module with the single purpose of being the application
+callback module.
 
 The first step, as for our last app, is to create the directory
 structure needed. You can also add a few file stubs if you feel like
@@ -74,7 +75,7 @@ Nothing too different from what we had before, you can even copy the
 Emakefile we had before.
 
 We can probably start writing most parts of the application pretty
-quickly. The `.app` file, the counter, library and supervisor should
+quickly. The ``.app`` file, the counter, library and supervisor should
 be relatively simple. On the other hand, the dispatch module will have
 to accomplish some complex tasks if we want things to be worth it.
 Let's start with the app file:
@@ -97,58 +98,60 @@ Let's start with the app file:
      ]}.
 
 
-This app file is a bit more complex than the `ppool` one. We can still
-recognize some of the fields as being the same: this app will also be
-in version 1.0.0, the modules listed are all the same as above. The
-next part is something we didn't have: an application dependency. As
-explained earlier, the `applications` tuple gives a list of all the
-applications that should be started before `erlcount`. If you try to
-start it without that, you'll get an error message. We then have to
-count the registered processes with `{registered, [erlcount]}`.
-Technically none of our modules started as part of the `erlcount` app
-will need a name. Everything we do can be anonymous. However, because
-we know `ppool` registers the `ppool_serv` to the name we give it and
-because we know we will use a process pool, then we're going to call
-it `erlcount` and note it there. If all applications that use `ppool`
-do the same, we should be able to detect conflicts in the future. The
-`mod` tuple is similar as before; we define the application behaviour
-callback module there.
+This app file is a bit more complex than the ``ppool`` one. We can
+still recognize some of the fields as being the same: this app will
+also be in version 1.0.0, the modules listed are all the same as
+above. The next part is something we didn't have: an application
+dependency. As explained earlier, the ``applications`` tuple gives a
+list of all the applications that should be started before
+``erlcount``. If you try to start it without that, you'll get an error
+message. We then have to count the registered processes with
+``{registered, [erlcount]}``. Technically none of our modules started
+as part of the ``erlcount`` app will need a name. Everything we do can
+be anonymous. However, because we know ``ppool`` registers the
+``ppool_serv`` to the name we give it and because we know we will use
+a process pool, then we're going to call it ``erlcount`` and note it
+there. If all applications that use ``ppool`` do the same, we should
+be able to detect conflicts in the future. The ``mod`` tuple is
+similar as before; we define the application behaviour callback module
+there.
 
 
 .. image:: ../images/snowman.png
     :alt: A snowman made of regular expression characters
 
 
-The last new thing in here is the `env` tuple. As seen earlier, this
+The last new thing in here is the ``env`` tuple. As seen earlier, this
 entire tuple gives us a key/value store for application-specific
 configuration variables. These variables will be accessible from all
 the processes running within the application, stored in memory for
 your convenience. They can basically be used as substitute
 configuration file for your app.
 
-In this case, we define three variables: `directory`, which tells the
-app where to look for `.erl` files (assuming we run the app from the
-erlcount-1.0 directory, this means the `learn-you-some-erlang`), then
-we have `max_files` telling us how many file descriptors should be
-opened at once. We don't want to open 10,000 files at once if we end
-up have that many, so this variable will match the maximum number of
-workers in `ppool`. Then the most complex variable is `regex`. This
-one will contain a list of all regular expressions we want to run over
-each of the files to count the results.
+In this case, we define three variables: ``directory``, which tells
+the app where to look for ``.erl`` files (assuming we run the app from
+the erlcount-1.0 directory, this means the ``learn-you-some-erlang``),
+then we have ``max_files`` telling us how many file descriptors should
+be opened at once. We don't want to open 10,000 files at once if we
+end up have that many, so this variable will match the maximum number
+of workers in ``ppool``. Then the most complex variable is ``regex``.
+This one will contain a list of all regular expressions we want to run
+over each of the files to count the results.
 
 I won't get into the long explaining of the syntax of Perl Compatible
-Regular Expressions (if you're interested, the `re` module contains
+Regular Expressions (if you're interested, the ``re`` module contains
 some documentation), but will still explain what we're doing here. In
 this case, the first regular expression says "look for a string that
-contains 'if' followed by any single white space character ( `\s`,
+contains 'if' followed by any single white space character ( ``\s``,
 with a second backslash for escaping purposes), and finishes with
-`->`. Moreover there can be anything in between the 'if' and the `->`
-( `.+`)". The second regular expression says "look for a string that
-contains 'case' followed by any single whitespace character ( `\s`),
-and finishes with 'of' preceded by single whitespace character.
-Between the 'case ' and the ' of', there can be anything ( `.+`)". To
-make things simple, we'll try to count how many times we use `case ...
-of` vs. how many times we use `if ... end` in our libraries.
+``->``. Moreover there can be anything in between the 'if' and the
+``->`` ( ``.+``)". The second regular expression says "look for a
+string that contains 'case' followed by any single whitespace
+character ( ``\s``), and finishes with 'of' preceded by single
+whitespace character. Between the 'case ' and the ' of', there can be
+anything ( ``.+``)". To make things simple, we'll try to count how
+many times we use ``case ... of`` vs. how many times we use ``if ...
+end`` in our libraries.
 
 Don't Drink Too Much Kool-Aid:
 Using regular expressions is not an optimal choice to analyse Erlang
@@ -206,7 +209,7 @@ And now the supervisor itself:
 
 
 This is a standard supervisor, which will be in charge of only
-`erlcount_dispatch`, as it was shown on the previous little schema.
+``erlcount_dispatch``, as it was shown on the previous little schema.
 The MaxRestart , MaxTime and the 60 seconds value for shutdown were
 chosen pretty randomly, but in real cases you'd want to study the
 needs you have. Because this is a demo application, it didn't seem
@@ -218,7 +221,7 @@ dispatcher. The dispatcher will have a few complex requirements to
 fulfill for it to be useful:
 
 
-+ When we go through directories to find files ending in `.erl`, we
++ When we go through directories to find files ending in ``.erl``, we
   should only go through the whole list of directories once, even when
   we apply multiple regular expressions;
 + We should be able to start scheduling files for result counting as
@@ -226,9 +229,11 @@ fulfill for it to be useful:
   need to wait for a complete list to do so.
 + We need to hold a counter per regular expression so we can compare
   the results in the end
-+ It is possible we start getting results from the `erlcount_counter`
-  workers before we're done looking for `.erl` files
-+ It is possible that many `erlcount_counter`s will be running at once
++ It is possible we start getting results from the
+  ``erlcount_counter`` workers before we're done looking for ``.erl``
+  files
++ It is possible that many ``erlcount_counter``s will be running at
+  once
 + It is likely we will keep getting result after we finished looking
   files up in the directories (especially if we have many files or
   complex regular expressions).
@@ -267,7 +272,7 @@ two possible return values:
 
 
 Whenever we receive the first one, we can schedule FileName into
-`ppool` and then call NextFun to keep looking for more files. We can
+``ppool`` and then call NextFun to keep looking for more files. We can
 implement this function into erlcount_lib:
 
 
@@ -285,9 +290,9 @@ implement this function into erlcount_lib:
 
 Ah, something new there! What a surprise, my heart is racing and my
 blood is pumping. The include file up there is something given to us
-by the `file` module. It contains a record ( `#file_info{}`) with a
-bunch of fields explaining details about the file, including its type,
-size, permissions, and so on.
+by the ``file`` module. It contains a record ( ``#file_info{}``) with
+a bunch of fields explaining details about the file, including its
+type, size, permissions, and so on.
 
 Our design here includes a queue. Why is that? Well it is entirely
 possible that a directory contains more than one file. So when we hit
@@ -320,10 +325,10 @@ call:
 
 This function tells us few things: we only want to deal with regular
 files and directories. In each case we will write ourselves a function
-to handle these specific occurrences ( `handle_directory/2` and
-`handle_regular_file/2`). For other files, we will dequeue anything we
-had prepared before with the help of `dequeue_and_run/2` (we'll see
-what this one is about soon). For now, we first start dealing with
+to handle these specific occurrences ( ``handle_directory/2`` and
+``handle_regular_file/2``). For other files, we will dequeue anything
+we had prepared before with the help of ``dequeue_and_run/2`` (we'll
+see what this one is about soon). For now, we first start dealing with
 directories:
 
 
@@ -340,12 +345,13 @@ directories:
         end.
 
 
-So if there are no files, we keep searching with `dequeue_and_run/1`,
-and if there are many, we enqueue them before doing so. Let me explain
-this. The function `dequeue_and_run` will take the queue of file names
-and get one element out of it. The file name it fetches out from there
-will be used by calling `find_erl(Name, Queue)` and we just keep going
-as if we were just getting started:
+So if there are no files, we keep searching with
+``dequeue_and_run/1``, and if there are many, we enqueue them before
+doing so. Let me explain this. The function ``dequeue_and_run`` will
+take the queue of file names and get one element out of it. The file
+name it fetches out from there will be used by calling
+``find_erl(Name, Queue)`` and we just keep going as if we were just
+getting started:
 
 
 ::
@@ -359,11 +365,11 @@ as if we were just getting started:
         end.
 
 
-Note that if the queue is empty ( `{empty, _}`), the function
-considers itself `done` (a keyword chosen for our CPS function),
+Note that if the queue is empty ( ``{empty, _}``), the function
+considers itself ``done`` (a keyword chosen for our CPS function),
 otherwise we keep going over again.
 
-The other function we had to consider was `enqueue_many/3`. This one
+The other function we had to consider was ``enqueue_many/3``. This one
 is designed to enqueue all the files found in a given directory and
 works as follows:
 
@@ -377,16 +383,17 @@ works as follows:
         lists:foldl(F, Queue, Files).
 
 
-Basically, we use the function `filename:join/2` to merge the
+Basically, we use the function ``filename:join/2`` to merge the
 directory's path to each file name (so that we get a complete path).
 We then add this new full path to a file to the queue. We use a fold
 to repeat the same procedure with all the files in a given directory.
-The new queue we get out of it is then used to run `find_erl/2` again,
-but this time with all the new files we found added to the to-do list.
+The new queue we get out of it is then used to run ``find_erl/2``
+again, but this time with all the new files we found added to the to-
+do list.
 
 Whoa, we digressed a bit. Where were we? Oh yes, we were handling
 directories and now we're done with them. We then need to check for
-regular files and whether they end in `.erl` or not.
+regular files and whether they end in ``.erl`` or not.
 
 
 ::
@@ -403,14 +410,14 @@ regular files and whether they end in `.erl` or not.
 
 
 You can see that if the name matches (according to
-`filename:extension/1`), we return our continuation. The continuation
-gives the Name to the caller, and then wraps the operation
-`dequeue_and_run/1` with the queue of files left to visit into a fun.
-That way, the user can call that fun and keep going as if we were
-still in the recursive call, while still getting results in the mean
-time. In the case where the file name doesn't end in `.erl`, then the
-user has no interest in us returning yet and we keep going by
-dequeuing more files. That's it.
+``filename:extension/1``), we return our continuation. The
+continuation gives the Name to the caller, and then wraps the
+operation ``dequeue_and_run/1`` with the queue of files left to visit
+into a fun. That way, the user can call that fun and keep going as if
+we were still in the recursive call, while still getting results in
+the mean time. In the case where the file name doesn't end in
+``.erl``, then the user has no interest in us returning yet and we
+keep going by dequeuing more files. That's it.
 
 Hooray, the CPS thing is done. We can then focus on the other issue.
 How are we going to design the dispatcher so that it can both dispatch
@@ -418,7 +425,7 @@ and receive at once? My suggestion, which you will no doubt accept
 because I'm the one writing the text, is to use a finite state
 machine. It will have two states. The first one will be the
 'dispatching' state. It's the one used whenever we're waiting for our
-`find_erl` CPS function to hit the done entry. While we're in there,
+``find_erl`` CPS function to hit the done entry. While we're in there,
 we will never think about us being done with the counting. That will
 only happen in the second and final state, 'listening', but we will
 still receive notices from ppool all the time:
@@ -457,14 +464,14 @@ We'll slowly start building our gen_fsm:
 
 
 Our API will thus have two functions: one for the supervisor (
-`start_link/0`) and one for the ppool callers ( `complete/4`, we'll
-see the arguments when we get there). The other functions are the
-standard gen_fsm callbacks, including our `listening/2` and
-`dispatching/2` asynchronous state handlers. I also defined a ?POOL
+``start_link/0``) and one for the ppool callers ( ``complete/4``,
+we'll see the arguments when we get there). The other functions are
+the standard gen_fsm callbacks, including our ``listening/2`` and
+``dispatching/2`` asynchronous state handlers. I also defined a ?POOL
 macro, used to give our ppool server the name 'erlcount'.
 
 What should the gen_fsm's data look like, though? Because we're going
-asynchronous and we are going to always call `ppool:run_async/2`
+asynchronous and we are going to always call ``ppool:run_async/2``
 instead of anything else, we will have no real way of knowing if we're
 ever done scheduling files or not. Basically we could have a timeline
 like this:
@@ -491,10 +498,10 @@ our state data might look like this:
     -record(data, {regex=[], refs=[]}).
 
 
-The first list will be tuples of the form `{RegularExpression,
-NumberOfOccurrences}`, while the second will be a list of some kind of
-references to the messages. Anything will do, as long as it's unique.
-We can then add the two following API functions:
+The first list will be tuples of the form ``{RegularExpression,
+NumberOfOccurrences}``, while the second will be a list of some kind
+of references to the messages. Anything will do, as long as it's
+unique. We can then add the two following API functions:
 
 
 ::
@@ -508,7 +515,7 @@ We can then add the two following API functions:
         gen_fsm:send_all_state_event(Pid, {complete, Regex, Ref, Count}).
 
 
-And here is our secret `complete/4` function. Unsurprisingly, the
+And here is our secret ``complete/4`` function. Unsurprisingly, the
 workers will only have to send back 3 pieces of data: what regular
 expression they were running, what their associated score was, and
 then the reference mentioned above. Awesome, we can get into the real
@@ -535,14 +542,14 @@ interesting stuff!
 
 The init function first loads all the info we need to run from the
 application file. Once that's done, we plan on starting the process
-pool with `erlcount_counter` as a callback module. The last step
+pool with ``erlcount_counter`` as a callback module. The last step
 before actually going is to make sure all regular expressions are
 valid. The reason for this is simple. If we do not check it right now,
 then we will have to add error handling call somewhere else instead.
-This is likely going to be in the `erlcount_counter` worker. Now if it
-happens there, we now have to define what do we do when the workers
+This is likely going to be in the ``erlcount_counter`` worker. Now if
+it happens there, we now have to define what do we do when the workers
 start crashing because of that and whatnot. It's just simpler to
-handle when starting the app. Here's the `valid_regex/1` function:
+handle when starting the app. Here's the ``valid_regex/1`` function:
 
 
 ::
@@ -557,16 +564,16 @@ handle when starting the app. Here's the `valid_regex/1` function:
 
 
 We only try to run the regular expression on an empty string. This
-will take no time and let the `re` module try and run things. So the
-regexes are valid and we start the app by sending ourselves `{start,
-Directory}` and with a state defined by `[{R,0} || R <- Re]`. This
-will basically change a list of the form `[a,b,c]` to the form
-`[{a,0},{b,0},{c,0}]`, the idea being to add a counter to each of the
-regular expressions.
+will take no time and let the ``re`` module try and run things. So the
+regexes are valid and we start the app by sending ourselves ``{start,
+Directory}`` and with a state defined by ``[{R,0} || R <- Re]``. This
+will basically change a list of the form ``[a,b,c]`` to the form
+``[{a,0},{b,0},{c,0}]``, the idea being to add a counter to each of
+the regular expressions.
 
-The first message we have to handle is `{start, Dir}` in
-`handle_info/2`. Remember, because Erlang's behaviours are pretty much
-all based on messages, we have to do the ugly step of sending
+The first message we have to handle is ``{start, Dir}`` in
+``handle_info/2``. Remember, because Erlang's behaviours are pretty
+much all based on messages, we have to do the ugly step of sending
 ourselves messages if we want to trigger a function call and do things
 our way. Annoying, but manageable:
 
@@ -579,16 +586,16 @@ our way. Annoying, but manageable:
         {next_state, State, Data}.
 
 
-We send ourselves the result of `erlcount_lib:find_erl(Dir)`. It will
-be received in the `dispatching`, given that's the value of State , as
-it was set by the `init` function of the FSM. This snippet solves our
-problem, but also illustrates the general pattern we'll have during
-the whole FSM. Because our `find_erl/1` function is written in a
-Continuation-Passing Style, we can just send ourselves an asynchronous
-event and deal with it in each of the right callback states. It is
-likely that the first result of our continuation will be `{continue,
-File, Fun}`. We will also be in the 'dispatching' state, because
-that's what we put as the initial state in the init function:
+We send ourselves the result of ``erlcount_lib:find_erl(Dir)``. It
+will be received in the ``dispatching``, given that's the value of
+State , as it was set by the ``init`` function of the FSM. This
+snippet solves our problem, but also illustrates the general pattern
+we'll have during the whole FSM. Because our ``find_erl/1`` function
+is written in a Continuation-Passing Style, we can just send ourselves
+an asynchronous event and deal with it in each of the right callback
+states. It is likely that the first result of our continuation will be
+``{continue, File, Fun}``. We will also be in the 'dispatching' state,
+because that's what we put as the initial state in the init function:
 
 
 ::
@@ -615,9 +622,9 @@ message with the new references as our state.
 
 What's the next kind of message we can get? We have two choices here.
 Either none of the workers have given us our results back (even though
-they have not been implemented yet) or we get the `done` message
+they have not been implemented yet) or we get the ``done`` message
 because all files have been looked up. Let's go the second type to
-finish implementing the `dispatching/2` function:
+finish implementing the ``dispatching/2`` function:
 
 
 ::
@@ -632,8 +639,8 @@ finish implementing the `dispatching/2` function:
 
 The comment is pretty explicit as to what is going on, but let me
 explain anyway. When we schedule jobs, we can receive results while in
-`dispatching/2` or while in `listening/2`. This can take the following
-form:
+``dispatching/2`` or while in ``listening/2``. This can take the
+following form:
 
 
 .. image:: ../images/erlcount-race1.png
@@ -652,9 +659,9 @@ as probable:
 
 Ouch. Our application would then be hanging forever, waiting for
 messages. This is the reason why we need to manually call
-`listening/2`: we will force it to do some kind of result detection to
-make sure everything has been received, just in case we already have
-all the results. Here's what this looks like:
+``listening/2``: we will force it to do some kind of result detection
+to make sure everything has been received, just in case we already
+have all the results. Here's what this looks like:
 
 
 ::
@@ -669,7 +676,7 @@ all the results. Here's what this looks like:
 
 If no *refs* are left, then everything was received and we can output
 the results. Otherwise, we can keep listening to messages. If you take
-another look at `complete/4` and this diagram:
+another look at ``complete/4`` and this diagram:
 
 
 .. image:: ../images/erlcount-events.png
@@ -698,14 +705,14 @@ The result messages are global, because they can be received in either
 The first thing this does is find the regular expression that just
 completed in the Re list, which also contains the count for all of
 them. We extract that value ( OldCount ) and update it with the new
-count ( `OldCount+Count`) with the help of `lists:keyreplace/4`. We
-update our Data record with the new scores while removing the Ref of
-the worker, and then send ourselves to the next state.
+count ( ``OldCount+Count``) with the help of ``lists:keyreplace/4``.
+We update our Data record with the new scores while removing the Ref
+of the worker, and then send ourselves to the next state.
 
-In normal FSMs, we would just have done `{next_state, State,
-NewData}`, but here, because of the problem mentioned with regards to
-knowing when we're done or not, we have to manually call `listening/2`
-again. Such a pain, but alas, a necessary step.
+In normal FSMs, we would just have done ``{next_state, State,
+NewData}``, but here, because of the problem mentioned with regards to
+knowing when we're done or not, we have to manually call
+``listening/2`` again. Such a pain, but alas, a necessary step.
 
 And that's it for the dispatcher. We just add in the rest of the
 filler behaviour functions:
@@ -745,10 +752,11 @@ minimalist. We only need it to do three things:
 #. Give the result back.
 
 
-For the first point, we have plenty of functions in `file` to help us
-do that. For the number 3, we defined `erlcount_dispatch:complete/4`
-to do it. For the number 2, we can use the `re` module with `run/2-3`,
-but it doesn't quite do what we need:
+For the first point, we have plenty of functions in ``file`` to help
+us do that. For the number 3, we defined
+``erlcount_dispatch:complete/4`` to do it. For the number 2, we can
+use the ``re`` module with ``run/2-3``, but it doesn't quite do what
+we need:
 
 
 ::
@@ -764,8 +772,8 @@ but it doesn't quite do what we need:
     {match,[["child"]]}
 
 
-While it does take the arguments we need ( `re:run(String, Pattern,
-Options)`), it doesn't give us the correct count. Let's add the
+While it does take the arguments we need ( ``re:run(String, Pattern,
+Options)``), it doesn't give us the correct count. Let's add the
 following function to erlcount_lib so we can start writing the
 counter:
 
@@ -826,12 +834,12 @@ Ok, on with the worker:
         {ok, State}.
 
 
-The two interesting sections here are the `init/1` callback, where we
-order ourselves to start, and then a single `handle_info/2` clause
-where we open the file ( `file:read_file(Name)`), get a binary back,
-which we pass to our new `regex_count/2` function, and then send it
-back with `complete/4`. We then stop the worker. The rest is just
-standard OTP callback stuff.
+The two interesting sections here are the ``init/1`` callback, where
+we order ourselves to start, and then a single ``handle_info/2``
+clause where we open the file ( ``file:read_file(Name)``), get a
+binary back, which we pass to our new ``regex_count/2`` function, and
+then send it back with ``complete/4``. We then stop the worker. The
+rest is just standard OTP callback stuff.
 
 We can now compile and run the whole thing!
 
@@ -879,10 +887,10 @@ Now start Erlang the following way:
 The ERL_LIBS variable is a special variable defined in your
 environment that lets you specify where Erlang can find OTP
 applications. The VM is then able to automatically look in there to
-find the `ebin/` directories for you. `erl` can also take an argument
-of the form `-env NameOFVar Value` to override this setting quickly,
-so that's what I used here. The ERL_LIBS variable is pretty useful,
-especially when installing libraries, so try to remember it!
+find the ``ebin/`` directories for you. ``erl`` can also take an
+argument of the form ``-env NameOFVar Value`` to override this setting
+quickly, so that's what I used here. The ERL_LIBS variable is pretty
+useful, especially when installing libraries, so try to remember it!
 
 With the VM we started, we can test that the modules are all there:
 
@@ -922,8 +930,8 @@ though? Do we need to change the application file all the time? No we
 don't! Erlang also supports that. So let's say I wanted to see how
 many times the Erlang programmers are angry in their source files?
 
-The `erl` executable supports a special set of arguments of the form
-`-AppName Key1 Val1 Key2 Val2 ... KeyN ValN`. In this case, we could
+The ``erl`` executable supports a special set of arguments of the form
+``-AppName Key1 Val1 Key2 Val2 ... KeyN ValN``. In this case, we could
 then run the following regular expression over the Erlang source code
 from the R14B02 distribution with 2 regular expressions as follows:
 
@@ -942,7 +950,7 @@ from the R14B02 distribution with 2 regular expressions as follows:
 
 
 Note that in this case, all expressions I give as arguments are
-wrapped in single quotation marks ( `'`). That's because I want them
+wrapped in single quotation marks ( ``'``). That's because I want them
 to be taken literally by my Unix shell. Different shells might have
 different rules.
 
@@ -979,8 +987,8 @@ Included Applications
 
 Included applications are one way to get things working. The basic
 idea of an included application is that you define an application (in
-this case `ppool`) as an application that is part of another one (
-`erlcount`, here). To do this, a bunch of changes need to be made to
+this case ``ppool``) as an application that is part of another one (
+``erlcount``, here). To do this, a bunch of changes need to be made to
 both applications.
 
 The gist of it is that you modify your application file a bit, and
@@ -1014,26 +1022,26 @@ Complex Terminations
 ~~~~~~~~~~~~~~~~~~~~
 
 There are cases where we need more steps to be done before terminating
-our application. The `stop/1` function from the application callback
+our application. The ``stop/1`` function from the application callback
 module might not be enough, especially since it gets called after the
 application has already terminated. What do we do if we need to clean
 things up before the application is actually gone?
 
-The trick is simple. Just add a function `prep_stop(State)` to your
+The trick is simple. Just add a function ``prep_stop(State)`` to your
 application callback module. State will be the state returned by your
-`start/2` function, and whatever `prep_stop/1` returns will be passed
-to `stop/1`. The function `prep_stop/1` thus technically inserts
-itself between `start/2` and `stop/1` and is executed while your
-application is still alive, but just before it shuts down.
+``start/2`` function, and whatever ``prep_stop/1`` returns will be
+passed to ``stop/1``. The function ``prep_stop/1`` thus technically
+inserts itself between ``start/2`` and ``stop/1`` and is executed
+while your application is still alive, but just before it shuts down.
 
 This is the kind of callback that you will know when you need to use
 it, but that we don't require for our application right now.
 
 Don't drink too much Kool-Aid:
-A real world use case of the `prep_stop/1` callback came to me when I
-was helping Yurii Rashkosvkii (yrashk) debug a problem with agner, a
+A real world use case of the ``prep_stop/1`` callback came to me when
+I was helping Yurii Rashkosvkii (yrashk) debug a problem with agner, a
 package manager for Erlang. The problems encountered are a bit complex
-and have to do with weird interactions between `simple_one_for_one`
+and have to do with weird interactions between ``simple_one_for_one``
 supervisors and the application master, so feel free to skip this part
 of the text.
 
@@ -1066,8 +1074,8 @@ its own execution, using its status as a group leader to terminate all
 of the leftover children. Again, this alone is fine.
 
 However, if you mix in both features, and then decide to shut the
-application down with `application:stop(agner)`, you end up in a very
-troublesome situation:
+application down with ``application:stop(agner)``, you end up in a
+very troublesome situation:
 
 
 .. image:: ../images/agner2.png
@@ -1076,8 +1084,8 @@ troublesome situation:
 
 At this precise point in time, both supervisors are dead, as well as
 the regular worker in the app. The simple-one-for-one workers are
-currently dying, each catching the `EXIT` signal sent by their direct
-ancestor.
+currently dying, each catching the ``EXIT`` signal sent by their
+direct ancestor.
 
 At the same time, though, The application master gets wind of its
 direct child dying and ends up killing every one of the simple-one-
@@ -1088,10 +1096,10 @@ themselves, and a bunch of others that didn't manage to do so. This is
 highly timing dependent, hard to debug and easy to fix.
 
 Yurii and I basically fixed this by using the
-`ApplicationCallback:prep_stop(State)` function to fetch a list of all
-the dynamic simple-one-for-one children, monitor them, and then wait
-for all of them to die in the `stop(State)` callback function. This
-forces the application controller to stay alive until all of the
+``ApplicationCallback:prep_stop(State)`` function to fetch a list of
+all the dynamic simple-one-for-one children, monitor them, and then
+wait for all of them to die in the ``stop(State)`` callback function.
+This forces the application controller to stay alive until all of the
 dynamic children were dead. You can see the actual file on Agner's
 github repository
 
@@ -1102,10 +1110,10 @@ github repository
 
 What an ugly thing! Hopefully, people very rarely run into this kind
 of issue and you hopefully won't. You can go put some soap in your
-eyes to wash away the terrible pictures of using `prep_stop/1` to get
-things working, even though it sometimes makes sense and is desirable.
-When you're back, we're going to start thinking about packaging our
-applications into releases.
+eyes to wash away the terrible pictures of using ``prep_stop/1`` to
+get things working, even though it sometimes makes sense and is
+desirable. When you're back, we're going to start thinking about
+packaging our applications into releases.
 
 update:
 Since version R15B, the issue above has been resolved. The termination

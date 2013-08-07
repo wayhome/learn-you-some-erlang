@@ -190,8 +190,8 @@ helps being sure that nothing's wrong).
 That's really the core of FSMs implemented as Erlang processes. There
 are things that could have been done differently: we could have passed
 state in the arguments of the state functions in a way similar to what
-we do with servers' main loop. We could also have added an `init` and
-`terminate` functions, handled code updates, etc.
+we do with servers' main loop. We could also have added an ``init``
+and ``terminate`` functions, handled code updates, etc.
 
 Another difference between the dog and cat FSMs is that the cat's
 events are *synchronous* and the dog's events are *asynchronous*. In a
@@ -201,22 +201,22 @@ forms of event the examples do not show: global events that can happen
 in any state.
 
 One example of such an event could be when the dog gets a sniff of
-food. Once the `smell food` event is triggered, no matter what state
+food. Once the ``smell food`` event is triggered, no matter what state
 the dog is in, he'd go looking for the source of food.
 
 Now we won't spend too much time implementing all of this in our
 'written-on-a-napkin' FSM. Instead we'll move directly to the
-`gen_fsm` behaviour.
+``gen_fsm`` behaviour.
 
 
 
 Generic Finite-State Machines
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `gen_fsm` behaviour is somewhat similar to `gen_server` in that it
-is a specialised version of it. The biggest difference is that rather
-than handling *calls* and *casts*, we're handling *synchronous* and
-*asynchronous* *events*. Much like our dog and cat examples, each
+The ``gen_fsm`` behaviour is somewhat similar to ``gen_server`` in
+that it is a specialised version of it. The biggest difference is that
+rather than handling *calls* and *casts*, we're handling *synchronous*
+and *asynchronous* *events*. Much like our dog and cat examples, each
 state is represented by a function. Again, we'll go through the
 callbacks our modules need to implement in order to work.
 
@@ -226,10 +226,11 @@ init
 ````
 
 This is the same init/1 as used for generic servers, except the return
-values accepted are `{ok, StateName, Data}`, `{ok, StateName, Data,
-Timeout}`, `{ok, StateName, Data, hibernate}` and `{stop, Reason}`.
-The `stop` tuple works in the same manner as for `gen_server`s, and
-`hibernate` and Timeout keep the same semantics.
+values accepted are ``{ok, StateName, Data}``, ``{ok, StateName, Data,
+Timeout}``, ``{ok, StateName, Data, hibernate}`` and ``{stop,
+Reason}``. The ``stop`` tuple works in the same manner as for
+``gen_server``s, and ``hibernate`` and Timeout keep the same
+semantics.
 
 What's new here is that StateName variable. StateName is an atom and
 represents the next callback function to be called.
@@ -245,12 +246,13 @@ StateName
 `````````
 
 The functions StateName/2 and StateName/3 are placeholder names and
-you are to decide what they will be. Let's suppose the `init/1`
-function returns the tuple `{ok, sitting, dog}`. This means the finite
-state machine will be in a `sitting` state. This is not the same kind
-of state as we had seen with `gen_server`; it is rather equivalent to
-the `sit`, `bark` and `wag_tail` states of the previous dog FSM. These
-states dictate a context in which you handle a given event.
+you are to decide what they will be. Let's suppose the ``init/1``
+function returns the tuple ``{ok, sitting, dog}``. This means the
+finite state machine will be in a ``sitting`` state. This is not the
+same kind of state as we had seen with ``gen_server``; it is rather
+equivalent to the ``sit``, ``bark`` and ``wag_tail`` states of the
+previous dog FSM. These states dictate a context in which you handle a
+given event.
 
 An example of this would be someone calling you on your phone. If
 you're in the state 'sleeping on a Saturday morning', your reaction
@@ -259,24 +261,24 @@ interview', chances are you'll pick the phone and answer politely. On
 the other hand, if you're in the state 'dead', then I am surprised you
 can even read this text at all.
 
-Back to our FSM. The `init/1` function said we should be in the
-`sitting` state. Whenever the `gen_fsm` process receives an event,
-either the function `sitting/2` or `sitting/3` will be called. The
-`sitting/2` function is called for asynchronous events and `sitting/3`
-for synchronous ones.
+Back to our FSM. The ``init/1`` function said we should be in the
+``sitting`` state. Whenever the ``gen_fsm`` process receives an event,
+either the function ``sitting/2`` or ``sitting/3`` will be called. The
+``sitting/2`` function is called for asynchronous events and
+``sitting/3`` for synchronous ones.
 
-The arguments for `sitting/2` (or generally `StateName/2`) are Event ,
-the actual message sent as an event, and StateData , the data that was
-carried over the calls. `sitting/2` can then return the tuples
-`{next_state, NextStateName, NewStateData}`, `{next_state,
-NextStateName, NewStateData, Timeout}`, `{next_state, NextStateName,
-hibernate}` and `{stop, Reason, NewStateData}`.
+The arguments for ``sitting/2`` (or generally ``StateName/2``) are
+Event , the actual message sent as an event, and StateData , the data
+that was carried over the calls. ``sitting/2`` can then return the
+tuples ``{next_state, NextStateName, NewStateData}``, ``{next_state,
+NextStateName, NewStateData, Timeout}``, ``{next_state, NextStateName,
+hibernate}`` and ``{stop, Reason, NewStateData}``.
 
-The arguments for `sitting/3` are similar, except there is a From
+The arguments for ``sitting/3`` are similar, except there is a From
 variable in between Event and StateData . The From variable is used in
-exactly the same way as it was for `gen_server`s, including
-gen_fsm:reply/2. The `StateName/3` functions can return the following
-tuples:
+exactly the same way as it was for ``gen_server``s, including
+gen_fsm:reply/2. The ``StateName/3`` functions can return the
+following tuples:
 
 
 ::
@@ -309,27 +311,27 @@ specific reaction no matter what state we're in (the dog smelling food
 will drop whatever it is doing and will instead look for food). For
 these events that should be treated the same way in every state, the
 handle_event/3 callback is what you want. The function takes arguments
-similar to `StateName/2` with the exception that it accepts a
+similar to ``StateName/2`` with the exception that it accepts a
 StateName variable in between them, telling you what the state was
 when the event was received. It returns the same values as
-`StateName/2`.
+``StateName/2``.
 
 
 
 handle_sync_event
 `````````````````
 
-The handle_sync_event/4 callback is to `StateName/3` what
-`handle_event/2` is to `StateName/2`. It handles synchronous global
-events, takes the same parameters and returns the same kind of tuples
-as `StateName/3`.
+The handle_sync_event/4 callback is to ``StateName/3`` what
+``handle_event/2`` is to ``StateName/2``. It handles synchronous
+global events, takes the same parameters and returns the same kind of
+tuples as ``StateName/3``.
 
 Now might be a good time to explain how we know whether an event is
 global or if it's meant to be sent to a specific state. To determine
 this we can look at the function used to send an event to the FSM.
-Asynchronous events aimed at any `StateName/2` function are sent with
-send_event/2, synchronous events to be picked up by `StateName/3` are
-to be sent with sync_send_event/2-3.
+Asynchronous events aimed at any ``StateName/2`` function are sent
+with send_event/2, synchronous events to be picked up by
+``StateName/3`` are to be sent with sync_send_event/2-3.
 
 The two equivalent functions for global events are
 send_all_state_event/2 and sync_send_all_state_event/2-3 (quite a long
@@ -340,10 +342,10 @@ name).
 code_change
 ```````````
 
-This works exactly the same as it did for `gen_server`s except that it
-takes an extra state parameter when called like
-`code_change(OldVersion, StateName, Data, Extra)`, and returns a tuple
-of the form `{ok, NextStateName, NewStateData}`.
+This works exactly the same as it did for ``gen_server``s except that
+it takes an extra state parameter when called like
+``code_change(OldVersion, StateName, Data, Extra)``, and returns a
+tuple of the form ``{ok, NextStateName, NewStateData}``.
 
 
 
@@ -351,7 +353,7 @@ terminate
 `````````
 
 This should, again, act a bit like what we have for generic servers.
-terminate/3 should do the opposite of `init/1`.
+terminate/3 should do the opposite of ``init/1``.
 
 
 
@@ -460,7 +462,7 @@ and then explain it.
     :alt: The idle state can switch to either idle_wait or negotiate. The idle_wait state can switch to negotiate state only. Negotiate can loop on itself or go into wait state. The wait state can go back to negotiate or move to ready state. The ready state is last and after that the FSM stops. All in bubbles and arrows.
 
 
-At first, both finite-state machines start in the `idle` state. At
+At first, both finite-state machines start in the ``idle`` state. At
 this point, one thing we can do is ask some other player to negotiate
 with us:
 
@@ -469,16 +471,16 @@ with us:
     :alt: Your client can send a message to its FSM asking to negotiate with Jim's FSM (The other player). Your FSM asks the other FSM to negotiate and switches to the idle_wait state.
 
 
-We go into `idle_wait` mode in order to wait for an eventual reply
+We go into ``idle_wait`` mode in order to wait for an eventual reply
 after our FSM forwarded the demand. Once the other FSM sends the
-reply, ours can switch to `negotiate`:
+reply, ours can switch to ``negotiate``:
 
 
 .. image:: ../images/fsm_other_accept.png
     :alt: The other's FSM accepts our invitation while in idle_wait state, and so we move to 'negotiate'
 
 
-The other player should also be in `negotiate` state after this.
+The other player should also be in ``negotiate`` state after this.
 Obviously, if we can invite the other, the other can invite us. If all
 goes well, this should end up looking like this:
 
@@ -499,13 +501,14 @@ trade with us at the same time he asks us to trade?
 
 What happens here is that both clients ask their own FSM to negotiate
 with the other one. As soon as the *ask negotiate* messages are sent,
-both FSMs switch to `idle_wait` state. Then they will be able to
+both FSMs switch to ``idle_wait`` state. Then they will be able to
 process the negotiation question. If we review the previous state
 diagrams, we see that this combination of events is the only time
-we'll receive *ask negotiate* messages while in the `idle_wait` state.
-Consequently, we know that getting these messages in `idle_wait` means
-that we hit the race condition and can assume both users want to talk
-to each other. We can move both of them to `negotiate` state. Hooray.
+we'll receive *ask negotiate* messages while in the ``idle_wait``
+state. Consequently, we know that getting these messages in
+``idle_wait`` means that we hit the race condition and can assume both
+users want to talk to each other. We can move both of them to
+``negotiate`` state. Hooray.
 
 So now we're negotiating. According to the list of actions I listed
 earlier, we must support users offering items and then retracting the
@@ -519,8 +522,8 @@ offer:
 All this does is forward our client's message to the other FSM. Both
 finite-state machines will need to hold a list of items offered by
 either player, so they can update that list when receiving such
-messages. We stay in the `negotiate` state after this; maybe the other
-player wants to offer items too:
+messages. We stay in the ``negotiate`` state after this; maybe the
+other player wants to offer items too:
 
 
 .. image:: ../images/fsm_other_item_offers.png
@@ -531,7 +534,7 @@ Here, our FSM basically acts in a similar manner. This is normal. Once
 we get tired of offering things and think we're generous enough, we
 have to say we're ready to officialise the trade. Because we have to
 synchronise both players, we'll have to use an intermediary state, as
-we did for `idle` and `idle_wait`:
+we did for ``idle`` and ``idle_wait``:
 
 
 .. image:: ../images/fsm_own_ready.png
@@ -540,20 +543,20 @@ we did for `idle` and `idle_wait`:
 
 What we do here is that as soon as our player is ready, our FSM asks
 Jim's FSM if he's ready. Pending its reply, our own FSM falls into its
-`wait` state. The reply we'll get will depend on Jim's FSM state: if
-it's in `wait` state, it'll tell us that it's ready. Otherwise, it'll
-tell us that it's not ready yet. That's precisely what our FSM
+``wait`` state. The reply we'll get will depend on Jim's FSM state: if
+it's in ``wait`` state, it'll tell us that it's ready. Otherwise,
+it'll tell us that it's not ready yet. That's precisely what our FSM
 automatically replies to Jim if he asks us if we are ready when in
-`negotiate` state:
+``negotiate`` state:
 
 
 .. image:: ../images/fsm_other_ready.png
     :alt: Jim's FSM asks our FSM if it's ready. It automatically says 'not yet' and remains in negotiate mode.
 
 
-Our finite state machine will remain in `negotiate` mode until our
+Our finite state machine will remain in ``negotiate`` mode until our
 player says he's ready. Let's assume he did and we're now in the
-`wait` state. However, Jim's not there yet. This means that when we
+``wait`` state. However, Jim's not there yet. This means that when we
 declared ourselves as ready, we'll have asked Jim if he was also ready
 and his FSM will have replied 'not yet':
 
@@ -574,9 +577,9 @@ offers:
 
 Of course, we want to avoid Jim removing all of his items and then
 clicking "I'm ready!", screwing us over in the process. As soon as he
-changes the items offered, we go back into the `negotiate` state so we
-can either modify our own offer, or examine the current one and decide
-we're ready. Rinse and repeat.
+changes the items offered, we go back into the ``negotiate`` state so
+we can either modify our own offer, or examine the current one and
+decide we're ready. Rinse and repeat.
 
 At some point, Jim will be ready to finalise the trade too. When this
 happens, his finite-state machine will ask ours if we are ready:
@@ -587,7 +590,7 @@ happens, his finite-state machine will ask ours if we are ready:
 
 
 What our FSM does is reply that we indeed are ready. We stay in the
-waiting state and refuse to move to the `ready` state though. Why is
+waiting state and refuse to move to the ``ready`` state though. Why is
 this? Because there's a potential race condition! Imagine that the
 following sequence of events takes place, without doing this necessary
 step:
@@ -601,16 +604,16 @@ This is a bit complex, so I'll explain. Because of the way messages
 are received, we could possibly only process the item offer *after* we
 declared ourselves ready and also *after* Jim declared himself as
 ready. This means that as soon as we read the offer message, we switch
-back to `negotiate` state. During that time, Jim will have told us he
-is ready. If he were to change states right there and move on to
-`ready` (as illustrated above), he'd be caught waiting indefinitely
+back to ``negotiate`` state. During that time, Jim will have told us
+he is ready. If he were to change states right there and move on to
+``ready`` (as illustrated above), he'd be caught waiting indefinitely
 while we wouldn't know what the hell to do. This could also happen the
 other way around! Ugh.
 
 One way to solve this is by adding one layer of indirection (Thanks to
-David Wheeler). This is why we stay in `wait` mode and send 'ready!'
+David Wheeler). This is why we stay in ``wait`` mode and send 'ready!'
 (as shown in our previous state diagram). Here's how we deal with that
-'ready!' message, assuming we were already in the `ready` state
+'ready!' message, assuming we were already in the ``ready`` state
 because we told our FSM we were ready beforehand:
 
 
@@ -623,13 +626,13 @@ again. This is to make sure that we won't have the 'double race
 condition' mentioned above. This will create a superfluous 'ready!'
 message in one of the two FSMs, but we'll just have to ignore it in
 this case. We then send an 'ack' message (and the Jim's FSM will do
-the same) before moving to `ready` state. The reason why this 'ack'
+the same) before moving to ``ready`` state. The reason why this 'ack'
 message exists is due to some implementation details about
 synchronising clients. I've put it in the diagram for the sake of
 being correct, but I won't explain it until later. Forget about it for
 now. We finally managed to synchronise both players. Whew.
 
-So now there's the `ready` state. This one is a bit special. Both
+So now there's the ``ready`` state. This one is a bit special. Both
 players are ready and have basically given the finite-state machines
 all the control they need. This lets us implement a bastardized
 version of a two-phase commit to make sure things go right when making
@@ -681,10 +684,10 @@ Game trading between two players
 
 
 The first thing that needs to be done to implement our protocol with
-OTP's `gen_fsm` is to create the interface. There will be 3 callers
-for our module: the player, the `gen_fsm` behaviour and the other
+OTP's ``gen_fsm`` is to create the interface. There will be 3 callers
+for our module: the player, the ``gen_fsm`` behaviour and the other
 player's FSM. We will only need to export the player function and
-`gen_fsm` functions, though. This is because the other FSM will also
+``gen_fsm`` functions, though. This is because the other FSM will also
 run within the trade_fsm module and can access them from the inside:
 
 
@@ -794,7 +797,8 @@ to our protocol above, this is what they should be like:
 So, now that we've got these calls done, we need to focus on the rest.
 The remaining calls relate to being ready or not and handling the
 final commit. Again, given our protocol above, we have three calls:
-`are_you_ready`, which can have the replies `not_yet` or `ready!`:
+``are_you_ready``, which can have the replies ``not_yet`` or
+``ready!``:
 
 
 ::
@@ -816,7 +820,7 @@ final commit. Again, given our protocol above, we have three calls:
 
 
 The only functions left are those which are to be used by both FSMs
-when doing the commit in the `ready` state. Their precise usage will
+when doing the commit in the ``ready`` state. Their precise usage will
 be described more in detail later, but for now, the names and the
 sequence/state diagram from earlier should be enough. Nonetheless, you
 can still transcribe them to your own version of trade_fsm:
@@ -849,14 +853,14 @@ other FSM we cancelled the trade:
         gen_fsm:send_all_state_event(OtherPid, cancel).
 
 
-We can now move to the really interesting part: the `gen_fsm`
-callbacks. The first callback is `init/1`. In our case, we'll want
+We can now move to the really interesting part: the ``gen_fsm``
+callbacks. The first callback is ``init/1``. In our case, we'll want
 each FSM to hold a name for the user it represents (that way, our
 output will be nicer) in the data it keeps passing on to itself. What
 else do we want to hold in memory? In our case, we want the other's
 pid, the items we offer and the items the other offers. We're also
 going to add the reference of a monitor (so we know to abort if the
-other dies) and a `from` field, used to do delayed replies:
+other dies) and a ``from`` field, used to do delayed replies:
 
 
 ::
@@ -870,8 +874,8 @@ other dies) and a `from` field, used to do delayed replies:
                     from}).
 
 
-In the case of `init/1`, we'll only care about our name for now. Note
-that we'll begin in the `idle` state:
+In the case of ``init/1``, we'll only care about our name for now.
+Note that we'll begin in the ``idle`` state:
 
 
 ::
@@ -926,7 +930,7 @@ player, if you look at the API functions, will use a synchronous call:
 
 A monitor is set up to allow us to handle the other dying, and its ref
 is stored in the FSM's data along with the other's pid, before moving
-to the `idle_wait` state. Note that we will report all unexpected
+to the ``idle_wait`` state. Note that we will report all unexpected
 events and ignore them by staying in the state we were already in. We
 can have a few out of band messages here and there that could be the
 result of race conditions. It's usually safe to ignore them, but we
@@ -934,8 +938,8 @@ can't easily get rid of them. It's just better not to crash the whole
 FSM on these unknown, but somewhat expected messages.
 
 When our own client asks the FSM to contact another player for a
-trade, it will send a synchronous event. The `idle/3` callback will be
-needed:
+trade, it will send a synchronous event. The ``idle/3`` callback will
+be needed:
 
 
 ::
@@ -957,7 +961,7 @@ with us or not. You'll notice that we do *not* reply to the client
 yet. This is because we have nothing interesting to say, and we want
 the client locked and waiting for the trade to be accepted before
 doing anything. The reply will only be sent if the other side accepts
-once we're in `idle_wait`.
+once we're in ``idle_wait``.
 
 When we're there, we have to deal with the other accepting to
 negotiate and the other asking to negotiate (the result of a race
@@ -981,9 +985,9 @@ condition, as described in the protocol):
         {next_state, idle_wait, Data}.
 
 
-This gives us two transitions to the `negotiate` state, but remember
-that we must use `gen_fsm:reply/2` reply to our client to tell it it's
-okay to start offering items. There's also the case of our FSM's
+This gives us two transitions to the ``negotiate`` state, but remember
+that we must use ``gen_fsm:reply/2`` reply to our client to tell it
+it's okay to start offering items. There's also the case of our FSM's
 client accepting the trade suggested by the other party:
 
 
@@ -999,14 +1003,14 @@ client accepting the trade suggested by the other party:
         {next_state, idle_wait, Data}.
 
 
-Again, this one moves on to the `negotiate` state. Here, we must
+Again, this one moves on to the ``negotiate`` state. Here, we must
 handle asynchronous queries to add and remove items coming both from
 the client and the other FSM. However, we have not yet decided how to
 store items. Because I'm somewhat lazy and I assume users won't trade
 that many items, simple lists will do it for now. However, we might
 change our mind at a later point, so it would be a good idea to wrap
 item operations in their own functions. Add the following functions at
-the bottom of the file with `notice/3` and `unexpected/2`:
+the bottom of the file with ``notice/3`` and ``unexpected/2``:
 
 
 ::
@@ -1059,9 +1063,9 @@ differentiate between player-to-FSM communications and FSM-to-FSM
 communications. Note that on those coming from our own player, we have
 to tell the other side about the changes we're making.
 
-Another responsibility is to handle the `are_you_ready` message we
+Another responsibility is to handle the ``are_you_ready`` message we
 mentioned in the protocol. This one is the last asynchronous event to
-handle in the `negotiate` state:
+handle in the ``negotiate`` state:
 
 
 ::
@@ -1080,14 +1084,14 @@ handle in the `negotiate` state:
         {next_state, negotiate, Data}.
 
 
-As described in the protocol, whenever we're not in the `wait` state
-and receive this message, we must reply with `not_yet`. Were also
+As described in the protocol, whenever we're not in the ``wait`` state
+and receive this message, we must reply with ``not_yet``. Were also
 outputting trade details to the user so a decision can be made.
 
-When such a decision is made and the user is ready, the `ready` event
-will be sent. This one should be synchronous because we don't want the
-user to keep modifying his offer by adding items while claiming he's
-ready:
+When such a decision is made and the user is ready, the ``ready``
+event will be sent. This one should be synchronous because we don't
+want the user to keep modifying his offer by adding items while
+claiming he's ready:
 
 
 ::
@@ -1102,12 +1106,12 @@ ready:
         {next_state, negotiate, S}.
 
 
-At this point a transition to the `wait` state should be made. Note
+At this point a transition to the ``wait`` state should be made. Note
 that just waiting for the other is not interesting. We save the From
-variable so we can use it with `gen_fsm:reply/2` when we have
+variable so we can use it with ``gen_fsm:reply/2`` when we have
 something to tell to the client.
 
-The `wait` state is a funny beast. New items might be offered and
+The ``wait`` state is a funny beast. New items might be offered and
 retracted because the other user might not be ready. It makes sense,
 then, to automatically rollback to the negotiating state. It would
 suck to have great items offered to us, only for the other to remove
@@ -1131,23 +1135,23 @@ negotiation is a good decision:
 Now that's something meaningful and we reply to the player with the
 coordinates we stored in S#state.from . The next set of messages we
 need to worry about are those related to with synchronising both FSMs
-so they can move to the `ready` state and confirm the trade. For this
-one we should really focus on the protocol defined earlier.
+so they can move to the ``ready`` state and confirm the trade. For
+this one we should really focus on the protocol defined earlier.
 
 
 .. image:: ../images/cash.png
     :alt: a cash register
 
 
-The three messages we could have are `are_you_ready` (because the
-other user just declared himself ready), `not_yet` (because we asked
-the other if he was ready and he was not) and `ready!` (because we
+The three messages we could have are ``are_you_ready`` (because the
+other user just declared himself ready), ``not_yet`` (because we asked
+the other if he was ready and he was not) and ``ready!`` (because we
 asked the other if he was ready and he was).
 
-We'll start with `are_you_ready`. Remember that in the protocol we
+We'll start with ``are_you_ready``. Remember that in the protocol we
 said that there could be a race condition hidden there. The only thing
-we can do is send the `ready!` message with `am_ready/1` and deal with
-the rest later:
+we can do is send the ``ready!`` message with ``am_ready/1`` and deal
+with the rest later:
 
 
 ::
@@ -1161,7 +1165,7 @@ the rest later:
 
 We'll be stuck waiting again, so it's not worth replying to our client
 yet. Similarly, we won't reply to the client when the other side sends
-a `not_yet` to our invitation:
+a ``not_yet`` to our invitation:
 
 
 ::
@@ -1172,9 +1176,9 @@ a `not_yet` to our invitation:
         {next_state, wait, S};
 
 
-On the other hand, if the other is ready, we send an extra `ready!`
+On the other hand, if the other is ready, we send an extra ``ready!``
 message to the other FSM, reply to our own user and then move to the
-`ready` state:
+``ready`` state:
 
 
 ::
@@ -1192,9 +1196,9 @@ message to the other FSM, reply to our own user and then move to the
         {next_state, wait, Data}.
 
 
-You might have noticed that I've used `ack_trans/1`. In fact, both
+You might have noticed that I've used ``ack_trans/1``. In fact, both
 FSMs should use it. Why is this? To understand this we have to start
-looking at what goes on in the `ready!` state.
+looking at what goes on in the ``ready!`` state.
 
 
 .. image:: ../images/commitment.png
@@ -1207,9 +1211,9 @@ liberty. Basically, both FSMs can freely talk to each other without
 worrying about the rest of the world. This lets us implement our
 bastardization of a two-phase commit. To begin this commit without
 either player acting, we'll need an event to trigger an action from
-the FSMs. The `ack` event from `ack_trans/1` is used for that. As soon
-as we're in the ready state, the message is treated and acted upon;
-the transaction can begin.
+the FSMs. The ``ack`` event from ``ack_trans/1`` is used for that. As
+soon as we're in the ready state, the message is treated and acted
+upon; the transaction can begin.
 
 Two-phase commits require synchronous communications, though. This
 means we can't have both FSMs starting the transaction at once,
@@ -1225,7 +1229,7 @@ or if it comes from another VM (we'll see more about this when we get
 into distributed Erlang).
 
 Knowing that two pids can be compared and one will be greater than the
-other, we can write a function `priority/2` that will take two pids
+other, we can write a function ``priority/2`` that will take two pids
 and tell a process whether it's been elected or not:
 
 
@@ -1239,8 +1243,8 @@ and tell a process whether it's been elected or not:
 And by calling that function, we can have one process starting the
 commit and the other following the orders.
 
-Here's what this gives us when included in the `ready` state, after
-receiving the `ack` message:
+Here's what this gives us when included in the ``ready`` state, after
+receiving the ``ack`` message:
 
 
 ::
@@ -1270,11 +1274,11 @@ receiving the `ack` message:
         {next_state, ready, Data}.
 
 
-This big `try ... catch` expression is the leading FSM deciding how
-the commit works. Both `ask_commit/1` and `do_commit/1` are
+This big ``try ... catch`` expression is the leading FSM deciding how
+the commit works. Both ``ask_commit/1`` and ``do_commit/1`` are
 synchronous. This lets the leading FSM call them freely. You can see
 that the other FSM just goes and wait. It will then receive the orders
-from the leading process. The first message should be `ask_commit`.
+from the leading process. The first message should be ``ask_commit``.
 This is just to make sure both FSMs are still there; nothing wrong
 happened, they're both dedicated to completing the task:
 
@@ -1288,7 +1292,7 @@ happened, they're both dedicated to completing the task:
 
 
 Once this is received, the leading process will ask to confirm the
-transaction with `do_commit`. That's when we must commit our data:
+transaction with ``do_commit``. That's when we must commit our data:
 
 
 ::
@@ -1303,9 +1307,9 @@ transaction with `do_commit`. That's when we must commit our data:
         {next_state, ready, Data}.
 
 
-And once it's done, we leave. The leading FSM will receive `ok` as a
+And once it's done, we leave. The leading FSM will receive ``ok`` as a
 reply and will know to commit on its own end afterwards. This explains
-why we need the big `try ... catch`: if the replying FSM dies or its
+why we need the big ``try ... catch``: if the replying FSM dies or its
 player cancels the transaction, the synchronous calls will crash after
 a timeout. The commit should be aborted in this case.
 
@@ -1329,14 +1333,14 @@ required to judge if both players did everything right. If you were to
 write a true commit function, it should contact that third party on
 behalf of both players, and then do the safe write to a database for
 them or rollback the whole exchange. We won't go into such details and
-the current `commit/1` function will be enough for the needs of this
+the current ``commit/1`` function will be enough for the needs of this
 book.
 
 We're not done yet. We have not yet covered two types of events: a
 player cancelling the trade and the other player's finite state
 machine crashing. The former can be dealt with by using the callbacks
-`handle_event/3` and `handle_sync_event/4`. Whenever the other user
-cancels, we'll receive an asynchronous notification:
+``handle_event/3`` and ``handle_sync_event/4``. Whenever the other
+user cancels, we'll receive an asynchronous notification:
 
 
 ::
@@ -1372,7 +1376,7 @@ ourselves:
 
 
 And voilà! The last event to take care of is when the other FSM goes
-down. Fortunately, we had set a monitor back in the `idle` state. We
+down. Fortunately, we had set a monitor back in the ``idle`` state. We
 can match on this and react accordingly:
 
 
@@ -1387,24 +1391,24 @@ can match on this and react accordingly:
         {next_state, StateName, Data}.
 
 
-Note that even if the `cancel` or `DOWN` events happen while we're in
-the commit, everything should be safe and nobody should get its items
-stolen.
+Note that even if the ``cancel`` or ``DOWN`` events happen while we're
+in the commit, everything should be safe and nobody should get its
+items stolen.
 
-Note: we used `io:format/2` for most of our messages to let the FSMs
+Note: we used ``io:format/2`` for most of our messages to let the FSMs
 communicate with their own clients. In a real world application, we
 might want something more flexible than that. One way to do it is to
 let the client send in a Pid, which will receive the notices sent to
 it. That process could be linked to a GUI or any other system to make
-the player aware of the events. The `io:format/2` solution was chosen
-for its simplicity: we want to focus on the FSM and the asynchronous
-protocols, not the rest.
+the player aware of the events. The ``io:format/2`` solution was
+chosen for its simplicity: we want to focus on the FSM and the
+asynchronous protocols, not the rest.
 
-Only two callbacks left to cover! They're `code_change/4` and
-`terminate/3`. For now, we don't have anything to do with
-`code_change/4` and only export it so the next version of the FSM can
-call it when it'll be reloaded. Our terminate function is also really
-short because we didn't handle real resources in this example:
+Only two callbacks left to cover! They're ``code_change/4`` and
+``terminate/3``. For now, we don't have anything to do with
+``code_change/4`` and only export it so the next version of the FSM
+can call it when it'll be reloaded. Our terminate function is also
+really short because we didn't handle real resources in this example:
 
 
 ::
@@ -1425,11 +1429,11 @@ Whew.
 We can now try it. Well, trying it is a bit annoying because we need
 two processes to communicate to each other. To solve this, I've
 written the tests in the file trade_calls.erl, which can run 3
-different scenarios. The first one is `main_ab/0`. It will run a
-standard trade and output everything. The second one is `main_cd/0`
+different scenarios. The first one is ``main_ab/0``. It will run a
+standard trade and output everything. The second one is ``main_cd/0``
 and will cancel the transaction halfway through. The last one is
-`main_ef/0` and is very similar to `main_ab/0`, except it contains a
-different race condition. The first and third tests should succeed,
+``main_ef/0`` and is very similar to ``main_ab/0``, except it contains
+a different race condition. The first and third tests should succeed,
 while the second one should fail (with a crapload of error messages,
 but that's how it goes). You can try it if you feel like it.
 
@@ -1449,10 +1453,10 @@ to make something hard out of the generic finite-state machine
 behaviour. If you feel confused, ask yourself these questions: Can you
 understand how different events are handled depending on the state
 your process is in? Do you understand how you can transition from one
-state to the other? Do you know when to use `send_event/2` and
-`sync_send_event/2-3` as opposed to `send_all_state_event/2` and
-`sync_send_all_state_event/3`? If you answered yes to these questions,
-you understand what `gen_fsm` is about.
+state to the other? Do you know when to use ``send_event/2`` and
+``sync_send_event/2-3`` as opposed to ``send_all_state_event/2`` and
+``sync_send_all_state_event/3``? If you answered yes to these
+questions, you understand what ``gen_fsm`` is about.
 
 The rest of it with the asynchronous protocols, delaying replies and
 carrying the From variable, giving a priority to processes for
@@ -1497,7 +1501,7 @@ have to face swords and knives. Beware the dormant bugs.
 
 Fortunately, we can put all of this madness behind us. We'll next see
 how OTP allows you to handle various events, such as alarms and logs,
-with the help of the `gen_event` behaviour.
+with the help of the ``gen_event`` behaviour.
 
 
 

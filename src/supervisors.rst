@@ -21,15 +21,15 @@ keep our software going in case of errors by just restarting the
 faulty processes.
 
 To be more detailed, our supervisors would start a *worker* process,
-link to it, and trap exit signals with `process_flag(trap_exit,true)`
-to know when the process died and restart it. This is fine when we
-want restarts, but it's also pretty dumb. Let's imagine that you're
-using the remote control to turn the TV on. If it doesn't work the
-first time, you might try once or twice just in case you didn't press
-right or the signal went wrong. Our supervisor, if it was trying to
-turn that very TV on, would keep trying forever, even if it turned out
-that the remote had no batteries or didn't even fit the TV. A pretty
-dumb supervisor.
+link to it, and trap exit signals with
+``process_flag(trap_exit,true)`` to know when the process died and
+restart it. This is fine when we want restarts, but it's also pretty
+dumb. Let's imagine that you're using the remote control to turn the
+TV on. If it doesn't work the first time, you might try once or twice
+just in case you didn't press right or the signal went wrong. Our
+supervisor, if it was trying to turn that very TV on, would keep
+trying forever, even if it turned out that the remote had no batteries
+or didn't even fit the TV. A pretty dumb supervisor.
 
 Something else that was dumb about our supervisors is that they could
 only watch one worker at a time. Don't get me wrong, it's sometimes
@@ -93,7 +93,7 @@ software that is not meant to run forever. You'll still want it to
 terminate cleanly though. How do you know everything is ready to be
 shut down? With supervisors, it's easy. Whenever you want to terminate
 an application, you have the top supervisor of the VM shut down (this
-is done for you with functions like `init:stop/1`). Then that
+is done for you with functions like ``init:stop/1``). Then that
 supervisor asks each of its children to terminate. If some of the
 children are supervisors, they do the same:
 
@@ -127,7 +127,7 @@ killing them. We wouldn't be real sadists without actually
 implementing it all though.
 
 When I said supervisors were simple to use, I wasn't kidding. There is
-a single callback function to provide: `init/1`. It takes some
+a single callback function to provide: ``init/1``. It takes some
 arguments and that's about it. The catch is that it returns quite a
 complex thing. Here's an example return from a supervisor:
 
@@ -161,8 +161,8 @@ bit simpler to work with:
 
 
 Where ChildSpec stands for a child specification. RestartStrategy can
-be any of `one_for_one`, `rest_for_one`, `one_for_all` and
-`simple_one_for_one`.
+be any of ``one_for_one``, ``rest_for_one``, ``one_for_all`` and
+``simple_one_for_one``.
 
 
 
@@ -171,7 +171,7 @@ one_for_one
 
 One for one is an intuitive restart strategy. It basically means that
 if your supervisor supervises many workers and one of them fails, only
-that one should be restarted. You should use `one_for_one` whenever
+that one should be restarted. You should use ``one_for_one`` whenever
 the processes being supervised are independent and not really related
 to each other, or when the process can restart and lose its state
 without impacting its siblings.
@@ -193,8 +193,8 @@ supervisor on top of the trading system we implemented back in the
 `Rage Against The Finite State Machines`_ chapter. It wouldn't
 actually make sense to restart only one of the two traders if one of
 them crashed because their state would be out of sync. Restarting both
-of them at once would be a saner choice and `one_for_all` would be the
-strategy for that.
+of them at once would be a saner choice and ``one_for_all`` would be
+the strategy for that.
 
 
 .. image:: ../images/restart-one-for-all.png
@@ -208,10 +208,10 @@ rest_for_one
 
 This is a more specific kind of strategy. Whenever you have to start
 processes that depend on each other in a chain ( A starts B , which
-starts C , which starts D , etc.), you can use `rest_for_one`. It's
+starts C , which starts D , etc.), you can use ``rest_for_one``. It's
 also useful in the case of services where you have similar
 dependencies ( X works alone, but Y depends on X and Z depends on
-both). What a `rest_for_one` restarting strategy does, basically, is
+both). What a ``rest_for_one`` restarting strategy does, basically, is
 make it so if a process dies, all the ones that were started after it
 (depend on it) get restarted, but not the other way around.
 
@@ -225,25 +225,25 @@ make it so if a process dies, all the ones that were started after it
 simple_one_for_one
 ``````````````````
 
-The `simple_one_for_one` restart strategy isn't the most simple one.
+The ``simple_one_for_one`` restart strategy isn't the most simple one.
 We'll see it in more details when we get to use it, but it basically
 makes it so it takes only one kind of children, and it's to be used
 when you want to dynamically add them to the supervisor, rather than
 having them started statically.
 
-To say it a bit differently, a `simple_one_for_one` supervisor just
+To say it a bit differently, a ``simple_one_for_one`` supervisor just
 sits around there, and it knows it can produce one kind of child only.
 Whenever you want a new one, you ask for it and you get it. This kind
-of thing could theoretically be done with the standard `one_for_one`
+of thing could theoretically be done with the standard ``one_for_one``
 supervisor, but there are practical advantages to using the simple
 version.
 
-Note: one of the big differences between `one_for_one` and
-`simple_one_for_one` is that `one_for_one` holds a list of all the
+Note: one of the big differences between ``one_for_one`` and
+``simple_one_for_one`` is that ``one_for_one`` holds a list of all the
 children it has (and had, if you don't clear it), started in order,
-while `simple_one_for_one` holds a single definition for all its
-children and works using a `dict` to hold its data. Basically, when a
-process crashes, the `simple_one_for_one` supervisor will be much
+while ``simple_one_for_one`` holds a single definition for all its
+children and works using a ``dict`` to hold its data. Basically, when
+a process crashes, the ``simple_one_for_one`` supervisor will be much
 faster when you have a large number of children.
 
 
@@ -311,10 +311,10 @@ StartFunc
 `````````
 
 StartFunc is a tuple that tells how to start the supervisor. It's the
-standard `{M,F,A}` format we've used a few times already. Note that it
-is *very* important that the starting function here is OTP-compliant
-and links to its caller when executed (hint: use `gen_*:start_link()`
-wrapped in your own module, all the time).
+standard ``{M,F,A}`` format we've used a few times already. Note that
+it is *very* important that the starting function here is OTP-
+compliant and links to its caller when executed (hint: use
+``gen_*:start_link()`` wrapped in your own module, all the time).
 
 
 
@@ -342,12 +342,12 @@ fail and which have few bits of code who depend on them.
 Transient processes are a bit of an in-between. They're meant to run
 until they terminate normally and then they won't be restarted.
 However, if they die of abnormal causes (exit reason is anything but
-`normal`), they're going to be restarted. This restart option is often
-used for workers that need to succeed at their task, but won't be used
-after they do so.
+``normal``), they're going to be restarted. This restart option is
+often used for workers that need to succeed at their task, but won't
+be used after they do so.
 
 You can have children of all three kinds mixed under a single
-supervisor. This might affect the restart strategy: a `one_for_all`
+supervisor. This might affect the restart strategy: a ``one_for_all``
 restart won't be triggered by a temporary process dying, but that
 temporary process might be restarted under the same supervisor if a
 permanent process dies first!
@@ -360,34 +360,34 @@ Shutdown
 Earlier in the text, I mentioned being able to shut down entire
 applications with the help of supervisors. This is how it's done. When
 the top-level supervisor is asked to terminate, it calls
-`exit(ChildPid, shutdown)` on each of the Pids. If the child is a
-worker and trapping exits, it'll call its own `terminate` function.
+``exit(ChildPid, shutdown)`` on each of the Pids. If the child is a
+worker and trapping exits, it'll call its own ``terminate`` function.
 Otherwise, it's just going to die. When a supervisor gets the
-`shutdown` signal, it will forward it to its own children the same
+``shutdown`` signal, it will forward it to its own children the same
 way.
 
 The Shutdown value of a child specification is thus used to give a
 deadline on the termination. On certain workers, you know you might
 have to do things like properly close files, notify a service that
 you're leaving, etc. In these cases, you might want to use a certain
-cutoff time, either in milliseconds or `infinity` if you are really
+cutoff time, either in milliseconds or ``infinity`` if you are really
 patient. If the time passes and nothing happens, the process is then
-brutally killed with `exit(Pid, kill)`. If you don't care about the
+brutally killed with ``exit(Pid, kill)``. If you don't care about the
 child and it can pretty much die without any consequences without any
-timeout needed, the atom `brutal_kill` is also an acceptable value.
-`brutal_kill` will make it so the child is killed with `exit(Pid,
-kill)`, which is untrappable and instantaneous.
+timeout needed, the atom ``brutal_kill`` is also an acceptable value.
+``brutal_kill`` will make it so the child is killed with ``exit(Pid,
+kill)``, which is untrappable and instantaneous.
 
 Choosing a good Shutdown value is sometimes complex or tricky. If you
-have a chain of supervisors with Shutdown values like: `5000 -> 2000
--> 5000 -> 5000`, the two last ones will likely end up brutally
+have a chain of supervisors with Shutdown values like: ``5000 -> 2000
+-> 5000 -> 5000``, the two last ones will likely end up brutally
 killed, because the second one had a shorter cutoff time. It is
 entirely application dependent, and few general tips can be given on
 the subject.
 
-Note: it is important to note that `simple_one_for_one` children are
+Note: it is important to note that ``simple_one_for_one`` children are
 *not* respecting this rule with the Shutdown time. In the case of
-`simple_one_for_one`, the supervisor will just exit and it will be
+``simple_one_for_one``, the supervisor will just exit and it will be
 left to each of the workers to terminate on their own, after their
 supervisor is gone.
 
@@ -411,8 +411,8 @@ Modules is a list of one element, the name of the callback module used
 by the child behavior. The exception to that is when you have callback
 modules whose identity you do not know beforehand (such as event
 handlers in an event manager). In this case, the value of Modules
-should be `dynamic` so that the whole OTP system knows who to contact
-when using more advanced features, such as releases.
+should be ``dynamic`` so that the whole OTP system knows who to
+contact when using more advanced features, such as releases.
 
 Hooray, we now have the basic knowledge required to start supervised
 processes. You can take a break and digest it all, or move forward
@@ -451,10 +451,10 @@ Musicians
 `````````
 
 The first thing we can do is write the individual band members. For
-our use case, the musicians module will implement a `gen_server`. Each
-musician will take an instrument and a skill level as a parameter (so
-we can say the drummer sucks, while the others are alright). Once a
-musician has spawned, it shall start playing. We'll also have an
+our use case, the musicians module will implement a ``gen_server``.
+Each musician will take an instrument and a skill level as a parameter
+(so we can say the drummer sucks, while the others are alright). Once
+a musician has spawned, it shall start playing. We'll also have an
 option to stop them, if needed. This gives us the following module and
 interface:
 
@@ -478,8 +478,8 @@ interface:
     stop(Role) -> gen_server:call(Role, stop).
 
 
-I've defined a `?DELAY` macro that we'll use as the standard time span
-between each time a musician will show himself as playing. As the
+I've defined a ``?DELAY`` macro that we'll use as the standard time
+span between each time a musician will show himself as playing. As the
 record definition shows, we'll also have to give each of them a name:
 
 
@@ -500,11 +500,11 @@ record definition shows, we'll also have to give each of them a name:
         {ok, #state{name=Name, role=StrRole, skill=Skill}, TimeToPlay}.
 
 
-Two things go on in the `init/1` function. First we start trapping
-exits. If you recall the description of the `terminate/2` from the
+Two things go on in the ``init/1`` function. First we start trapping
+exits. If you recall the description of the ``terminate/2`` from the
 `Generic Servers chapter`_, we need to do this if we want
-`terminate/2` to be called when the server's parent shuts down its
-children. The rest of the `init/1` function is setting a random seed
+``terminate/2`` to be called when the server's parent shuts down its
+children. The rest of the ``init/1`` function is setting a random seed
 (so that each process gets different random numbers) and then creates
 a random name for itself. The functions to create the names are:
 
@@ -531,7 +531,7 @@ a random name for itself. The functions to create the names are:
 
 
 Alright! We can move on to the implementation. This one is going to be
-pretty trivial for `handle_call` and `handle_cast`:
+pretty trivial for ``handle_call`` and ``handle_cast``:
 
 
 ::
@@ -549,7 +549,7 @@ pretty trivial for `handle_call` and `handle_cast`:
 The only call we have is to stop the musician server, which we agree
 to do pretty quick. If we receive an unexpected message, we do not
 reply to it and the caller will crash. Not our problem. We set the
-timeout in the `{noreply, S, ?DELAY}` tuples, for one simple reason
+timeout in the ``{noreply, S, ?DELAY}`` tuples, for one simple reason
 that we'll see right now:
 
 
@@ -575,10 +575,10 @@ that we'll see right now:
 Each time the server times out, our musicians are going to play a
 note. If they're good, everything's going to be completely fine. If
 they're bad, they'll have one chance out of 5 to miss and play a bad
-note, which will make them crash. Again, we set the `?DELAY` timeout
+note, which will make them crash. Again, we set the ``?DELAY`` timeout
 at the end of each non-terminating call.
 
-Then we add an empty `code_change/3` callback, as required by the
+Then we add an empty ``code_change/3`` callback, as required by the
 'gen_server' behaviour:
 
 
@@ -614,12 +614,12 @@ And we can set the terminate function:
 
 
 We've got many different messages here. If we terminate with a
-`normal` reason, it means we've called the `stop/1` function and so we
-display the the musician left of his/her own free will. In the case of
-a `bad_note` message, the musician will crash and we'll say that it's
-because the manager (the supervisor we'll soon add) kicked him out of
-the game.
-Then we have the `shutdown` message, which will come from the
+``normal`` reason, it means we've called the ``stop/1`` function and
+so we display the the musician left of his/her own free will. In the
+case of a ``bad_note`` message, the musician will crash and we'll say
+that it's because the manager (the supervisor we'll soon add) kicked
+him out of the game.
+Then we have the ``shutdown`` message, which will come from the
 supervisor. Whenever that happens, it means the supervisor decided to
 kill all of its children, or in our case, fired all of his musicians.
 We then add a generic error message for the rest.
@@ -650,8 +650,8 @@ Here's a simple use case of a musician:
 
 
 So we have Ralphie playing and crashing after a bad note. Hooray. If
-you try the same with a `good` musician, you'll need to call our
-`musicians:stop(Instrument)` function in order to stop all the
+you try the same with a ``good`` musician, you'll need to call our
+``musicians:stop(Instrument)`` function in order to stop all the
 playing.
 
 
@@ -663,12 +663,12 @@ We can now work with the supervisor. We'll have three grades of
 supervisors: a lenient one, an angry one, and a total jerk. The
 difference between them is that the lenient supervisor, while still a
 very pissy person, will fire a single member of the band at a time (
-`one_for_one`), the one who fails, until he gets fed up, fires them
+``one_for_one``), the one who fails, until he gets fed up, fires them
 all and gives up on bands. The angry supervisor, on the other hand,
-will fire some of them ( `rest_for_one`) on each mistake and will wait
-shorter before firing them all and giving up. Then the jerk supervisor
-will fire the whole band each time someone makes a mistake, and give
-up if the bands fail even less often.
+will fire some of them ( ``rest_for_one``) on each mistake and will
+wait shorter before firing them all and giving up. Then the jerk
+supervisor will fire the whole band each time someone makes a mistake,
+and give up if the bands fail even less often.
 
 
 ::
@@ -836,12 +836,12 @@ process per connection it receives. In this case, you would want a
 dynamic supervisors to look over all the different processes you'll
 have.
 
-Every time a worker is added to a supervisor using the `one_for_one`,
-`rest_for_one`, or `one_for_all` strategies, the child specification
-is added to a list in the supervisor, along with a pid and some other
-information. The child specification can then be used to restart the
-child and whatnot. Because things work that way, the following
-interface exists:
+Every time a worker is added to a supervisor using the
+``one_for_one``, ``rest_for_one``, or ``one_for_all`` strategies, the
+child specification is added to a list in the supervisor, along with a
+pid and some other information. The child specification can then be
+used to restart the child and whatnot. Because things work that way,
+the following interface exists:
 
 :start_child(SupervisorNameOrPid, ChildSpec): This adds a child
   specification to the list and starts the child with it
@@ -903,24 +903,24 @@ well when you need quick access to many children.
     :alt: a guitar case with some money inside it
 
 
-In these case, what you want is `simple_one_for_one`. The problem with
-`simple_one_for_one` is that it will not allow you to manually restart
-a child, delete it or terminate it. This loss in flexibility is
-fortunately accompanied by a few advantages. All the children are held
-in a dictionary, which makes looking them up fast. There is also a
-single child specification for all children under the supervisor. This
-will save you memory and time in that you will never need to delete a
-child yourself or store any child specification.
+In these case, what you want is ``simple_one_for_one``. The problem
+with ``simple_one_for_one`` is that it will not allow you to manually
+restart a child, delete it or terminate it. This loss in flexibility
+is fortunately accompanied by a few advantages. All the children are
+held in a dictionary, which makes looking them up fast. There is also
+a single child specification for all children under the supervisor.
+This will save you memory and time in that you will never need to
+delete a child yourself or store any child specification.
 
-For the most part, writing a `simple_one_for_one` supervisor is
+For the most part, writing a ``simple_one_for_one`` supervisor is
 similar to writing any other type of supervisor, except for one thing.
-The argument list in the `{M,F,A}` tuple is not the whole thing, but
+The argument list in the ``{M,F,A}`` tuple is not the whole thing, but
 is going to be appended to what you call it with when you do
-`supervisor:start_child(Sup, Args)`. That's right,
-`supervisor:start_child/2` changes API. So instead of doing
-`supervisor:start_child(Sup, Spec)`, which would call
-`erlang:apply(M,F,A)`, we now have `supervisor:start_child(Sup,
-Args)`, which calls `erlang:apply(M,F,A++Args)`.
+``supervisor:start_child(Sup, Args)``. That's right,
+``supervisor:start_child/2`` changes API. So instead of doing
+``supervisor:start_child(Sup, Spec)``, which would call
+``erlang:apply(M,F,A)``, we now have ``supervisor:start_child(Sup,
+Args)``, which calls ``erlang:apply(M,F,A++Args)``.
 
 Here's how we'd write it for our band_supervisor. Just add the
 following clause somewhere in it:
@@ -951,10 +951,10 @@ lenient:
     {error,{already_started,<0.690.0>}}
 
 
-Whoops! this happens because we register the djembe player as `djembe`
-as part of the start call to our `gen_server`. If we didn't name them
-or used a different name for each, it wouldn't cause a problem.
-Really, here's one with the name `drum` instead:
+Whoops! this happens because we register the djembe player as
+``djembe`` as part of the start call to our ``gen_server``. If we
+didn't name them or used a different name for each, it wouldn't cause
+a problem. Really, here's one with the name ``drum`` instead:
 
 
 ::
@@ -987,12 +987,12 @@ As a general (and sometimes wrong) hint, I'd tell you to use standard
 supervisors dynamically only when you know with certainty that you
 will have few children to supervise and/or that they won't need to be
 manipulated with any speed and rather infrequently. For other kinds of
-dynamic supervision, use `simple_one_for_one` where possible.
+dynamic supervision, use ``simple_one_for_one`` where possible.
 
 update:
 Since version R14B03, it is possible to terminate children with the
-function `supervisor:terminate_child(SupRef, Pid)`. Simple one for one
-supervison schemes are now possible to make fully dynamic and have
+function ``supervisor:terminate_child(SupRef, Pid)``. Simple one for
+one supervison schemes are now possible to make fully dynamic and have
 become an all-around interesting choice for when you have many
 processes running a single type of process.
 

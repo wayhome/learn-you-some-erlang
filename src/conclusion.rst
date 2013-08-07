@@ -68,7 +68,7 @@ also tends to work much better than any debugger for a concurrent
 language like Erlang. The best about it? It's traceable within Erlang,
 so you can make Erlang programs that trace themselves! If you look
 into them and find them a bit hard to digest, you might be okay
-staying with the `sys` module's tracing functions. They work only on
+staying with the ``sys`` module's tracing functions. They work only on
 OTP behaviourised processes, but they're often good enough to get
 going.
 

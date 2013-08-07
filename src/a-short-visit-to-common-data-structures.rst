@@ -60,8 +60,8 @@ They're declared as module attributes in the following manner:
 
 So here we have a record representing robots with 4 fields: name,
 type, hobbies and details. There is also a default value for type and
-details, `industrial` and `[]`, respectively. Here's how to declare a
-record in the module records:
+details, ``industrial`` and ``[]``, respectively. Here's how to
+declare a record in the module records:
 
 
 ::
@@ -88,7 +88,7 @@ And running the code:
 
 Woops! Here comes the hack! Erlang records are just syntactic sugar on
 top of tuples. Fortunately, there's a way to make it better. The
-Erlang shell has a command `rr(Module)` that lets you load record
+Erlang shell has a command ``rr(Module)`` that lets you load record
 definitions from Module :
 
 
@@ -104,12 +104,12 @@ definitions from Module :
 
 
 Ah there! This makes it much easier to work with records that way.
-You'll notice that in `first_robot/0`, we had not defined the
-`hobbies` field and it had no default value in its declaration.
+You'll notice that in ``first_robot/0``, we had not defined the
+``hobbies`` field and it had no default value in its declaration.
 Erlang, by defaults, sets the value to undefined for you.
 
-To see the behavior of the defaults we set in the `robot` definition,
-let's compile the following function:
+To see the behavior of the defaults we set in the ``robot``
+definition, let's compile the following function:
 
 
 ::
@@ -135,21 +135,21 @@ And run it:
 And we have an industrial robot that likes to spend time building
 cars.
 
-Note: The function `rr()` can take more than a module name: it can
-take a wildcard (like `rr("*")`) and also a list as a second argument
-to specify which records to load.
+Note: The function ``rr()`` can take more than a module name: it can
+take a wildcard (like ``rr("*")``) and also a list as a second
+argument to specify which records to load.
 
 There are a few other functions to deal with records in the shell:
-`rd(Name, Definition)` lets you define a record in a manner similar to
-the `-record(Name, Definition)` used in our module. You can use `rf()`
-to 'unload' all records, or `rf(Name)` or `rf([Names])` to get rid of
-specific definitions.
+``rd(Name, Definition)`` lets you define a record in a manner similar
+to the ``-record(Name, Definition)`` used in our module. You can use
+``rf()`` to 'unload' all records, or ``rf(Name)`` or ``rf([Names])``
+to get rid of specific definitions.
 
-You can use `rl()` to print all record definitions in a way you could
-copy-paste into the module or use `rl(Name)` or `rl([Names])` to
-restrict it to specific records.
+You can use ``rl()`` to print all record definitions in a way you
+could copy-paste into the module or use ``rl(Name)`` or
+``rl([Names])`` to restrict it to specific records.
 
-Finally, `rp(Term)` lets you convert a tuple to a record (given the
+Finally, ``rp(Term)`` lets you convert a tuple to a record (given the
 definition exists).
 
 Writing records alone won't do much. We need a way to extract values
@@ -172,7 +172,7 @@ for robots loaded:
 Ugh, not a pretty syntax. This is due to the nature of records as
 tuples. Because they're just some kind of compiler trick, you have to
 keep keywords around defining what record goes with what variable,
-hence the `#robot` part of `Crusher#robot.hobbies`. It's sad, but
+hence the ``#robot`` part of ``Crusher#robot.hobbies``. It's sad, but
 there's no way out of it. Worse than that, nested records get pretty
 ugly:
 
@@ -194,7 +194,7 @@ And yes, the parentheses are mandatory.
 Update:
 Starting with revision R14A, it is now possible to nest records
 without the parentheses. The NestedBot example above could also be
-written as `NestedRobot#robot.details#robot.name` and work the same.
+written as ``NestedRobot#robot.details#robot.name`` and work the same.
 
 To further show the dependence of records on tuples, see the
 following:
@@ -236,10 +236,10 @@ under:
 
 
 The syntax to bind a variable to any field of a record is demonstrated
-in the `admin_panel/1` function (it's possible to bind variables to
+in the ``admin_panel/1`` function (it's possible to bind variables to
 more than one field). An important thing to note about the
-`adult_section/1` function is that you need to do `SomeVar =
-#some_record{}` in order to bind the whole record to a variable. Then
+``adult_section/1`` function is that you need to do ``SomeVar =
+#some_record{}`` in order to bind the whole record to a variable. Then
 we do the compiling as usual:
 
 
@@ -265,7 +265,7 @@ of the tuple or even know how many there are when writing the
 function: we can only match on the age or the group if that's what's
 needed and forget about all the rest of the structure. If we were to
 use a normal tuple, the function definition might need to look a bit
-like `function({record, _, _, ICareAboutThis, _, _}) -> ...`. Then,
+like ``function({record, _, _, ICareAboutThis, _, _}) -> ...``. Then,
 whenever someone decides to add an element to the tuple, someone else
 (probably angry about it all) would need to go around and update all
 functions where that tuple is used.
@@ -299,8 +299,8 @@ And then:
 
 And you can see my robot has been repaired. The syntax to update
 records is a bit special here. It looks like we're updating the record
-in place ( `Rob#robot{Field=NewValue}`) but it's all compiler trickery
-to call the underlying `erlang:setelement/3` function.
+in place ( ``Rob#robot{Field=NewValue}``) but it's all compiler
+trickery to call the underlying ``erlang:setelement/3`` function.
 
 One last thing about records. Because they're pretty useful and code
 duplication is annoying, Erlang programmers frequently share records
@@ -359,10 +359,10 @@ syntax is not pretty, they're not much but a hack, but they're
 relatively important for the maintainability of your code.
 
 Note: You will often see open source software using the method shown
-here of having a project-wide `.hrl` file for records that are shared
-across all modules. While I felt obligated to document this use, I
-strongly recommend that you keep all record definitions local, within
-one module. If you want some other module to look at a record's
+here of having a project-wide ``.hrl`` file for records that are
+shared across all modules. While I felt obligated to document this
+use, I strongly recommend that you keep all record definitions local,
+within one module. If you want some other module to look at a record's
 innards, write functions to access its fields and keep its details as
 private as possible. This helps prevent name clashes, avoids problems
 when upgrading code, and just generally improves the readability and
@@ -391,21 +391,21 @@ title. I just need one of these ribbons.
 
 For small amounts of data, there are basically two data structures
 that can be used. The first one is called a *proplist*. A proplist is
-any list of tuples of the form `[{Key,Value}]`. They're a weird kind
+any list of tuples of the form ``[{Key,Value}]``. They're a weird kind
 of structure because there is no other rule than that. In fact the
 rules are so relaxed that the list can also contain boolean values,
 integers and whatever you want. We're rather interested by the idea of
 a tuple with a key and a value in a list here, though. To work with
 proplists, you can use the proplists module. It contains functions
-such as `proplists:delete/2`, `proplists:get_value/2`,
-`proplists:get_all_values/2`, `proplists:lookup/2` and
-`proplists:lookup_all/2`.
+such as ``proplists:delete/2``, ``proplists:get_value/2``,
+``proplists:get_all_values/2``, ``proplists:lookup/2`` and
+``proplists:lookup_all/2``.
 
 You'll notice there is no function to add or update an element of the
 list. This shows how loosely defined proplists are as a data
 structure. To get these functionalities, you must cons your element
-manually ( `[NewElement|OldList]`) and use functions such as
-`lists:keyreplace/4`. Using two modules for one small data structure
+manually ( ``[NewElement|OldList]``) and use functions such as
+``lists:keyreplace/4``. Using two modules for one small data structure
 is not the cleanest thing, but because proplists are so loosely
 defined, they're often used to deal with configuration lists, and
 general description of a given item. Proplists are not exactly
@@ -417,10 +417,10 @@ If you do want a more complete key-value store for small amounts of
 data, the orddict module is what you need. Orddicts (ordered
 dictionaries) are proplists with a taste for formality. Each key can
 be there once, the whole list is sorted for faster average lookup,
-etc. Common functions for the CRUD usage include `orddict:store/3`,
-`orddict:find/2` (when you do not know whether the key is in the
-dictionaries), `orddict:fetch/2` (when you know it is there or that it
-must be there) and `orddict:erase/2`.
+etc. Common functions for the CRUD usage include ``orddict:store/3``,
+``orddict:find/2`` (when you do not know whether the key is in the
+dictionaries), ``orddict:fetch/2`` (when you know it is there or that
+it must be there) and ``orddict:erase/2``.
 
 
 .. image:: ../images/dict.png
@@ -433,22 +433,22 @@ amount, you should switch to different key-value stores.
 
 There are basically two key-value structures/modules to deal with
 larger amounts of data: dicts and gb_trees. Dictionaries have the same
-interface as orddicts: `dict:store/3`, `dict:find/2`, `dict:fetch/2`,
-`dict:erase/2` and every other function, such as `dict:map/2` and
-`dict:fold/2` (pretty useful to work on the whole data structure!)
-Dicts are thus very good choices to scale orddicts up whenever it is
-needed.
+interface as orddicts: ``dict:store/3``, ``dict:find/2``,
+``dict:fetch/2``, ``dict:erase/2`` and every other function, such as
+``dict:map/2`` and ``dict:fold/2`` (pretty useful to work on the whole
+data structure!) Dicts are thus very good choices to scale orddicts up
+whenever it is needed.
 
 General Balanced Trees, on the other hand, have a bunch more functions
 leaving you more direct control over how the structure is to be used.
 There are basically two modes for gb_trees: the mode where you know
 your structure in and out (I call this the 'smart mode'), and the mode
 where you can't assume much about it (I call this one the 'naive
-mode'). In naive mode, the functions are `gb_trees:enter/2`,
-`gb_trees:lookup/2` and `gb_trees:delete_any/2`. The related smart
-functions are `gb_trees:insert/3`, `gb_trees:get/2`,
-`gb_trees:update/3` and `gb_trees:delete/2`. There is also
-`gb_trees:map/2`, which is always a nice thing when you need it.
+mode'). In naive mode, the functions are ``gb_trees:enter/2``,
+``gb_trees:lookup/2`` and ``gb_trees:delete_any/2``. The related smart
+functions are ``gb_trees:insert/3``, ``gb_trees:get/2``,
+``gb_trees:update/3`` and ``gb_trees:delete/2``. There is also
+``gb_trees:map/2``, which is always a nice thing when you need it.
 
 The disadvantage of 'naive' functions over 'smart' ones is that
 because gb_trees are balanced trees, whenever you insert a new element
@@ -468,12 +468,12 @@ the best.
 
 Oh and also note that while dicts have a fold function, gb_trees
 don't: they instead have an *iterator* function, which returns a bit
-of the tree on which you can call `gb_trees:next(Iterator)` to get the
-following values in order. What this means is that you need to write
-your own recursive functions on top of gb_trees rather than use a
-generic fold. On the other hand, gb_trees let you have quick access to
-the smallest and largest elements of the structure with
-`gb_trees:smallest/1` and `gb_trees:largest/1`.
+of the tree on which you can call ``gb_trees:next(Iterator)`` to get
+the following values in order. What this means is that you need to
+write your own recursive functions on top of gb_trees rather than use
+a generic fold. On the other hand, gb_trees let you have quick access
+to the smallest and largest elements of the structure with
+``gb_trees:smallest/1`` and ``gb_trees:largest/1``.
 
 I would therefore say that your application's needs is what should
 govern which key-value store to choose. Different factors such as how
@@ -544,12 +544,12 @@ build a set. The four modules are ordsets, sets, gb_sets and sofs
 :ordsets: Ordsets are implemented as a sorted list. They're mainly
   useful for small sets, are the slowest kind of set, but they have the
   simplest and most readable representation of all sets. There are
-  standard functions for them such as `ordsets:new/0`,
-  `ordsets:is_element/2`, `ordsets:add_element/2`,
-  `ordsets:del_element/2`, `ordsets:union/1`, `ordsets:intersection/1`,
-  and a bunch more.
+  standard functions for them such as ``ordsets:new/0``,
+  ``ordsets:is_element/2``, ``ordsets:add_element/2``,
+  ``ordsets:del_element/2``, ``ordsets:union/1``,
+  ``ordsets:intersection/1``, and a bunch more.
 :sets: Sets (the module) is implemented on top of a structure really
-  similar to the one used in `dict`. They implement the same interface
+  similar to the one used in ``dict``. They implement the same interface
   as ordsets, but they're going to scale much better. Like dictionaries,
   they're especially good for read-intensive manipulations, like
   checking whether some element is part of the set or not.
@@ -571,11 +571,11 @@ build a set. The four modules are ordsets, sets, gb_sets and sofs
 Don't drink too much kool-aid:
 While such a variety can be seen as something great, some
 implementation details can be downright frustrating. As an example,
-gb_sets, ordsets and sofs all use the `==` operator to compare values:
-if you have the numbers 2 and 2.0 , they'll both end up seen as the
-same one.
+gb_sets, ordsets and sofs all use the ``==`` operator to compare
+values: if you have the numbers 2 and 2.0 , they'll both end up seen
+as the same one.
 
-However, sets (the module) uses the `=:=` operator, which means you
+However, sets (the module) uses the ``=:=`` operator, which means you
 can't necessarily switch over every implementation as you wish. There
 are cases where you need one precise behavior and at that point, you
 might lose the benefit of having multiple implementations.
@@ -584,7 +584,7 @@ It's a bit confusing to have that many options available. Björn
 Gustavsson, from the Erlang/OTP team and programmer of Wings3D mainly
 suggests using gb_sets in most circumstances, using ordset when you
 need a clear representation that you want to process with your own
-code and 'sets' when you need the `=:=` operator (source.)
+code and 'sets' when you need the ``=:=`` operator (source.)
 
 In any case, like for key-value stores, the best solution is usually
 to benchmark and see what fits your application better.
@@ -632,16 +632,16 @@ separation into 3 interfaces (or APIs) of varying complexity, called
 'Original API', 'Extended API' and 'Okasaki API':
 
 :Original API: The original API contains the functions at the base of
-  the queue concept, including: `new/0`, for creating empty queues,
-  `in/2`, for inserting new elements, `out/1`, for removing elements,
-  and then functions to convert to lists, reverse the queue, look if a
-  particular value is part of it, etc.
+  the queue concept, including: ``new/0``, for creating empty queues,
+  ``in/2``, for inserting new elements, ``out/1``, for removing
+  elements, and then functions to convert to lists, reverse the queue,
+  look if a particular value is part of it, etc.
 :Extended API: The extended API mainly adds some introspection power
   and flexibility: it lets you do things such as looking at the front of
-  the queue without removing the first element (see `get/1` or
-  `peek/1`), removing elements without caring about them ( `drop/1`),
-  etc. These functions are not essential to the concept of queues, but
-  they're still useful in general.
+  the queue without removing the first element (see ``get/1`` or
+  ``peek/1``), removing elements without caring about them (
+  ``drop/1``), etc. These functions are not essential to the concept of
+  queues, but they're still useful in general.
 :Okasaki API: The Okasaki API is a bit weird. It's derived from Chris
   Okasaki's *Purely Functional Data Structures*. The API provides
   operations similar to what was available in the two previous APIs, but

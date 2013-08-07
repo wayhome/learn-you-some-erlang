@@ -105,13 +105,13 @@ programmers tend to omit that layer.
 
 In any case, now that we understand that organisation, we can go back
 to our two assumptions (we need to instantiate stuff, and then mess
-stuff up). Each test suite is a module that ends with `_SUITE`. If I
+stuff up). Each test suite is a module that ends with ``_SUITE``. If I
 were to test the magic 8-ball application from last chapter, I might
-thus call my suite `m8ball_SUITE`. Related to that one is a directory
-called the *data directory*. Each suite is allowed to have one such
-directory, usually named `Module_SUITE_data/`. In the case of the
-magic 8-ball app, it would have been `m8ball_SUITE_data/`. That
-directory contains anything you want.
+thus call my suite ``m8ball_SUITE``. Related to that one is a
+directory called the *data directory*. Each suite is allowed to have
+one such directory, usually named ``Module_SUITE_data/``. In the case
+of the magic 8-ball app, it would have been ``m8ball_SUITE_data/``.
+That directory contains anything you want.
 
 What about the side-effects? Well because we might run tests many
 times, Common Test develops its structure a bit more:
@@ -132,16 +132,16 @@ risk of overwriting something important or the results of former test
 runs.
 
 Enough with this architectural material; we're ready to write our
-first simple test suite. Create a directory named `ct/` (or whatever
+first simple test suite. Create a directory named ``ct/`` (or whatever
 you'd like, this is hopefully a free country, after all). That
 directory will be our test root. Inside of it, we can then make a
-directory named `demo/` for the simpler tests we'll use as examples.
+directory named ``demo/`` for the simpler tests we'll use as examples.
 This will be our test object directory.
 
 Inside the test object directory, we'll begin with a module named
 basic_SUITE.erl, to see the most basic stuff possible. You can omit
-creating the `basic_SUITE_data/` directory — we won't need it for this
-run. Common Test won't complain.
+creating the ``basic_SUITE_data/`` directory — we won't need it for
+this run. Common Test won't complain.
 
 Here's what the module looks like:
 
@@ -165,14 +165,14 @@ Here's what the module looks like:
 
 
 Let's study it step by step. First of all, we've got to include the
-file `"common_test/include/ct.hrl"`. That file gives a few useful
-macros, and even though `basic_SUITE` doesn't use them, it's usually a
-good habit of including that file.
+file ``"common_test/include/ct.hrl"``. That file gives a few useful
+macros, and even though ``basic_SUITE`` doesn't use them, it's usually
+a good habit of including that file.
 
-Then we have the function `all/0`. That function returns a list of
+Then we have the function ``all/0``. That function returns a list of
 test cases. It's basically what tells Common Test "hey, I want to run
-these test cases!". EUnit would do it based on the name ( `*_test()`
-or `*_test_()`); Common Test does it with an explicit function call.
+these test cases!". EUnit would do it based on the name ( ``*_test()``
+or ``*_test_()``); Common Test does it with an explicit function call.
 
 
 .. image:: ../images/priv_dir.png
@@ -182,18 +182,18 @@ or `*_test_()`); Common Test does it with an explicit function call.
 What about these _Config variables? They're unused for now, but for
 your own personal knowledge, they contain the initial state your test
 cases will require. That state is literally a proplist, and it
-initially contains two values, `data_dir` and `priv_dir`, the two
+initially contains two values, ``data_dir`` and ``priv_dir``, the two
 directories we have for our static data and the one where we can mess
 around.
 
 We can run the tests either from the command line or from an Erlang
-shell. If you use the command line, you can call `$ ct_run -suite
-Name_SUITE`. In Erlang/OTP versions before R15 (released around
-December 2011), the default command was `run_test` instead of `ct_run`
-(although some systems had both already). The name was changed with
-the objective of minimizing the risk of name clashes with other
-applications by moving to a slightly less generic name. Running it, we
-find:
+shell. If you use the command line, you can call ``$ ct_run -suite
+Name_SUITE``. In Erlang/OTP versions before R15 (released around
+December 2011), the default command was ``run_test`` instead of
+``ct_run`` (although some systems had both already). The name was
+changed with the objective of minimizing the risk of name clashes with
+other applications by moving to a slightly less generic name. Running
+it, we find:
 
 
 ::
@@ -265,21 +265,21 @@ these HTML files:
 Oh what the hell did Common Test do to my beautiful directory? It is a
 shameful thing to look at. We've got two directories there. Feel free
 to explore them if you feel adventurous, but all the cowards like me
-will prefer to instead look at either the `all_runs.html` or the
-`index.html` files. The former will link to indexes of all iterations
-of the tests you ran while the latter will link to the newest runs
-only. Pick one, and then click around in a browser (or press around if
-you don't believe in mice as an input device) until you find the test
-suite with its two tests:
+will prefer to instead look at either the ``all_runs.html`` or the
+``index.html`` files. The former will link to indexes of all
+iterations of the tests you ran while the latter will link to the
+newest runs only. Pick one, and then click around in a browser (or
+press around if you don't believe in mice as an input device) until
+you find the test suite with its two tests:
 
 
 .. image:: ../images/ct-log-screen.png
     :alt: A screenshot of the HTML log from a browser
 
 
-You see that `test2` failed. if you click on the underlined line
+You see that ``test2`` failed. if you click on the underlined line
 number, you'll see a raw copy of the module. If you instead click on
-the `test2` link, you'll see a detailed log of what happened:
+the ``test2`` link, you'll see a detailed log of what happened:
 
 
 ::
@@ -329,10 +329,10 @@ code to be called before and after the case, respectively.
 
 Common Test follows that concept. Instead of having EUnit-style
 fixtures, it instead relies on two functions. The first is the setup
-function, called `init_per_testcase/2` and the second one is the
-teardown function, called `end_per_testcase/2`. To see how they're
+function, called ``init_per_testcase/2`` and the second one is the
+teardown function, called ``end_per_testcase/2``. To see how they're
 used, create a new test suite called state_SUITE (still under the
-`demo/` directory), add the following code:
+``demo/`` directory), add the following code:
 
 
 ::
@@ -364,25 +364,25 @@ used, create a new test suite called state_SUITE (still under the
         zachary = ets:last(TabId).
 
 
-This is a little normal ETS test checking a few `ordered_set`
+This is a little normal ETS test checking a few ``ordered_set``
 concepts. What's interesting about it is the two new functions,
-`init_per_testcase/2` and `end_per_testcase/2`. Both functions need to
-be exported in order to be called. If they're exported, the functions
-are going to be called for *all* test cases in a module. You can
-separate them based on the arguments. The first one is the name of the
-test case (as an atom), and the second one is the Config proplist that
-you can modify.
+``init_per_testcase/2`` and ``end_per_testcase/2``. Both functions
+need to be exported in order to be called. If they're exported, the
+functions are going to be called for *all* test cases in a module. You
+can separate them based on the arguments. The first one is the name of
+the test case (as an atom), and the second one is the Config proplist
+that you can modify.
 
-Note: to read from Config , rather than using `proplists:get_value/2`,
-the Common test include file has a `?config(Key, List)` macro that
-returns the value matching the given key. The macro is in fact a
-wrapper around `proplists:get_value/2` and is documented as such, so
-you know you can deal with Config as a proplist without worrying about
-it ever breaking.
+Note: to read from Config , rather than using
+``proplists:get_value/2``, the Common test include file has a
+``?config(Key, List)`` macro that returns the value matching the given
+key. The macro is in fact a wrapper around ``proplists:get_value/2``
+and is documented as such, so you know you can deal with Config as a
+proplist without worrying about it ever breaking.
 
-As an example, if I had tests `a`, `b`, and `c` and only wanted a
-setup and teardown function for the first two tests, my init function
-might look like this:
+As an example, if I had tests ``a``, ``b``, and ``c`` and only wanted
+a setup and teardown function for the first two tests, my init
+function might look like this:
 
 
 ::
@@ -397,9 +397,9 @@ might look like this:
         Config.
 
 
-And similarly for the `end_per_testcase/2` function.
+And similarly for the ``end_per_testcase/2`` function.
 
-Looking back at `state_SUITE`, you can see the test case, but what's
+Looking back at ``state_SUITE``, you can see the test case, but what's
 interesting to note is how I instantiate the ETS table. I specify no
 heir, and yet, the tests run without a problem after the init function
 is done.
@@ -409,13 +409,13 @@ tables are usually owned by the process that started them. In this
 case, we leave the table as it is. If you run the tests, you'll see
 the suite succeeds.
 
-What we can infer from this is that the `init_per_testcase` and
-`end_per_testcase` functions run in the same process as the test case
-itself. You can thus safely do things like set links, start tables and
-whatnot without worrying about different processes breaking your
-things. What about errors in the test case? Fortunately, crashing in
-your test case won't stop Common Test from cleaning up and calling the
-`end_per_testcase` function, with the exception of `kill` exit
+What we can infer from this is that the ``init_per_testcase`` and
+``end_per_testcase`` functions run in the same process as the test
+case itself. You can thus safely do things like set links, start
+tables and whatnot without worrying about different processes breaking
+your things. What about errors in the test case? Fortunately, crashing
+in your test case won't stop Common Test from cleaning up and calling
+the ``end_per_testcase`` function, with the exception of ``kill`` exit
 signals.
 
 We're now pretty much equal to EUnit with Common Test, at least in
@@ -426,10 +426,10 @@ more do we want?
 
 Note: if you end up feeling like outputting stuff to help you debug
 things or just show progress in your tests, you'll quickly find out
-that `io:format/1-2` prints only in the HTML logs but not the Erlang
+that ``io:format/1-2`` prints only in the HTML logs but not the Erlang
 shell. If you want to do both (with free time stamps included), use
-the function `ct:pal/1-2`. It works like `io:format/1-2`, but prints
-to both the shell and logs.
+the function ``ct:pal/1-2``. It works like ``io:format/1-2``, but
+prints to both the shell and logs.
 
 
 
@@ -474,7 +474,7 @@ to do it is to add a group function to declare all of them:
     groups() -> ListOfGroups.
 
 
-Well, there's a `groups()` function. Here's what ListOfGroups should
+Well, there's a ``groups()`` function. Here's what ListOfGroups should
 be:
 
 
@@ -508,9 +508,10 @@ That's a tiny test case street gang. Here's a more complex one:
        {group, name_of_another_test_group}]}].
 
 
-That one specifies two properties, `shuffle` and `sequence`. We'll see
-what they mean soon. The example also shows a group including another
-group. This assumes that the group function might be a bit like this:
+That one specifies two properties, ``shuffle`` and ``sequence``. We'll
+see what they mean soon. The example also shows a group including
+another group. This assumes that the group function might be a bit
+like this:
 
 
 ::
@@ -547,7 +548,7 @@ simpler with time. In any case, nested groups are not a mandatory
 thing and you can avoid them if you find them confusing.
 
 But wait, how do you use such a group? Well, by putting them in the
-`all/0` function:
+``all/0`` function:
 
 
 ::
@@ -559,34 +560,36 @@ But wait, how do you use such a group? Well, by putting them in the
 And that way, Common Test will be able to know whether it needs to run
 a test case or not.
 
-I've quickly skipped over the group properties. We've seen `shuffle`,
-`sequence` and an empty list. Here's what they stand for:
+I've quickly skipped over the group properties. We've seen
+``shuffle``, ``sequence`` and an empty list. Here's what they stand
+for:
 
 :empty list / no option: The test cases in the group are run one after
   the other. If a test fails, the others after it in the list are run.
 :shuffle: Runs the test in a random order. The random seed (the
   initialization value) used for the sequence will be printed in the
-  HTML logs, of the form `{A,B,C}`. If a particular sequence of tests
+  HTML logs, of the form ``{A,B,C}``. If a particular sequence of tests
   fails and you want to reproduce it, use that seed in the HTML logs and
-  change the `shuffle` option to instead be `{shuffle, {A,B,C}}`. That
-  way you can reproduce random runs in their precise order if you ever
-  need to.
+  change the ``shuffle`` option to instead be ``{shuffle, {A,B,C}}``.
+  That way you can reproduce random runs in their precise order if you
+  ever need to.
 :parallel: The tests are run in different processes. Be careful
-  because if you forget to export the `init_per_group` and
-  `end_per_group` functions, Common Test will silently ignore this
+  because if you forget to export the ``init_per_group`` and
+  ``end_per_group`` functions, Common Test will silently ignore this
   option.
 :sequence: Doesn't necessarily mean that the tests are run in order,
   but rather that if a test fails in the group's list, then all the
   other subsequent tests are skipped. This option can be combined with
-  `shuffle` if you want any random test failing to stop the ones after.
+  ``shuffle`` if you want any random test failing to stop the ones
+  after.
 :{repeat, Times}: Repeats the group Times times. You could thus run
   the whole test case sequence in parallel 9 times by using the group
-  properties `[parallel, {repeat, 9}]`. Times can also have the value
-  `forever`, although 'forever' is a bit of a lie as it can't defeat
+  properties ``[parallel, {repeat, 9}]``. Times can also have the value
+  ``forever``, although 'forever' is a bit of a lie as it can't defeat
   concepts such as hardware failure or heat death of the Universe
   (ahem).
 :{repeat_until_any_fail, N}: Runs all the tests until one of them
-  fails or they have been run N times. N can also be `forever`.
+  fails or they have been run N times. N can also be ``forever``.
 :{repeat_until_all_fail, N}: Same as above, but the tests may run
   until all cases fail.
 :{repeat_until_any_succeed, N}: Same as before, except the tests may
@@ -761,12 +764,13 @@ hold a meeting with human-made tools:
 
 
 We don't care whether these tests actually test something or not. They
-are just there to use the `meeting` module (which we'll see how to put
-in place for the tests soon) and try to generate wrong reservations.
+are just there to use the ``meeting`` module (which we'll see how to
+put in place for the tests soon) and try to generate wrong
+reservations.
 
 To find out if we had a race condition or not between all of these
-tests, we'll make use of the `meeting:get_all_bookings()` function in
-a fourth and final test:
+tests, we'll make use of the ``meeting:get_all_bookings()`` function
+in a fourth and final test:
 
 
 ::
@@ -792,8 +796,8 @@ works? We'll need to make clever use of test groups.
 First of all, because we need a race condition, we know we'll need to
 have a bunch of tests running in parallel. Secondly, given we have a
 requirement to see the problem from these race conditions, we'll need
-to either run `all_same_owner` many times during the whole debacle, or
-only after it to look with despair at the aftermath.
+to either run ``all_same_owner`` many times during the whole debacle,
+or only after it to look with despair at the aftermath.
 
 I chose the latter. This would give us this:
 
@@ -808,18 +812,18 @@ I chose the latter. This would give us this:
                   [carla, mark, dog]}].
 
 
-This creates a `clients` group of tests, with the individual tests
-being `carla`, `mark`, and `dog`. They're going to run in parallel, 10
-times each.
+This creates a ``clients`` group of tests, with the individual tests
+being ``carla``, ``mark``, and ``dog``. They're going to run in
+parallel, 10 times each.
 
-You see that I include the group in the `all/0` function, and then put
-`all_same_owner`. That's because by default, Common Test will run the
-tests and groups in `all/0` in the order they were declared.
+You see that I include the group in the ``all/0`` function, and then
+put ``all_same_owner``. That's because by default, Common Test will
+run the tests and groups in ``all/0`` in the order they were declared.
 
-But wait. We forgot to start and stop the `meeting` process itself. To
-do it, we'll need to have a way to keep a process alive for all tests,
-regardless of whether they're in the 'clients' group or not. The
-solution to this problem is to nest things one level deeper, in
+But wait. We forgot to start and stop the ``meeting`` process itself.
+To do it, we'll need to have a way to keep a process alive for all
+tests, regardless of whether they're in the 'clients' group or not.
+The solution to this problem is to nest things one level deeper, in
 another group:
 
 
@@ -847,11 +851,11 @@ another group:
         ok.
 
 
-We use the `init_per_group` and `end_per_group` functions to specify
-that the `session` group (which now runs `{group, clients}` and
-`all_same_owner`) will work with an active meeting. Don't forget to
-export the two setup and teardown functions, otherwise nothing will
-run in parallel.
+We use the ``init_per_group`` and ``end_per_group`` functions to
+specify that the ``session`` group (which now runs ``{group,
+clients}`` and ``all_same_owner``) will work with an active meeting.
+Don't forget to export the two setup and teardown functions, otherwise
+nothing will run in parallel.
 
 Alright, let's run the tests and see what we get:
 
@@ -880,8 +884,8 @@ Alright, let's run the tests and see what we get:
 
 Interesting. The problem is a badmatch with three tuples with
 different items owned by different people. Moreover, the output tells
-us it's the `all_same_owner` test that failed. I think that's a pretty
-good sign that `all_same_owner` crashed as planned.
+us it's the ``all_same_owner`` test that failed. I think that's a
+pretty good sign that ``all_same_owner`` crashed as planned.
 
 If you go look at the HTML log, you'll be able to see all the runs
 with the exact test that failed, and for what reason. Click on the
@@ -912,14 +916,14 @@ itself:
     :alt: Similar to the earlier groups and test cases nesting illustrations, this one shows groups being wrapped in suites: [suite init] -> [group] -> [suite end]
 
 
-We have two additional functions, `init_per_suite(Config)` and
-`end_per_suite(Config)`. These, like all the other init and end
+We have two additional functions, ``init_per_suite(Config)`` and
+``end_per_suite(Config)``. These, like all the other init and end
 functions, aim to give more control over initialization of data and
 processes.
 
-The `init_per_suite/1` and `end_per_suite/1` functions will run only
-once, respectively before and after all of the groups or test cases.
-They'll be mostly useful when dealing with general state and
+The ``init_per_suite/1`` and ``end_per_suite/1`` functions will run
+only once, respectively before and after all of the groups or test
+cases. They'll be mostly useful when dealing with general state and
 dependencies that will be required for all tests. This can include
 manually starting applications you depend on, for example.
 
@@ -955,59 +959,59 @@ Test specifications are special files that let you detail everything
 about how you want to have the tests run, and they work with the
 Erlang shell and the command line. The test specification can be put
 in a file with any extension you want (although I personally fancy
-`.spec` files). The spec files will contain Erlang tuples, much like a
-consult file. Here's a few of the items it can have:
+``.spec`` files). The spec files will contain Erlang tuples, much like
+a consult file. Here's a few of the items it can have:
 
-: `{include, IncludeDirectories}`: When Common Test automatically
+: ``{include, IncludeDirectories}``: When Common Test automatically
   compiles suites, this option lets you specify where it should look for
   include files in order to make sure they're there. The
   IncludeDirectories value has to be a string (list) or a list of
   strings (list of lists).
-: `{logdir, LoggingDirectory}`: When logging, all logs should be moved
-  to the LoggingDirectory , a string. Note that the directory must exist
-  before the tests are run, otherwise Common Test will complain.
-: `{suites, Directory, Suites}`: Finds the given suites in Directory .
-  Suites can be an atom ( `some_SUITE`), a list of atoms, or the atom
-  `all` to run all the suites in a directory.
-: `{skip_suites, Directory, Suites, Comment}`: This subtracts a list
+: ``{logdir, LoggingDirectory}``: When logging, all logs should be
+  moved to the LoggingDirectory , a string. Note that the directory must
+  exist before the tests are run, otherwise Common Test will complain.
+: ``{suites, Directory, Suites}``: Finds the given suites in Directory
+  . Suites can be an atom ( ``some_SUITE``), a list of atoms, or the
+  atom ``all`` to run all the suites in a directory.
+: ``{skip_suites, Directory, Suites, Comment}``: This subtracts a list
   of suites from those previously declared and skips them. The Comment
   argument is a string explaining why you decided to skip them. This
   comment will be put in the final HTML logs. The tables will show a
   yellow 'SKIPPED: Reason' where Reason is whatever Comment contained.
-: `{groups, Directory, Suite, Groups}`: This is an option to pick only
-  a few groups from a given suite. The Groups variable can be a single
-  atom (the group name) or `all` for all groups. The value can also be
-  more complex, letting you override the group definitions inside
-  `groups()` within the test case by picking a value like `{GroupName,
-  [parallel]}`, which will override GroupName 's options for `parallel`,
-  without needing to recompile tests.
-: `{groups, Directory, Suite, Groups, {cases,Cases}}`: Similar to the
-  one above, but it lets you specify some test cases to include in the
-  tests by substituting Cases by a single case name (an atom), a list of
-  names, or the atom `all`.
-: `{skip_groups, Directory, Suite, Groups, Comment}`: This command was
-  only added in R15B and documented in R15B01. It allows one to skip
-  test groups, much like the `skip_suites` for suites. There is no
+: ``{groups, Directory, Suite, Groups}``: This is an option to pick
+  only a few groups from a given suite. The Groups variable can be a
+  single atom (the group name) or ``all`` for all groups. The value can
+  also be more complex, letting you override the group definitions
+  inside ``groups()`` within the test case by picking a value like
+  ``{GroupName, [parallel]}``, which will override GroupName 's options
+  for ``parallel``, without needing to recompile tests.
+: ``{groups, Directory, Suite, Groups, {cases,Cases}}``: Similar to
+  the one above, but it lets you specify some test cases to include in
+  the tests by substituting Cases by a single case name (an atom), a
+  list of names, or the atom ``all``.
+: ``{skip_groups, Directory, Suite, Groups, Comment}``: This command
+  was only added in R15B and documented in R15B01. It allows one to skip
+  test groups, much like the ``skip_suites`` for suites. There is no
   explanation as to why it wasn't there before then.
-: `{skip_groups, Directory, Suite, Groups, {cases,Cases}, Comment}`:
+: ``{skip_groups, Directory, Suite, Groups, {cases,Cases}, Comment}``:
   Similar to the one above, but with specific test cases to skip on top
   of it. Also only available since R15B.
-: `{cases, Directory, Suite, Cases}`: Runs specific test cases from a
-  given suite. Cases can be an atom, a list of atoms, or `all`.
-: `{skip_cases, Directory, Suite, Cases, Comment}`: This is similar to
-  `skip_suites`, except we choose specific test cases to avoid with this
-  one.
-: `{alias, Alias, Directory}`: Because it gets very annoying to write
-  all these directory names (especially if they're full names), Common
-  Test lets you substitute them with aliases (atoms). This is pretty
-  useful in order to be concise.
+: ``{cases, Directory, Suite, Cases}``: Runs specific test cases from
+  a given suite. Cases can be an atom, a list of atoms, or ``all``.
+: ``{skip_cases, Directory, Suite, Cases, Comment}``: This is similar
+  to ``skip_suites``, except we choose specific test cases to avoid with
+  this one.
+: ``{alias, Alias, Directory}``: Because it gets very annoying to
+  write all these directory names (especially if they're full names),
+  Common Test lets you substitute them with aliases (atoms). This is
+  pretty useful in order to be concise.
 
 
-Before showing a simple example, you should add a `logs/` directory
-above the `demo/` one ( `ct/` in my files). Unsurprisingly, that's
+Before showing a simple example, you should add a ``logs/`` directory
+above the ``demo/`` one ( ``ct/`` in my files). Unsurprisingly, that's
 where our Common Test logs will be moved to. Here's what a possible
 test specification could look like for all our tests so far, under the
-imaginative name of `spec.spec`:
+imaginative name of ``spec.spec``:
 
 
 ::
@@ -1022,17 +1026,18 @@ imaginative name of `spec.spec`:
     {skip_cases, demo, basic_SUITE, test2, "This test fails on purpose"}.
 
 
-This spec file declares two aliases, `demo` and `meeting`, which point
-to the two test directories we have. We put the logs inside
-`ct/logs/`, our newest directory. Then we ask to run all suites in the
-meeting directory, which, coincidentally is the `meeting_SUITE` suite.
-Next on the list are the two suites inside the demo directory.
-Moreover, we ask to skip `test2` from the `basic_SUITE` suite, given
-it contains a division by zero that we know will fail.
+This spec file declares two aliases, ``demo`` and ``meeting``, which
+point to the two test directories we have. We put the logs inside
+``ct/logs/``, our newest directory. Then we ask to run all suites in
+the meeting directory, which, coincidentally is the ``meeting_SUITE``
+suite. Next on the list are the two suites inside the demo directory.
+Moreover, we ask to skip ``test2`` from the ``basic_SUITE`` suite,
+given it contains a division by zero that we know will fail.
 
-To run the tests, you can either use `$ ct_run -spec spec.spec` (or
-`run_test` for versions of Erlang before R15), or you can use the
-function `ct:run_test([{spec, "spec.spec"}]).` from the Erlang shell:
+To run the tests, you can either use ``$ ct_run -spec spec.spec`` (or
+``run_test`` for versions of Erlang before R15), or you can use the
+function ``ct:run_test([{spec, "spec.spec"}]).`` from the Erlang
+shell:
 
 
 ::
@@ -1062,9 +1067,9 @@ function `ct:run_test([{spec, "spec.spec"}]).` from the Erlang shell:
 If you take the time to look at the logs, you'll see two directories
 for the different test runs. One of them will have a failure; that's
 the meeting that fails as expected. The other one will have one
-success, and one skipped case, of the form `1 (1/0)`. Generally, the
-format is `TotalSkipped (IntentionallySkipped/SkippedDueToError)`. In
-this case the skip happened from the spec file, so it goes on the
+success, and one skipped case, of the form ``1 (1/0)``. Generally, the
+format is ``TotalSkipped (IntentionallySkipped/SkippedDueToError)``.
+In this case the skip happened from the spec file, so it goes on the
 left. If it happened because one of the many init functions failed,
 then it'd be on the right.
 
@@ -1103,53 +1108,54 @@ The first step to get things going that way is to expand our test
 specifications so they become distributed. We're going to add a few
 new tuples:
 
-: `{node, NodeAlias, NodeName}`: Much like `{alias, AliasAtom,
-  Directory}` for test suites, groups, and cases, except it's used for
+: ``{node, NodeAlias, NodeName}``: Much like ``{alias, AliasAtom,
+  Directory}`` for test suites, groups, and cases, except it's used for
   node names. Both NodeAlias and NodeName need to be atoms. This tuple
   is especially useful because NodeName needs to be a long node name,
   and in some cases this can be quite long.
-: `{init, NodeAlias, Options}`: This is a more complex one. This is
+: ``{init, NodeAlias, Options}``: This is a more complex one. This is
   the option that lets you start nodes. NodeAlias can be a single node
   alias, or a list of many of them. The Options are those available to
-  the `ct_slave` module:
+  the ``ct_slave`` module:
 
 
 Here are a few of the options available:
 
-: `{username, UserName}` and `{password, Password}`: Using the host
-  part of the node given by NodeAlias , Common Test will try to connect
-  to the given host over SSH (on port 22) using the user name and
-  password and run from there.
-: `{startup_functions, [{M,F,A}]}`: This option defines a list of
+: ``{username, UserName}`` and ``{password, Password}``: Using the
+  host part of the node given by NodeAlias , Common Test will try to
+  connect to the given host over SSH (on port 22) using the user name
+  and password and run from there.
+: ``{startup_functions, [{M,F,A}]}``: This option defines a list of
   functions to be called as soon as the other node has booted.
-: `{erl_flags, String}`: This sets standard flags that we'd want to
-  pass to the `erl` application when we start it. For example, if we
-  wanted to start a node with `erl -env ERL_LIBS ../ -config conf_file`,
-  the option would be `{erl_flags, "-env ERL_LIBS ../ -config
-  config_file"}`.
-: `{monitor_master, true | false}`: If the CT master stops running and
-  the option is set to `true`, then the slave node will also be taken
-  down. I do recommend using this option if you're spawning the remote
-  nodes; otherwise they'll keep running in the background if the master
-  dies. Moreover, if you run tests again, Common Test will be able to
-  connect to these nodes, and there will be some state attached to them.
-: `{boot_timeout, Seconds}`, `{init_timeout, Seconds}`,
-  `{startup_timeout, Seconds}`: These three options let you wait for
+: ``{erl_flags, String}``: This sets standard flags that we'd want to
+  pass to the ``erl`` application when we start it. For example, if we
+  wanted to start a node with ``erl -env ERL_LIBS ../ -config
+  conf_file``, the option would be ``{erl_flags, "-env ERL_LIBS ../
+  -config config_file"}``.
+: ``{monitor_master, true | false}``: If the CT master stops running
+  and the option is set to ``true``, then the slave node will also be
+  taken down. I do recommend using this option if you're spawning the
+  remote nodes; otherwise they'll keep running in the background if the
+  master dies. Moreover, if you run tests again, Common Test will be
+  able to connect to these nodes, and there will be some state attached
+  to them.
+: ``{boot_timeout, Seconds}``, ``{init_timeout, Seconds}``,
+  ``{startup_timeout, Seconds}``: These three options let you wait for
   different parts of the starting of a remote node. The boot timeout is
   about how long it takes before the node becomes pingable, with a
   default value of 3 seconds. The init timeout is an internal timer
   where the new remote node calls back the CT master to tell it it's up.
   By default, it lasts one second. Finally, the startup timeout tells
   Common Test how long to wait for the functions we defined earlier as
-  part of the `startup_functions` tuple.
-: `{kill_if_fail, true | false}`: This option will react to one of the
-  three timeouts above. If any of them are triggered, Common Test will
-  abort the connection, skip tests, etc. but not necessarily kill the
-  node, unless the option is set to `true`. Fortunately, that's the
-  default value.
+  part of the ``startup_functions`` tuple.
+: ``{kill_if_fail, true | false}``: This option will react to one of
+  the three timeouts above. If any of them are triggered, Common Test
+  will abort the connection, skip tests, etc. but not necessarily kill
+  the node, unless the option is set to ``true``. Fortunately, that's
+  the default value.
 
 
-Note: all these options are provided by the `ct_slave` module. It is
+Note: all these options are provided by the ``ct_slave`` module. It is
 possible to define your own module to start slave nodes, as long as it
 respects the right interface.
 
@@ -1181,8 +1187,8 @@ different nodes running different environments or parts of the system
 (such as databases, external applications, etc.)
 
 As a simple way to see how this works, let's turn the previous
-`spec.spec` file into a distributed one. Copy it as `dist.spec` and
-then change it until it looks like this:
+``spec.spec`` file into a distributed one. Copy it as ``dist.spec``
+and then change it until it looks like this:
 
 
 ::
@@ -1203,17 +1209,17 @@ then change it until it looks like this:
     {skip_cases, [a], demo, basic_SUITE, test2, "This test fails on purpose"}.
 
 
-This changes it a bit. We define two slave nodes, `a` and `b`, that
-need to be started for the tests. They do nothing special but make
-sure to die if the master dies. The aliases for directories remain the
-same as they were.
+This changes it a bit. We define two slave nodes, ``a`` and ``b``,
+that need to be started for the tests. They do nothing special but
+make sure to die if the master dies. The aliases for directories
+remain the same as they were.
 
-The `logdir` values are interesting. We declared no node alias as
-`all_nodes` or `master`, but yet, here they are. The `all_nodes` alias
-stands for all non-master nodes for Common Test, while `master` stands
-for the master node itself. To truly include all nodes,
-`[all_nodes,master]` is required. No clear explanation as to why these
-names were picked.
+The ``logdir`` values are interesting. We declared no node alias as
+``all_nodes`` or ``master``, but yet, here they are. The ``all_nodes``
+alias stands for all non-master nodes for Common Test, while
+``master`` stands for the master node itself. To truly include all
+nodes, ``[all_nodes,master]`` is required. No clear explanation as to
+why these names were picked.
 
 
 .. image:: ../images/venn-ref.png
@@ -1223,20 +1229,20 @@ names were picked.
 The reason why I put all values there is that Common Test will
 generate logs (and directories) for each of the slave nodes, and it
 will also generate a master set of logs, referring to the slave ones.
-I don't want any of these in directories other than `logs/`. Note that
-the logs for the slave nodes will be stored on each of the slave nodes
-individually. In that case, unless all nodes share the same
+I don't want any of these in directories other than ``logs/``. Note
+that the logs for the slave nodes will be stored on each of the slave
+nodes individually. In that case, unless all nodes share the same
 filesystem, the HTML links in the master's logs won't work and you'll
 have to access each of the nodes to get their respective logs.
 
-Last of all are the `suites` and `skip_cases` entries. They're pretty
-much the same as the previous ones, but adapted for each node. This
-way, you can skip some entries only on given nodes (which you know
-might be missing libraries or dependencies), or maybe more intensive
-ones where the hardware isn't up to the task.
+Last of all are the ``suites`` and ``skip_cases`` entries. They're
+pretty much the same as the previous ones, but adapted for each node.
+This way, you can skip some entries only on given nodes (which you
+know might be missing libraries or dependencies), or maybe more
+intensive ones where the hardware isn't up to the task.
 
 To run distributed tests of the sort, we must start a distributed node
-with `-name` and use `ct_master` to run the suites:
+with ``-name`` and use ``ct_master`` to run the suites:
 
 
 ::
@@ -1279,9 +1285,9 @@ with `-name` and use `ct_master` to run the suites:
     [{"dist.spec",ok}]
 
 
-There is no way to run such tests using `ct_run`. Note that CT will
+There is no way to run such tests using ``ct_run``. Note that CT will
 show all results as ok whether or not the tests actually succeeded.
-That is because `ct_master` only shows if it could contact all the
+That is because ``ct_master`` only shows if it could contact all the
 nodes. The results themselves are actually stored on each individual
 node.
 
@@ -1298,8 +1304,8 @@ terminating the master, the following warnings are shown instead:
 
 
 That's alright. It only means that Common Test is able to connect to
-remote nodes, but it found no use in calling our `init` tuple from the
-test specification, given the nodes are already alive. There is no
+remote nodes, but it found no use in calling our ``init`` tuple from
+the test specification, given the nodes are already alive. There is no
 need for Common Test to actually start any remote nodes it will run
 tests on, but I usually find it useful to do so.
 
@@ -1327,8 +1333,8 @@ other.
 
 While it's difficult to include Common Test suites within EUnit ones,
 the opposite is quite easy to do. The trick is that when you call
-`eunit:test(SomeModule)`, the function can return either `ok` when
-things work, or `error` in case of any failure.
+``eunit:test(SomeModule)``, the function can return either ``ok`` when
+things work, or ``error`` in case of any failure.
 
 This means that to integrate EUnit tests to a Common Test suite, all
 you need to do is have a function a bit like this:
@@ -1354,8 +1360,8 @@ Is There More?
 You bet there's more. Common Test is a very complex beast. There are
 ways to add configuration files for some variables, add hooks that run
 at many points during the test executions, use callbacks on events
-during the suites, modules to test over `SSH`, `Telnet`, `SNMP`, and
-`FTP`.
+during the suites, modules to test over ``SSH``, ``Telnet``, ``SNMP``,
+and ``FTP``.
 
 This chapter only scratched the surface, but it is enough to get you
 started if you want to explore in more depth. A more complete document

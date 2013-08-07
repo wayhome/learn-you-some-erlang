@@ -360,8 +360,8 @@ process its share of time.
 This plays against many common hardware optimizations and makes the VM
 spend time doing useless stuff. This often makes purely sequential
 applications run much slower on many cores than on a single one. In
-this case, disabling symmetric multiprocessing ( `$ erl -smp disable`)
-might be a good idea.
+this case, disabling symmetric multiprocessing ( ``$ erl -smp
+disable``) might be a good idea.
 
 
 
@@ -380,8 +380,8 @@ it. It runs a function and once it's done, it disappears. Technically,
 a process also has some hidden state (such as a mailbox for messages),
 but functions are enough for now.
 
-To start a new process, Erlang provides the function `spawn/1`, which
-takes a single function and runs it:
+To start a new process, Erlang provides the function ``spawn/1``,
+which takes a single function and runs it:
 
 
 ::
@@ -393,7 +393,7 @@ takes a single function and runs it:
     <0.44.0>
 
 
-The result of `spawn/1` ( `<0.44.0>`) is called a *Process
+The result of ``spawn/1`` ( ``<0.44.0>``) is called a *Process
 Identifier*, often just written *PID*, *Pid*, or *pid* by the
 community. The process identifier is an arbitrary value representing
 any process that exists (or might have existed) at some point in the
@@ -415,10 +415,10 @@ easiest one is to just output whatever we get:
 
 
 This isn't practical for a real program, but it is useful for seeing
-how Erlang dispatches processes. Fortunately, using `io:format/2` is
+how Erlang dispatches processes. Fortunately, using ``io:format/2`` is
 enough to let us experiment. We'll start 10 processes real quick and
 pause each of them for a while with the help of the function
-`timer:sleep/1`, which takes an integer value N and waits for N
+``timer:sleep/1``, which takes an integer value N and waits for N
 milliseconds before resuming code. After the delay, the value present
 in the process is output.
 
@@ -454,7 +454,7 @@ weird ordering.
 
 Note: the results are similar whether symmetric multiprocessing is
 enabled or not. To prove it, you can just test it out by starting the
-Erlang VM with `$ erl -smp disable`.
+Erlang VM with ``$ erl -smp disable``.
 
 To see if your Erlang VM runs with or without SMP support in the first
 place, start a new VM without any options and look for the first line
@@ -470,7 +470,7 @@ with only one shared run queue. Since R13B, there is one run queue per
 scheduler by default; this allows for better parallelism.
 
 To prove the shell itself is implemented as a regular process, I'll
-use the BIF `self/0`, which returns the pid of the current process:
+use the BIF ``self/0``, which returns the pid of the current process:
 
 
 ::
@@ -491,10 +491,10 @@ out how to send messages around, because nobody wants to be stuck with
 outputting the resulting values of processes all the time, and then
 entering them by hand in other processes (at least I know I don't.)
 
-The next primitive required to do message passing is the operator `!`,
-also known as the *bang* symbol. On the left-hand side it takes a pid
-and on the right-hand side it takes any Erlang term. The term is then
-sent to the process represented by the pid, which can access it:
+The next primitive required to do message passing is the operator
+``!``, also known as the *bang* symbol. On the left-hand side it takes
+a pid and on the right-hand side it takes any Erlang term. The term is
+then sent to the process represented by the pid, which can access it:
 
 
 ::
@@ -505,7 +505,7 @@ sent to the process represented by the pid, which can access it:
 
 
 The message has been put in the process' mailbox, but it hasn't been
-read yet. The second `hello` shown here is the return value of the
+read yet. The second ``hello`` shown here is the return value of the
 send operation. This means it is possible to send the same message to
 many processes by doing:
 
@@ -517,7 +517,7 @@ many processes by doing:
     double
 
 
-Which is equivalent to `self() ! (self() ! double)`. A thing to note
+Which is equivalent to ``self() ! (self() ! double)``. A thing to note
 about a process' mailbox is that the messages are kept in the order
 they are received. Every time a message is read it is taken out of the
 mailbox. Again, this is a bit similar to the introduction's example
@@ -528,8 +528,8 @@ with people writing letters.
     :alt: Message passing explained as a drawing, again
 
 
-To see the contents of the current mailbox, you can use the `flush()`
-command while in the shell:
+To see the contents of the current mailbox, you can use the
+``flush()`` command while in the shell:
 
 
 ::
@@ -548,9 +548,9 @@ at least we know how to send it from a process to another one and
 check if it's been received.
 
 Sending messages that nobody will read is as useful as writing emo
-poetry; not a whole lot. This is why we need the `receive` statement.
-Rather than playing for too long in the shell, we'll write a short
-program about dolphins to learn about it:
+poetry; not a whole lot. This is why we need the ``receive``
+statement. Rather than playing for too long in the shell, we'll write
+a short program about dolphins to learn about it:
 
 
 ::
@@ -570,10 +570,10 @@ program about dolphins to learn about it:
         end.
 
 
-As you can see, `receive` is syntactically similar to `case ... of`.
-In fact, the patterns work exactly the same way except they bind
+As you can see, ``receive`` is syntactically similar to ``case ...
+of``. In fact, the patterns work exactly the same way except they bind
 variables coming from messages rather than the expression between
-`case` and `of`. Receives can also have guards:
+``case`` and ``of``. Receives can also have guards:
 
 
 ::
@@ -605,24 +605,24 @@ with dolphins:
     15> 
 
 
-Here we introduce a new way of spawning with `spawn/3`. Rather than
-taking a single function, `spawn/3` takes the module, function and its
-arguments as its own arguments. Once the function is running, the
+Here we introduce a new way of spawning with ``spawn/3``. Rather than
+taking a single function, ``spawn/3`` takes the module, function and
+its arguments as its own arguments. Once the function is running, the
 following events take place:
 
 
-#. The function hits the `receive` statement. Given the process'
+#. The function hits the ``receive`` statement. Given the process'
    mailbox is empty, our dolphin waits until it gets a message;
 #. The message "oh, hello dolphin!" is received. The function tries to
-   pattern match against `do_a_flip`. This fails, and so the pattern
-   `fish` is tried and also fails. Finally, the message meets the catch-
-   all clause ( `_`) and matches.
+   pattern match against ``do_a_flip``. This fails, and so the pattern
+   ``fish`` is tried and also fails. Finally, the message meets the
+   catch-all clause ( ``_``) and matches.
 #. The process outputs the message "Heh, we're smarter than you
    humans."
 
 
 Then it should be noted that if the first message we sent worked, the
-second provoked no reaction whatsoever from the process `<0.40.0>`.
+second provoked no reaction whatsoever from the process ``<0.40.0>``.
 This is due to the fact once our function output "Heh, we're smarter
 than you humans." , it terminated and so did the process. We'll need
 to restart the dolphin:
@@ -642,14 +642,14 @@ to restart the dolphin:
 
 And this time the fish message works. Wouldn't it be useful to be able
 to receive a reply from the dolphin rather than having to use
-`io:format/2`? Of course it would (why am I even asking?) I've
+``io:format/2``? Of course it would (why am I even asking?) I've
 mentioned earlier in this chapter that the only manner to know if a
 process had received a message is to send a reply. Our dolphin process
 will need to know who to reply to. This works like it does with the
 postal service. If we want someone to know answer our letter, we need
 to add our address. In Erlang terms, this is done by packaging a
 process' pid in a tuple. The end result is a message that looks a bit
-like `{Pid, Message}`. Let's create a new dolphin function that will
+like ``{Pid, Message}``. Let's create a new dolphin function that will
 accept such messages:
 
 
@@ -667,7 +667,7 @@ accept such messages:
         end.
 
 
-As you can see, rather than accepting `do_a_flip` and `fish` for
+As you can see, rather than accepting ``do_a_flip`` and ``fish`` for
 messages, we now require a variable From . That's where the process
 identifier will go.
 
@@ -690,8 +690,8 @@ It seems to work pretty well. We can receive replies to messages we
 sent (we need to add an address to each message), but we still need to
 start a new process for each call. Recursion is the way to solve this
 problem. We just need the function to call itself so it never ends and
-always expects more messages. Here's a function `dolphin3/0` that puts
-this in practice:
+always expects more messages. Here's a function ``dolphin3/0`` that
+puts this in practice:
 
 
 ::
@@ -710,11 +710,11 @@ this in practice:
         end.
 
 
-Here the catch-all clause and the `do_a_flip` clause both loop with
-the help of `dolphin3/0`. Note that the function will not blow the
+Here the catch-all clause and the ``do_a_flip`` clause both loop with
+the help of ``dolphin3/0``. Note that the function will not blow the
 stack because it is tail recursive. As long as only these messages are
 sent, the dolphin process will loop indefinitely. However, if we send
-the `fish` message, the process will stop:
+the ``fish`` message, the process will stop:
 
 
 ::
@@ -740,7 +740,7 @@ the `fish` message, the process will stop:
 
 And that should be it for dolphins.erl. As you see, it does respect
 our expected behavior of replying once for every message and keep
-going afterwards, except for the `fish` call. The dolphin got fed up
+going afterwards, except for the ``fish`` call. The dolphin got fed up
 with our crazy human antics and left us for good.
 
 

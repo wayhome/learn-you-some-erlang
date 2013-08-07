@@ -106,7 +106,7 @@ this, we will identify different kinds of state:
 Now, static data is somewhat easy to deal with. Most of the time you
 can get it straight from the supervisor. Same for the dynamic but re-
 computable data. In this case you might want to grab it and compute it
-within the `init/1` function, or anywhere else in your code, really.
+within the ``init/1`` function, or anywhere else in your code, really.
 
 The most problematic kind of state is the dynamic data you can't
 recompute and that you can basically just hope not to lose. In some
@@ -143,16 +143,16 @@ application.
     :alt: Parody of 'catch me if you can's introduction pictures with 'crash me if you can' written instead. The little plane is exploding.
 
 
-The error kernel is likely the place where you'll want to use `try ...
-catch`es more than anywhere else, where handling exceptional cases is
-vital. This is what you want to be error-free. Careful testing has to
-be done around there, especially in cases where there is no way to go
-back. You don't want to lose a customer's order halfway through
-processing it, do you? Some operations are going to be considered
-safer than others. Because of this, we want to keep vital data in the
-safest core possible, and keeping everything somewhat dangerous
-outside of it. In specific terms, this means that all kinds of
-operations related together should be part of the same supervision
+The error kernel is likely the place where you'll want to use ``try
+... catch``es more than anywhere else, where handling exceptional
+cases is vital. This is what you want to be error-free. Careful
+testing has to be done around there, especially in cases where there
+is no way to go back. You don't want to lose a customer's order
+halfway through processing it, do you? Some operations are going to be
+considered safer than others. Because of this, we want to keep vital
+data in the safest core possible, and keeping everything somewhat
+dangerous outside of it. In specific terms, this means that all kinds
+of operations related together should be part of the same supervision
 trees, and the unrelated ones should be kept in different trees.
 Within the same tree, operations that are failure-prone but not vital
 can be in a separate sub-tree. When possible, only restart the part of
@@ -177,7 +177,7 @@ being able to start the pool application as a whole, having many pools
 and each pool having many workers that can be queued. This already
 suggests a few possible design constraints.
 
-We will need one `gen_server` per pool. The server's job will be to
+We will need one ``gen_server`` per pool. The server's job will be to
 maintain the counter of how many workers are in the pool. For
 convenience, the same server should also hold the queue of tasks. Who
 should be in charge of overlooking each of the workers, though? The
@@ -203,14 +203,14 @@ The one above, for example would have a single supervisor for all of
 the pools. Each pool is in fact a set of a pool server and a
 supervisor for workers. The pool server knows the existence of its
 worker supervisor and asks it to add items. Given adding children is a
-very dynamic thing with unknown limits so far, a `simple_one_for_one`
-supervisor shall be used.
+very dynamic thing with unknown limits so far, a
+``simple_one_for_one`` supervisor shall be used.
 
-Note: the name `ppool` is chosen because the Erlang standard library
-already has a `pool` module. Plus it's a terrible pool-related pun.
+Note: the name ``ppool`` is chosen because the Erlang standard library
+already has a ``pool`` module. Plus it's a terrible pool-related pun.
 
 The advantage of doing things that way is that because the
-`worker_sup` supervisor will need to track only OTP workers of a
+``worker_sup`` supervisor will need to track only OTP workers of a
 single type, each pool is guaranteed to be about a well defined kind
 of worker, with simple management and restart strategies that are easy
 to define. This right here is one example of an error kernel being
@@ -235,23 +235,23 @@ application architecture:
 
 And that makes a bit more sense. From the onion layer perspective, all
 pools are independent, the workers are independent from each other and
-the `ppool_serv` server is going to be isolated from all the workers.
-That's good enough for the architecture, everything we need seems to
-be there. We can start working on the implementation, again, top to
-bottom.
+the ``ppool_serv`` server is going to be isolated from all the
+workers. That's good enough for the architecture, everything we need
+seems to be there. We can start working on the implementation, again,
+top to bottom.
 
 
 
 Implementing the Supervisors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We can start with just the top level supervisor, `ppool_supersup`. All
-this one has to do is start the supervisor of a pool when required.
-We'll give it a few functions: `start_link/0`, which starts the whole
-application, `stop/0`, which stops it, `start_pool/3`, which creates a
-specific pool and `stop_pool/1` which does the opposite. We also can't
-forget `init/1`, the only callback required by the supervisor
-behaviour:
+We can start with just the top level supervisor, ``ppool_supersup``.
+All this one has to do is start the supervisor of a pool when
+required. We'll give it a few functions: ``start_link/0``, which
+starts the whole application, ``stop/0``, which stops it,
+``start_pool/3``, which creates a specific pool and ``stop_pool/1``
+which does the opposite. We also can't forget ``init/1``, the only
+callback required by the supervisor behaviour:
 
 
 ::
@@ -266,13 +266,13 @@ behaviour:
         supervisor:start_link({local, ppool}, ?MODULE, []).
 
 
-Here we gave the top level process pool supervisor the name `ppool`
-(this explains the use of `{local, Name}`, an OTP convention about
-registering `gen_`* processes on a node; another one exists for
+Here we gave the top level process pool supervisor the name ``ppool``
+(this explains the use of ``{local, Name}``, an OTP convention about
+registering ``gen_``* processes on a node; another one exists for
 distributed registration). This is because we know we will only have
-one `ppool` per Erlang node and we can give it a name without worrying
-about clashes. Fortunately, the same name can then be used to stop the
-whole set of pools:
+one ``ppool`` per Erlang node and we can give it a name without
+worrying about clashes. Fortunately, the same name can then be used to
+stop the whole set of pools:
 
 
 ::
@@ -309,9 +309,9 @@ childless supervisor:
 
 
 We can now focus on starting each individual pool's supervisor and
-attaching them to `ppool`. Given our initial requirements, we can
+attaching them to ``ppool``. Given our initial requirements, we can
 determine that we'll need two parameters: the number of workers the
-pool will accept, and the `{M,F,A}` tuple that the worker supervisor
+pool will accept, and the ``{M,F,A}`` tuple that the worker supervisor
 will need to start each worker. We'll also add a name for good
 measure. We then pass this childspec to the process pool's supervisor
 as we start it:
@@ -330,13 +330,13 @@ You can see each pool supervisor is asked to be permanent, has the
 arguments needed (notice how we're be changing programmer-submitted
 data into static data this way). The name of the pool is both passed
 to the supervisor and used as an identifier in the child
-specification. There's also a maximum shutdown time of `10500`. There
-is no easy way to pick this value. Just make sure it's large enough
-that all the children will have time to stop. Play with them according
-to your needs and test and adapt yourself. You might as well try the
-`infinity` option if you just don't know.
+specification. There's also a maximum shutdown time of ``10500``.
+There is no easy way to pick this value. Just make sure it's large
+enough that all the children will have time to stop. Play with them
+according to your needs and test and adapt yourself. You might as well
+try the ``infinity`` option if you just don't know.
 
-To stop the pool, we need to ask the `ppool` super supervisor (the
+To stop the pool, we need to ask the ``ppool`` super supervisor (the
 *supersup*!) to kill its matching child:
 
 ::
@@ -350,7 +350,7 @@ To stop the pool, we need to ask the `ppool` super supervisor (the
 This is possible because we gave the pool's Name as the childspec
 identifier. Great! We can now focus on each pool's direct supervisor!
 
-Each `ppool_sup` will be in charge of the pool server and the worker
+Each ``ppool_sup`` will be in charge of the pool server and the worker
 supervisor.
 
 
@@ -358,13 +358,13 @@ supervisor.
     :alt: Shows the ppool_sup overlooking the ppool_serv and worker_sup
 
 
-Can you see the funny thing here? The `ppool_serv` process should be
-able to contact the `worker_sup` process. If we're to have them
+Can you see the funny thing here? The ``ppool_serv`` process should be
+able to contact the ``worker_sup`` process. If we're to have them
 started by the same supervisor at the same time, we won't have any way
-to let `ppool_serv` know about `worker_sup`, unless we were to do some
-trickery with `supervisor:which_children/1` (which would be sensitive
-to timing and somewhat risky), or giving a name to both the
-`ppool_serv` process (so that users can call it) and the supervisor.
+to let ``ppool_serv`` know about ``worker_sup``, unless we were to do
+some trickery with ``supervisor:which_children/1`` (which would be
+sensitive to timing and somewhat risky), or giving a name to both the
+``ppool_serv`` process (so that users can call it) and the supervisor.
 Now we don't want to give names to the supervisors because:
 
 
@@ -375,7 +375,7 @@ Now we don't want to give names to the supervisors because:
 
 
 The way to do it is basically to get the pool server to dynamically
-attach the worker supervisor to its `ppool_sup`. If this is vague,
+attach the worker supervisor to its ``ppool_sup``. If this is vague,
 you'll get it soon. For now we only start the server:
 
 ::
@@ -401,14 +401,14 @@ you'll get it soon. For now we only start the server:
 
 
 And that's about it. Note that the Name is passed to the server, along
-with `self()`, the supervisor's own pid. This will let the server call
-for the spawning of the worker supervisor; the MFA variable will be
-used in that call to let the `simple_one_for_one` supervisor know what
-kind of workers to run.
+with ``self()``, the supervisor's own pid. This will let the server
+call for the spawning of the worker supervisor; the MFA variable will
+be used in that call to let the ``simple_one_for_one`` supervisor know
+what kind of workers to run.
 
 We'll get to how the server handles everything, but for now we'll
 finish writing all of the application's supervisors by writing
-`ppool_worker_sup`, in charge of all the workers:
+``ppool_worker_sup``, in charge of all the workers:
 
 ::
 
@@ -429,11 +429,11 @@ finish writing all of the application's supervisors by writing
                 temporary, 5000, worker, [M]}]}}.
 
 
-Simple stuff there. We picked a `simple_one_for_one` because workers
+Simple stuff there. We picked a ``simple_one_for_one`` because workers
 could be added in very high number with a requirement for speed, plus
 we want to restrict their type. All the workers are temporary, and
-because we use an `{M,F,A}` tuple to start the worker, we can use any
-kind of OTP behaviour there.
+because we use an ``{M,F,A}`` tuple to start the worker, we can use
+any kind of OTP behaviour there.
 
 
 .. image:: ../images/zombies.png
@@ -448,7 +448,7 @@ can have an access to the worker's pid, depending on the use case. For
 this to work in any safe and simple manner, we can't just restart
 workers as we please without tracking its creator and sending it a
 notification. This would make things quite complex just to grab a pid.
-Of course, you are free to write your own `ppool_worker_sup` that
+Of course, you are free to write your own ``ppool_worker_sup`` that
 doesn't return pids but restarts them. There's nothing inherently
 wrong in that design.
 
@@ -471,8 +471,8 @@ we must support.
   no place is available, queue it up and run it whenever.
 
 
-The first one will be done by a function named `run/2`, the second by
-`sync_queue/2` and the last one by `async_queue/2`:
+The first one will be done by a function named ``run/2``, the second
+by ``sync_queue/2`` and the last one by ``async_queue/2``:
 
 ::
 
@@ -502,10 +502,10 @@ The first one will be done by a function named `run/2`, the second by
         gen_server:call(Name, stop).
 
 
-For `start/4` and `start_link/4`, Args are going to be the additional
-arguments passed to the A part of the `{M,F,A}` triple sent to the
-supervisor. Note that for the synchronous queue, I've set the waiting
-time to `infinity`.
+For ``start/4`` and ``start_link/4``, Args are going to be the
+additional arguments passed to the A part of the ``{M,F,A}`` triple
+sent to the supervisor. Note that for the synchronous queue, I've set
+the waiting time to ``infinity``.
 
 As mentioned earlier, we have to start the supervisor from within the
 server. If you're adding the code as we go, you might want to include
@@ -515,8 +515,8 @@ reading the server from top to bottom.
 
 The first thing we do is handle the creation of the supervisor. If you
 remember last chapter's bit on `dynamic supervision`_, we do not need
-a `simple_one_for_one` for cases where we need few children added, so
-`supervisor:start_child/2` ought to do it. We'll first define the
+a ``simple_one_for_one`` for cases where we need few children added,
+so ``supervisor:start_child/2`` ought to do it. We'll first define the
 child specification of the worker supervisor:
 
 ::
@@ -538,7 +538,7 @@ of process that can be running, the pid of the supervisor and a queue
 for all the jobs. To know when a worker's done running and to fetch
 one from the queue to start it, we will need to track each worker from
 the server. The sane way to do this is with monitors, so we'll also
-add a `refs` field to our state record to keep all the monitor
+add a ``refs`` field to our state record to keep all the monitor
 references in memory:
 
 ::
@@ -563,10 +563,10 @@ natural thing to try is the following:
 
 
 and get going. However, this code is wrong. The way things work with
-`gen_*` behaviours is that the process that spawns the behaviour waits
-until the `init/1` function returns before resuming its processing.
-This means that by calling `supervisor:start_child/2` in there, we
-create the following deadlock:
+``gen_*`` behaviours is that the process that spawns the behaviour
+waits until the ``init/1`` function returns before resuming its
+processing. This means that by calling ``supervisor:start_child/2`` in
+there, we create the following deadlock:
 
 
 .. image:: ../images/ppool_deadlock.png
@@ -576,7 +576,7 @@ create the following deadlock:
 Both processes will keep waiting for each other until there is a
 crash. The cleanest way to get around this is to create a special
 message that the server will send to itself to be able to handle it in
-`handle_info/2` as soon as it has returned (and the pool supervisor
+``handle_info/2`` as soon as it has returned (and the pool supervisor
 has become free):
 
 ::
@@ -589,7 +589,7 @@ has become free):
         {ok, #state{limit=Limit, refs=gb_sets:empty()}}.
 
 
-This one is cleaner. We can then head out to the `handle_info/2`
+This one is cleaner. We can then head out to the ``handle_info/2``
 function and add the following clauses:
 
 ::
@@ -624,8 +624,8 @@ will be able to produce production-ready code on their first try, and
 the author is not as clever as the examples might make it look like.
 
 Alright, so we've got this bit solved. Now we'll take care of the
-`run/2` function. This one is a synchronous call with the message of
-the form `{run, Args}` and works as follows:
+``run/2`` function. This one is a synchronous call with the message of
+the form ``{run, Args}`` and works as follows:
 
 ::
 
@@ -645,9 +645,9 @@ place), we accept to start the worker. We then set up a monitor to
 know when it's done, store all of this in our state, decrement the
 counter and off we go.
 
-In the case no space is available, we simply reply with `noalloc`.
+In the case no space is available, we simply reply with ``noalloc``.
 
-The calls to `sync_queue/2` will give a very similar implementation:
+The calls to ``sync_queue/2`` will give a very similar implementation:
 
 ::
 
@@ -661,13 +661,13 @@ The calls to `sync_queue/2` will give a very similar implementation:
 
 
 If there is space for more workers, then the first clause is going to
-do exactly the same as we did for `run/2`. The difference comes in the
-case where no workers can run. Rather than replying with `noalloc` as
-we did last time, this one doesn't reply to the caller, keeps the From
-information and enqueues it for a later time when there is space for
-the worker to be run. We'll see how we dequeue them and handle them
-soon enough, but for now, we'll finish the `handle_call/3` callback
-with the following clauses:
+do exactly the same as we did for ``run/2``. The difference comes in
+the case where no workers can run. Rather than replying with
+``noalloc`` as we did last time, this one doesn't reply to the caller,
+keeps the From information and enqueues it for a later time when there
+is space for the worker to be run. We'll see how we dequeue them and
+handle them soon enough, but for now, we'll finish the
+``handle_call/3`` callback with the following clauses:
 
 ::
 
@@ -678,11 +678,12 @@ with the following clauses:
         {noreply, State}.
 
 
-Which handle the unknown cases and the `stop/1` call. We can now focus
-on getting `async_queue/2` working. Because `async_queue/2` basically
-does not care when the worker is ran and expects absolutely no reply,
-it was decided to make it a cast rather than a call. You'll find the
-logic of it to be awfully similar to the two previous options:
+Which handle the unknown cases and the ``stop/1`` call. We can now
+focus on getting ``async_queue/2`` working. Because ``async_queue/2``
+basically does not care when the worker is ran and expects absolutely
+no reply, it was decided to make it a cast rather than a call. You'll
+find the logic of it to be awfully similar to the two previous
+options:
 
 ::
 
@@ -705,7 +706,7 @@ limit doesn't change in this case.
 
 When do we know it's time to dequeue something? Well, we have monitors
 set all around the place and we're storing their references in a
-`gb_sets`. Whenever a worker goes down, we're notified of it. Let's
+``gb_sets``. Whenever a worker goes down, we're notified of it. Let's
 work from there:
 
 ::
@@ -725,10 +726,10 @@ work from there:
     	...
 
 
-What we do in the snippet is make sure the `'DOWN'` message we get
+What we do in the snippet is make sure the ``'DOWN'`` message we get
 comes from a worker. If it doesn't come from one (which would be
 surprising), we just ignore it. However, if the message really is what
-we want, we call a function named `handle_down_worker/2`:
+we want, we call a function named ``handle_down_worker/2``:
 
 ::
 
@@ -754,11 +755,11 @@ we want, we call a function named `handle_down_worker/2`:
 Quite a complex one. Because our worker is dead, we can look in the
 queue for the next one to run. We do this by popping one element out
 of the queue, and looking what the result is. If there is at least one
-element in the queue, it will be of the form `{{value, Item},
-NewQueue}`. If the queue is empty, it returns `{empty, SameQueue}`.
-Furthermore, we know that when we have the value `{From, Args}`, it
-means this came from `sync_queue/2` and that it came from
-`async_queue/2` otherwise.
+element in the queue, it will be of the form ``{{value, Item},
+NewQueue}``. If the queue is empty, it returns ``{empty, SameQueue}``.
+Furthermore, we know that when we have the value ``{From, Args}``, it
+means this came from ``sync_queue/2`` and that it came from
+``async_queue/2`` otherwise.
 
 Both cases where the queue has tasks in it will behave roughly the
 same: a new worker is attached to the worker supervisor, the reference
@@ -784,9 +785,9 @@ The last thing to do is add the standard OTP callbacks:
 
 That's it, our pool is ready to be used! It is a very unfriendly pool,
 though. All the functions we need to use are scattered around the
-place. Some are in `ppool_supersup`, some are in `ppool_serv`. Plus
-the module names are long for no reason. To make things nicer, add the
-following API module (just abstracting the calls away) to the
+place. Some are in ``ppool_supersup``, some are in ``ppool_serv``.
+Plus the module names are long for no reason. To make things nicer,
+add the following API module (just abstracting the calls away) to the
 application's directory:
 
 ::
@@ -825,10 +826,10 @@ Note: you'll have noticed that our process pool doesn't limit the
 number of items that can be stored in the queue. In some cases, a real
 server application will need to put a ceiling on how many things can
 be queued to avoid crashing when too much memory is used, although the
-problem can be circumvented if you only use `run/2` and `sync_queue/2`
-with a fixed number of callers (if all content producers are stuck
-waiting for free space in the pool, they stop producing so much
-content in the first place).
+problem can be circumvented if you only use ``run/2`` and
+``sync_queue/2`` with a fixed number of callers (if all content
+producers are stuck waiting for free space in the pool, they stop
+producing so much content in the first place).
 
 Adding a limit to the queue size is left as an exercise to the reader,
 but fear not because it is relatively simple to do; you will need to
@@ -886,10 +887,10 @@ Here we go:
         gen_server:call(Pid, stop).
 
 
-Yes, we're going to be using yet another `gen_server`. You'll find out
-that people use them all the time, even when sometimes not
+Yes, we're going to be using yet another ``gen_server``. You'll find
+out that people use them all the time, even when sometimes not
 appropriate! It's important to remember that our pool can accept any
-OTP compliant process, not just `gen_servers`.
+OTP compliant process, not just ``gen_servers``.
 
 ::
 
@@ -902,8 +903,8 @@ This just takes the basic data and forwards it. Again, Task is the
 thing to send as a message, Delay is the time spent in between each
 sending, Max is the number of times it's going to be sent and SendTo
 is a pid or a name where the message will go. Note that Delay is
-passed as a third element of the tuple, which means `timeout` will be
-sent to `handle_info/2` after Delay milliseconds.
+passed as a third element of the tuple, which means ``timeout`` will
+be sent to ``handle_info/2`` after Delay milliseconds.
 
 Given our API above, most of the server is rather straightforward:
 
@@ -940,12 +941,12 @@ Given our API above, most of the server is rather straightforward:
     terminate(_Reason, _State) -> ok.
 
 
-The only somewhat complex part here lies in the `handle_info/2`
-function. As seen back in the ` `gen_server` chapter`_, every time a
-timeout is hit (in this case, after Delay milliseconds), the `timeout`
-message is sent to the process. Based on this, we check how many nags
-were sent to know if we have to send more or just quit. With this
-worker done, we can actually try this process pool!
+The only somewhat complex part here lies in the ``handle_info/2``
+function. As seen back in the ` ``gen_server`` chapter`_, every time a
+timeout is hit (in this case, after Delay milliseconds), the
+``timeout`` message is sent to the process. Based on this, we check
+how many nags were sent to know if we have to send more or just quit.
+With this worker done, we can actually try this process pool!
 
 
 
@@ -1000,9 +1001,9 @@ the right destination. When we try to run more tasks than allowed,
 allocation is denied to us. No time for cleaning up, sorry! The others
 still run fine though.
 
-Note: the `ppool` is started with `start_link/0`. If at any time you
-make an error in the shell, you take down the whole pool and have to
-start over again. This issue will be addressed in the next chapter.
+Note: the ``ppool`` is started with ``start_link/0``. If at any time
+you make an error in the shell, you take down the whole pool and have
+to start over again. This issue will be addressed in the next chapter.
 
 Note: of course a cleaner nagger would probably call an event manager
 used to forward messages correctly to all appropriate media. In
@@ -1069,10 +1070,10 @@ The synchronous one will behave differently:
 Again, the log isn't as clear as if you tried it yourself (which I
 encourage). The basic sequence of events is that two workers are added
 to the pool. They aren't done running and when we try to add a third
-one, the shell gets locked up until `ppool_serv` (under the process
-name `nagger`) receives a worker's down message ( received down msg ).
-After this, our call to `sync_queue/2` can return and give us the pid
-of our brand new worker.
+one, the shell gets locked up until ``ppool_serv`` (under the process
+name ``nagger``) receives a worker's down message ( received down msg
+). After this, our call to ``sync_queue/2`` can return and give us the
+pid of our brand new worker.
 
 We can now get rid of the pool as a whole:
 
@@ -1087,8 +1088,8 @@ We can now get rid of the pool as a whole:
 
 
 All pools will be terminated if you decide to just call
-`ppool:stop()`, but you'll receive a bunch of error messages. This is
-because we brutally kill the `ppool_supersup` process rather than
+``ppool:stop()``, but you'll receive a bunch of error messages. This
+is because we brutally kill the ``ppool_supersup`` process rather than
 taking it down correctly (which in turns crashes all child pools), but
 next chapter will cover how to do that cleanly.
 
@@ -1115,10 +1116,10 @@ concurrency is handled, and we now have enough architectural blocks to
 write some pretty solid server-side software, even though we still
 haven't really seen good ways to run them from the shell...
 
-The next chapter will show how to package the `ppool` application into
-a real OTP application, ready to be shipped and use by other products.
-So far we haven't seen all the advanced features of OTP, but I can
-tell you that you're now on a level where you should be able to
+The next chapter will show how to package the ``ppool`` application
+into a real OTP application, ready to be shipped and use by other
+products. So far we haven't seen all the advanced features of OTP, but
+I can tell you that you're now on a level where you should be able to
 understand most intermediate to early advanced discussions on OTP and
 Erlang (the non-distributed part, at least). That's pretty good!
 

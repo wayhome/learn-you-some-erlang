@@ -26,8 +26,8 @@ development and so will also find tests useful.
 
 If you recall the chapter where we wrote a `RPN calculator`_, we had a
 few tests that we had manually written. They were simply a set of
-pattern matches of the form `Result = Expression` that would crash if
-something went wrong, or would succeed otherwise. That works for
+pattern matches of the form ``Result = Expression`` that would crash
+if something went wrong, or would succeed otherwise. That works for
 simple bits of code you write for yourself, but when we get to more
 serious tests, we will definitely want something better, like a
 framework.
@@ -45,9 +45,9 @@ EUnit, What's a EUnit?
 ~~~~~~~~~~~~~~~~~~~~~~
 
 EUnit, in its simplest form, is just a way to automate running
-functions that end in `_test()` in a module by assuming they are unit
-tests. If you go dig out that RPN calculator I mentioned above, you'll
-find the following code:
+functions that end in ``_test()`` in a module by assuming they are
+unit tests. If you go dig out that RPN calculator I mentioned above,
+you'll find the following code:
 
 
 ::
@@ -88,19 +88,19 @@ fine. Find the old module and try this:
     ok
 
 
-Calling `eunit:test(Module).` was all we needed! Yay, we now know
+Calling ``eunit:test(Module).`` was all we needed! Yay, we now know
 EUnit! Pop the champagne and let's head to a different chapter!
 
 Obviously a testing framework that only does this little wouldn't be
 very useful, and in technical programmer jargon, it might be described
 as 'not very good'. EUnit does more than automatically exporting and
-running functions ending in `_test()`. For one, you can move the tests
-out to a different module so that your code and its tests are not
-mixed together. This means you can't test private functions anymore,
-but also means that if you develop all your tests against the module's
-interface (the exported functions), then you won't need to rewrite
-tests when you refactor your code. Let's try separating tests and code
-with two simple modules:
+running functions ending in ``_test()``. For one, you can move the
+tests out to a different module so that your code and its tests are
+not mixed together. This means you can't test private functions
+anymore, but also means that if you develop all your tests against the
+module's interface (the exported functions), then you won't need to
+rewrite tests when you refactor your code. Let's try separating tests
+and code with two simple modules:
 
 
 ::
@@ -139,9 +139,9 @@ to the first. Here's a thing EUnit can do:
     ok
 
 
-Calling `eunit:test(Mod)` automatically looks for Mod _tests and runs
-the tests within that one. Let's change the test a bit (make it `3 =
-ops:add(2,2)`) to see what failures look like:
+Calling ``eunit:test(Mod)`` automatically looks for Mod _tests and
+runs the tests within that one. Let's change the test a bit (make it
+``3 = ops:add(2,2)``) to see what failures look like:
 
 
 ::
@@ -165,52 +165,53 @@ ops:add(2,2)`) to see what failures look like:
     :alt: A lie detector with a red light lit up, meaning someone lied
 
 
-We can see what test failed ( `ops_tests: add_test...`) and why it did
-( `::error:{badmatch,4}`). We also get a full report of how many tests
-passed or failed. The output is pretty bad though. At least as bad as
-regular Erlang crashes: no line numbers, no clear explanation ( `4`
-didn't match with what, exactly?), etc. We're left helpless by a test
-framework that runs tests but doesn't tell you much about them.
+We can see what test failed ( ``ops_tests: add_test...``) and why it
+did ( ``::error:{badmatch,4}``). We also get a full report of how many
+tests passed or failed. The output is pretty bad though. At least as
+bad as regular Erlang crashes: no line numbers, no clear explanation (
+``4`` didn't match with what, exactly?), etc. We're left helpless by a
+test framework that runs tests but doesn't tell you much about them.
 
 For this reason, EUnit introduces a few macros to help us. Each of
 them will give us cleaner reporting (including line numbers) and
 clearer semantics. They're the difference between knowing that
 something goes wrong and knowing *why* something goes wrong:
 
-: `?assert(Expression), ?assertNot(Expression)`: Will test for boolean
-  values. If any value other than `true` makes it into `?assert`, an
-  error will be shown. Same for `?assertNot`, but for negative values.
-  This macro is somewhat equivalent to `true = X` or `false = Y`.
-: `?assertEqual(A, B)`: Does a strict comparison (equivalent to `=:=`)
-  between two expressions, A and B . If they are different, a failure
-  will occur. This is roughly equivalent to `true = X =:= Y`. Since
-  R14B04, the macro `?assertNotEqual` is available to do the opposite of
-  `?assertEqual`.
-: `?assertMatch(Pattern, Expression)`: This allows us to match in a
-  form similar to `Pattern = Expression`, without variables ever
+: ``?assert(Expression), ?assertNot(Expression)``: Will test for
+  boolean values. If any value other than ``true`` makes it into
+  ``?assert``, an error will be shown. Same for ``?assertNot``, but for
+  negative values. This macro is somewhat equivalent to ``true = X`` or
+  ``false = Y``.
+: ``?assertEqual(A, B)``: Does a strict comparison (equivalent to
+  ``=:=``) between two expressions, A and B . If they are different, a
+  failure will occur. This is roughly equivalent to ``true = X =:= Y``.
+  Since R14B04, the macro ``?assertNotEqual`` is available to do the
+  opposite of ``?assertEqual``.
+: ``?assertMatch(Pattern, Expression)``: This allows us to match in a
+  form similar to ``Pattern = Expression``, without variables ever
   binding. This means that I could do something like
-  `?assertMatch({X,X}, some_function())` and assert that I receive a
+  ``?assertMatch({X,X}, some_function())`` and assert that I receive a
   tuple with two elements being identical. Moreover, I could later do
-  `?assertMatch(X,Y)` and X would not be bound.
-This is to say that rather than properly being like `Pattern =
-  Expression`, what we have is closer to `(fun (Pattern) -> true; (_) ->
-  erlang:error(nomatch) end)(Expression)`: variables in the pattern's
-  head *never* get bound across multiple assertions. The macro
-  `?assertNotMatch` has been added to EUnit in R14B04.
-: `?assertError(Pattern, Expression)`: Tells EUnit that Expression
-  should result in an error. As an example, `?assertError(badarith,
-  1/0)` would be a successful test.
-: `?assertThrow(Pattern, Expression)`: Exactly the same as
-  `?assertError`, but with `throw(Pattern)` instead of
-  `erlang:error(Pattern)`.
-: `?assertExit(Pattern, Expression)`: Exactly the same as
-  `?assertError`, but with `exit(Pattern)` (and not `exit/2`) instead of
-  `erlang:error(Pattern)`.
-: `?assertException(Class, Pattern, Expression)`: A general form of
-  the three previous macros. As an example, `?assertException(error,
-  Pattern, Expression)` is the same as `?assertError(Pattern,
-  Expression)`. Starting with R14B04, there is also the macro
-  `?assertNotException/3` available for tests.
+  ``?assertMatch(X,Y)`` and X would not be bound.
+This is to say that rather than properly being like ``Pattern =
+  Expression``, what we have is closer to ``(fun (Pattern) -> true; (_)
+  -> erlang:error(nomatch) end)(Expression)``: variables in the
+  pattern's head *never* get bound across multiple assertions. The macro
+  ``?assertNotMatch`` has been added to EUnit in R14B04.
+: ``?assertError(Pattern, Expression)``: Tells EUnit that Expression
+  should result in an error. As an example, ``?assertError(badarith,
+  1/0)`` would be a successful test.
+: ``?assertThrow(Pattern, Expression)``: Exactly the same as
+  ``?assertError``, but with ``throw(Pattern)`` instead of
+  ``erlang:error(Pattern)``.
+: ``?assertExit(Pattern, Expression)``: Exactly the same as
+  ``?assertError``, but with ``exit(Pattern)`` (and not ``exit/2``)
+  instead of ``erlang:error(Pattern)``.
+: ``?assertException(Class, Pattern, Expression)``: A general form of
+  the three previous macros. As an example, ``?assertException(error,
+  Pattern, Expression)`` is the same as ``?assertError(Pattern,
+  Expression)``. Starting with R14B04, there is also the macro
+  ``?assertNotException/3`` available for tests.
 
 
 Using these macros, we could write better tests in our module:
@@ -259,8 +260,8 @@ And running them:
 
 
 See how much nicer the error reporting is? We know that the
-`assertEqual` on line 11 of `ops_tests` failed. When we called
-`ops:add(1,1)`, we thought we'd receive 3 as a value, but we instead
+``assertEqual`` on line 11 of ``ops_tests`` failed. When we called
+``ops:add(1,1)``, we thought we'd receive 3 as a value, but we instead
 got 2 . Of course you've got to read these values as Erlang terms, but
 at least they're there.
 
@@ -280,11 +281,11 @@ Test Generators
 Because of this common need for flexibility, EUnit supports something
 called *test generators*. Test generators are pretty much shorthand
 for assertions wrapped in functions that can be run later, in clever
-manners. Instead of having functions ending with `_test()` with macros
-that are of the form `?assertSomething`, we will use functions that
-end in `_test_()` and macros of the form `?_assertSomething`. Those
-are small changes, but they make things much more powerful. The two
-following tests would be equivalent:
+manners. Instead of having functions ending with ``_test()`` with
+macros that are of the form ``?assertSomething``, we will use
+functions that end in ``_test_()`` and macros of the form
+``?_assertSomething``. Those are small changes, but they make things
+much more powerful. The two following tests would be equivalent:
 
 
 ::
@@ -294,11 +295,11 @@ following tests would be equivalent:
     function_test_() -> ?_assert(A == B).
 
 
-Here, `function_test_()` is called a *test generator function*, while
-`?_assert(A == B)` is called a *test generator*. It is called that
-way, because secretly, the underlying implementation of `?_assert(A ==
-B)` is `fun() -> ?assert(A,B) end`. That is to say, a function that
-generates a test.
+Here, ``function_test_()`` is called a *test generator function*,
+while ``?_assert(A == B)`` is called a *test generator*. It is called
+that way, because secretly, the underlying implementation of
+``?_assert(A == B)`` is ``fun() -> ?assert(A,B) end``. That is to say,
+a function that generates a test.
 
 The advantage of test generators, compared to regular assertions, is
 that they are funs. This means that they can be manipulated without
@@ -338,9 +339,9 @@ functions that return tests! Let's add the following to ops_tests:
          ?_assertEqual(3, ops:add(1,1))].
 
 
-Because only `add_test_()` ends in `_test_()`, the two functions
-`test_them_Something()` will not be seen as tests. In fact, they will
-only be called by `add_test_()` to generate tests:
+Because only ``add_test_()`` ends in ``_test_()``, the two functions
+``test_them_Something()`` will not be seen as tests. In fact, they
+will only be called by ``add_test_()`` to generate tests:
 
 
 ::
@@ -365,7 +366,7 @@ So we still get the expected failures, and now you see that we jumped
 from 2 tests to 7. The magic of test generators.
 
 What if we only wanted to test some parts of the suite, maybe just
-`add_test_/0`? Well EUnit has a few tricks up its sleeves:
+``add_test_/0``? Well EUnit has a few tricks up its sleeves:
 
 
 ::
@@ -386,17 +387,18 @@ What if we only wanted to test some parts of the suite, maybe just
 
 
 Note that this only works with test generator functions. What we have
-here as `{generator, Fun}` is what EUnit parlance calls a *test
+here as ``{generator, Fun}`` is what EUnit parlance calls a *test
 representation*. We have a few other representations:
 
 
-+ `{module, Mod}` runs all tests in Mod
-+ `{dir, Path}` runs all the tests for the modules found in Path
-+ `{file, Path}` runs all the tests found in a single compiled module
-+ `{generator, Fun}` runs a single generator function as a test, as
++ ``{module, Mod}`` runs all tests in Mod
++ ``{dir, Path}`` runs all the tests for the modules found in Path
++ ``{file, Path}`` runs all the tests found in a single compiled
+  module
++ ``{generator, Fun}`` runs a single generator function as a test, as
   seen above
-+ `{application, AppName}` runs all the tests for all the modules
-  mentioned in AppName 's `.app` file.
++ ``{application, AppName}`` runs all the tests for all the modules
+  mentioned in AppName 's ``.app`` file.
 
 
 These different test representations can make it easy to run test
@@ -447,13 +449,13 @@ documentation):
   passed the value returned by the setup function.
 :Cleanup: A function that takes the result of a setup function as an
   argument, and takes care of cleaning up whatever is needed. If in OTP
-  `terminate` does the opposite of `init`, then cleanup functions are
-  the opposite of setup functions for EUnit.
+  ``terminate`` does the opposite of ``init``, then cleanup functions
+  are the opposite of setup functions for EUnit.
 :Instantiator: It's a function that takes the result of a setup
   function and returns a test set (remember, test sets are possibly
-  deeply nested lists of `?_Macro` assertions).
-:Where: Specifies how to run the tests: `local`, `spawn`, `{spawn,
-  node()}`.
+  deeply nested lists of ``?_Macro`` assertions).
+:Where: Specifies how to run the tests: ``local``, ``spawn``,
+  ``{spawn, node()}``.
 
 
 Alright, so what does this look like in practice? Well, let's imagine
@@ -484,16 +486,16 @@ names:
         [?_assertEqual({error, already_named}, Res)].
 
 
-This fixture first starts the registry server within the `start/0`
-function. Then, the instantiator `two_names_one_pid(ResultFromSetup)`
-is called. In that test, the only thing I do is try to register the
-current process twice.
+This fixture first starts the registry server within the ``start/0``
+function. Then, the instantiator
+``two_names_one_pid(ResultFromSetup)`` is called. In that test, the
+only thing I do is try to register the current process twice.
 
 That's where the instantiator does its work. The result of the second
 registration is stored in the variable Res . The function will then
-return a test set containing a single test ( `?_assertEqual({error,
-already_named}, Res)`). That test set will be run by EUnit. Then, the
-teardown function `stop/1` will be called. Using the pid returned by
+return a test set containing a single test ( ``?_assertEqual({error,
+already_named}, Res)``). That test set will be run by EUnit. Then, the
+teardown function ``stop/1`` will be called. Using the pid returned by
 the setup function, it'll be able to shut down the registry that we
 had started beforehand. Glorious!
 
@@ -528,7 +530,7 @@ enters the stage:
 
 The foreach fixture is quite similar to the setup fixture, with the
 difference that it takes lists of instantiators. Here's the
-`some_test_/0` function written with a foreach fixture:
+``some_test_/0`` function written with a foreach fixture:
 
 
 ::
@@ -585,19 +587,19 @@ instantiator for them.
 Tests can also have some finer grained control into how they should be
 running when you use fixtures. Four options are available:
 
-: `{spawn, TestSet}`: Runs tests in a separate process than the main
+: ``{spawn, TestSet}``: Runs tests in a separate process than the main
   test process. The test process will wait for all of the spawned tests
   to finish
-: `{timeout, Seconds, TestSet}`: The tests will run for Seconds number
-  of Seconds. If they take longer than Seconds to finish, they will be
-  terminated without further ado.
-: `{inorder, TestSet}`: This tells EUnit to run the tests within the
+: ``{timeout, Seconds, TestSet}``: The tests will run for Seconds
+  number of Seconds. If they take longer than Seconds to finish, they
+  will be terminated without further ado.
+: ``{inorder, TestSet}``: This tells EUnit to run the tests within the
   test set strictly in the order they are returned.
-: `{inparallel, Tests}`: Where possible, the tests will be run in
+: ``{inparallel, Tests}``: Where possible, the tests will be run in
   parallel.
 
 
-As an example, the `some_tricky_test_/0` test generator could be
+As an example, the ``some_tricky_test_/0`` test generator could be
 rewritten as follows:
 
 
@@ -635,7 +637,7 @@ neat way. Check this out:
           fun two_names_one_pid/1}}.
 
 
-Nice, huh? You can wrap a fixture by doing `{Comment, Fixture}` in
+Nice, huh? You can wrap a fixture by doing ``{Comment, Fixture}`` in
 order to get readable tests. Let's put this in practice.
 
 
@@ -653,7 +655,7 @@ the regis-1.0.0 process registry, the one used by Process Quest.
     :alt: A portrait of Regis Philbin
 
 
-Now, the development of `regis` was done in a test-driven manner.
+Now, the development of ``regis`` was done in a test-driven manner.
 Hopefully you don't hate TDD (Test-Driven Development), but even if
 you do, it shouldn't be too bad because we'll look at the test suite
 after the fact. By doing this, we cut through the few trial-and-error
@@ -770,9 +772,9 @@ second part contains setup and cleanup functions that we might need.
 The last one contains the instantiators returning test sets.
 
 In this case, the instantiator checks to see whether
-`regis_server:start_link()` spawned a process that was truly alive,
-and that it was registered with the name `regis_server`. If it's true,
-then that will work for the server.
+``regis_server:start_link()`` spawned a process that was truly alive,
+and that it was registered with the name ``regis_server``. If it's
+true, then that will work for the server.
 
 If we look at the current version of the file, it now looks more like
 this for the two first sections:
@@ -833,22 +835,22 @@ this for the two first sections:
 
 Nice, isn't it? Note that as I was writing the suite, I ended up
 seeing that I never needed any other setup and teardown functions than
-`start/0` and `stop/1`. For this reason, I added the
-`?setup(Instantiator)` macro, that makes things look a bit better than
-if all the fixtures were to be fully expanded. It's now pretty obvious
-that I turned each point of the feature list into a bunch of tests.
-You'll note that I divided all tests depending on whether they had to
-do with starting and stopping the server ( `start_stop_test_/0`),
-registering processes ( `register_test_/0`) and unregistering
-processes ( `unregister_test_/0`).
+``start/0`` and ``stop/1``. For this reason, I added the
+``?setup(Instantiator)`` macro, that makes things look a bit better
+than if all the fixtures were to be fully expanded. It's now pretty
+obvious that I turned each point of the feature list into a bunch of
+tests. You'll note that I divided all tests depending on whether they
+had to do with starting and stopping the server (
+``start_stop_test_/0``), registering processes ( ``register_test_/0``)
+and unregistering processes ( ``unregister_test_/0``).
 
 By reading the test generators' definitions, we can know what the
 module is supposed to be doing. The tests become documentation
 (although they should not replace proper documentation).
 
 We'll study the tests a bit and see why things were done in a certain
-way. The first test in the list `start_stop_test_/0`, with the simple
-requirement that the server can be registered:
+way. The first test in the list ``start_stop_test_/0``, with the
+simple requirement that the server can be registered:
 
 
 ::
@@ -859,8 +861,8 @@ requirement that the server can be registered:
          ?setup(fun is_registered/1)}.
 
 
-The implementation of the test itself is put in the `is_registered/1`
-function:
+The implementation of the test itself is put in the
+``is_registered/1`` function:
 
 
 ::
@@ -882,11 +884,11 @@ function:
 As explained earlier when we looked at the first version of the test,
 this checks whether the process is available or not. There's nothing
 really special about that one, although the function
-`erlang:is_process_alive(Pid)` might be new to you. As its name says,
-it checks whether a process is currently running. I've put that test
-in there for the simple reason that it might well be possible that the
-server crashes as soon as we start it, or that it's never started in
-the first place. We don't want that.
+``erlang:is_process_alive(Pid)`` might be new to you. As its name
+says, it checks whether a process is currently running. I've put that
+test in there for the simple reason that it might well be possible
+that the server crashes as soon as we start it, or that it's never
+started in the first place. We don't want that.
 
 The second test is related to being able to register a process:
 
@@ -920,7 +922,7 @@ Here's what the test looks like:
 
 Granted, this isn't the most elegant test around. What it does is that
 it spawns a process that will do nothing but register itself and reply
-to some message we send it. This is all done in the `callback/1`
+to some message we send it. This is all done in the ``callback/1``
 helper function defined as follows:
 
 
@@ -939,12 +941,12 @@ helper function defined as follows:
 
 So the function has the module register itself, receives a message,
 and sends a response back. Once the process is started, the
-`register_contact/1` instantiator waits 15 milliseconds (just a tiny
+``register_contact/1`` instantiator waits 15 milliseconds (just a tiny
 delay to make sure the other process registers itself), and then tries
-to use the `whereis` function from `regis_server` to retrieve a Pid
-and send a message to the process. If the regis server is functioning
-correctly, a message will be received back and the pids will match in
-the tests at the bottom of the function.
+to use the ``whereis`` function from ``regis_server`` to retrieve a
+Pid and send a message to the process. If the regis server is
+functioning correctly, a message will be received back and the pids
+will match in the tests at the bottom of the function.
 
 Don't Drink Too Much Kool-Aid:
 By reading that test, you have seen the little timer work we've had to
@@ -973,7 +975,7 @@ The next tests are introduced as follows:
 
 So when a bunch of processes have been registered, it should be
 possible to get a list of all the names. This is a functionality
-similar to Erlang's `registered()` function call:
+similar to Erlang's ``registered()`` function call:
 
 
 ::
@@ -990,12 +992,12 @@ similar to Erlang's `registered()` function call:
 
 
 First of all, we make sure that the first list of registered processes
-is empty ( `?_assertEqual(L1, [])`) so that we've got something that
+is empty ( ``?_assertEqual(L1, [])``) so that we've got something that
 works even when no process has ever tried to register itself. Then 15
 processes are created, all of which will try to register themselves
 with a number (1..15). We make the test sleep a bit to make sure all
 processes have the time to register themselves, and then call
-`regis_server:get_names()`. The names should include all integers
+``regis_server:get_names()``. The names should include all integers
 between 1 and 15, inclusively. Then a slight cleanup is done by
 eliminating all the registered processes — we don't want to be leaking
 them, after all.
@@ -1010,7 +1012,7 @@ L1 and L2 ) before using them in test sets. The reason for this is
 that the test set that is returned is executed well after the test
 initiator (the whole active bit of code) has been running. If you were
 to try and put function calls that depend on other processes and time-
-sensitive events in the `?_assert*` macros, you'd get everything out
+sensitive events in the ``?_assert*`` macros, you'd get everything out
 of sync and things would generally be awful for you and the people
 using your software.
 
@@ -1030,11 +1032,12 @@ The next test is simple:
          ?_assertEqual(undefined, regis_server:whereis(make_ref()))].
 
 
-As you can see, this tests for two things: we return `undefined`, and
-the specification's assumption that using `undefined` does indeed
-crash attempted calls. For that one, there is no need to use temporary
-variables to store the state: both tests can be executed at any time
-during the life of the regis server given we never change its state.
+As you can see, this tests for two things: we return ``undefined``,
+and the specification's assumption that using ``undefined`` does
+indeed crash attempted calls. For that one, there is no need to use
+temporary variables to store the state: both tests can be executed at
+any time during the life of the regis server given we never change its
+state.
 
 Let's keep going:
 
@@ -1059,19 +1062,19 @@ we get the right output and that the test process can't register
 itself twice with different names.
 
 Note: you might have noticed that the tests above tend to use
-`make_ref()` a whole lot. When possible, it is useful to use functions
-that generate unique values like `make_ref()` does. If at some point
-in the future someone wants to run tests in parallel or to run them
-under a single regis server that never stops, then it will be possible
-to do so without needing to modify the tests.
+``make_ref()`` a whole lot. When possible, it is useful to use
+functions that generate unique values like ``make_ref()`` does. If at
+some point in the future someone wants to run tests in parallel or to
+run them under a single regis server that never stops, then it will be
+possible to do so without needing to modify the tests.
 
-If we were to use hard coded names like `a`, `b`, and `c` in all the
-tests, then it would be very likely that sooner or later, name
+If we were to use hard coded names like ``a``, ``b``, and ``c`` in all
+the tests, then it would be very likely that sooner or later, name
 conflicts would happen if we were to try and run many test suites at
-once. Not all tests in the `regis_server_tests` suite follow this
+once. Not all tests in the ``regis_server_tests`` suite follow this
 advice, mostly for demonstration purposes.
 
-The next tests is the opposite of `two_names_one_pid`:
+The next tests is the opposite of ``two_names_one_pid``:
 
 
 ::
@@ -1095,9 +1098,9 @@ them, the trick is to spawn one process (the one whose results we do
 not need), and then do the critical part ourselves.
 
 You can see that timers are used to make sure that the other process
-tries registering a name first (within the `callback/1` function), and
-that the test process itself waits to try at its turn, expecting an
-error tuple ( `{error, name_taken}`) as a result.
+tries registering a name first (within the ``callback/1`` function),
+and that the test process itself waits to try at its turn, expecting
+an error tuple ( ``{error, name_taken}``) as a result.
 
 This covers all the features for the tests related to the registration
 of processes. Only those related to unregistering processes are left:
@@ -1135,8 +1138,8 @@ simple:
 This way of serializing all the calls in a list is a nifty trick I
 like to do when I need to test the results of all the events. By
 putting them in a list, I can then compare the sequence of actions to
-the expected `[ok, {error, already_named}, ok, ok]` to see how things
-went. Note that there is nothing specifying that Erlang should
+the expected ``[ok, {error, already_named}, ok, ok]`` to see how
+things went. Note that there is nothing specifying that Erlang should
 evaluate the list in order, but the trick above has pretty much always
 worked.
 
@@ -1151,8 +1154,8 @@ The following test, the one about never crashing, goes like this:
 
 
 Whoa, slow down here, buddy! That's it? Yes it is. If you look back at
-`re_un_register`, you'll see that it already handles testing the
-'unregistration' of processes. For `unregister_nocrash`, we really
+``re_un_register``, you'll see that it already handles testing the
+'unregistration' of processes. For ``unregister_nocrash``, we really
 only want to know if it will work to try and remove a process that's
 not there.
 
@@ -1255,9 +1258,9 @@ techniques related to how to write tests for concurrent processes,
 using patterns that make sense in the real world.
 
 One last trick should be known: when you feel like testing processes
-such as `gen_server`s and `gen_fsm`s, you might feel like inspecting
-the internal state of the processes. Here's a nice trick, courtesy of
-the sys module:
+such as ``gen_server``s and ``gen_fsm``s, you might feel like
+inspecting the internal state of the processes. Here's a nice trick,
+courtesy of the sys module:
 
 
 ::
@@ -1288,8 +1291,8 @@ given to you: you can now inspect everything you need, all the time!
 If you feel like getting more comfortable with testing servers and
 whatnot, I recommend reading the tests written for Process Quests'
 player module. They test the gen_server using a different technique,
-where all individual calls to `handle_call`, `handle_cast` and
-`handle_info` are tried independently. It was still developed in a
+where all individual calls to ``handle_call``, ``handle_cast`` and
+``handle_info`` are tried independently. It was still developed in a
 test-driven manner, but the needs of that one forced things to be done
 differently.
 

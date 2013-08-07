@@ -47,8 +47,8 @@ So what's Erlang?
 ~~~~~~~~~~~~~~~~~
 
 First of all, Erlang is a functional programming language. If you have
-ever worked with imperative languages, statements such as `i++` may be
-normal to you; in functional programming they are not allowed. In
+ever worked with imperative languages, statements such as ``i++`` may
+be normal to you; in functional programming they are not allowed. In
 fact, changing the value of any variable is strictly forbidden! This
 may sound weird at first, but if you remember your math classes, it's
 in fact how you've learned it:
@@ -86,8 +86,8 @@ parameter should always return the same result:
 
 Functions always returning the same result for the same parameter is
 called referential transparency. It's what lets us replace
-`add_two_to(3)` with 5, as the result of `3+2` will always be 5. That
-means we can then glue dozens of functions together in order to
+``add_two_to(3)`` with 5, as the result of ``3+2`` will always be 5.
+That means we can then glue dozens of functions together in order to
 resolve more complex problems while being sure nothing will break.
 Logical and clean isn't it? There's a problem though:
 
@@ -241,9 +241,9 @@ Don't forget to add your Erlang directory to your PATH system variable
 to be able to access it from the command line.
 
 On Debian-based Linux distributions, you should be able to install the
-package by doing `$ apt-get install erlang`. On Fedora (if you have
-'yum' installed), you can achieve the same by typing `# yum install
-erlang`. However, these repositories often hold outdated versions of
+package by doing ``$ apt-get install erlang``. On Fedora (if you have
+'yum' installed), you can achieve the same by typing ``# yum install
+erlang``. However, these repositories often hold outdated versions of
 the Erlang packages; Using an outdated version could give you some
 differences with what you'll get from this tutorial and a hit in
 performance with certain applications. I thus encourage you to compile
@@ -252,13 +252,13 @@ get all the installing details you'll need, they'll do a far better
 job than I ever will.
 
 On FreeBSD, many options are available to you. If you're using
-portmaster, you can do `portmaster lang/erlang`. For standard ports,
-it should be `cd /usr/ports/lang/erlang; make install clean`. Finally,
-if you want to use packages, run `pkg_add -rv erlang`.
+portmaster, you can do ``portmaster lang/erlang``. For standard ports,
+it should be ``cd /usr/ports/lang/erlang; make install clean``.
+Finally, if you want to use packages, run ``pkg_add -rv erlang``.
 
-If you're on OSX, you can install Erlang with `$ brew install erlang`
-(with Homebrew or by doing `$ port install erlang` (if you prefer
-MacPorts.)
+If you're on OSX, you can install Erlang with ``$ brew install
+erlang`` (with Homebrew or by doing ``$ port install erlang`` (if you
+prefer MacPorts.)
 
 Note: at the time of this writing, I'm using Erlang version R13B+, so
 for best results, you should use that version or newer ones.
@@ -271,7 +271,7 @@ Where to get Help
 There are a few places where you can get help. If you're using linux,
 you can access the man pages for good technical documentation. Erlang
 has a lists module (which we'll soon see): to get the documentation on
-lists, just type in `$ erl -man lists`.
+lists, just type in ``$ erl -man lists``.
 
 On Windows, the installation should include HTML documentation. You
 can download it at any time from the official erlang site, or consult

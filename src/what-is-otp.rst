@@ -14,7 +14,7 @@ It's The Open Telecom Platform!
     :alt: A telephone with someone on the other end saying 'Hullo'
 
 
-OTP stands for *Open Telecom Platform*, although it's not that much
+OTP stands for **Open Telecom Platform**, although it's not that much
 about telecom anymore (it's more about software that has the property
 of telecom applications, but yeah.) If half of Erlang's greatness
 comes from its concurrency and distribution and the other half comes
@@ -250,7 +250,7 @@ This takes a message and a PID, sticks them into in the function, then
 forwards the message for you in a safe manner. From now on, we can
 just substitute the message sending we do with a call to this
 function. So if we were to rewrite a new kitty server to be paired
-with the abstracted `my_server`, it could begin like this:
+with the abstracted ``my_server``, it could begin like this:
 
 
 ::
@@ -279,8 +279,8 @@ with the abstracted `my_server`, it could begin like this:
 
 
 The next big generic chunk of code we have is not as obvious as the
-`call/2` function. Note that every process we've written so far has a
-loop where all the messages are pattern matched. This is a bit of a
+``call/2`` function. Note that every process we've written so far has
+a loop where all the messages are pattern matched. This is a bit of a
 touchy part, but here we have to separate the pattern matching from
 the loop itself. One quick way to do it would be to add:
 
@@ -307,16 +307,17 @@ And then the specific module can look like this:
 
 
 This is better. There are still ways to make it even cleaner. If you
-paid attention when reading the `kitty_server` module (and I hope you
-did!), you will have noticed we have a specific way to call
+paid attention when reading the ``kitty_server`` module (and I hope
+you did!), you will have noticed we have a specific way to call
 synchronously and another one to call asynchronously. It would be
 pretty helpful if our generic server implementation could provide a
 clear way to know which kind of call is which.
 
 In order to do this, we will need to match different kinds of messages
-in `my_server:loop/2`. This means we'll need to change the `call/2`
-function a little bit so synchronous calls are made obvious by adding
-the atom `sync` to the message on the function's second line:
+in ``my_server:loop/2``. This means we'll need to change the
+``call/2`` function a little bit so synchronous calls are made obvious
+by adding the atom ``sync`` to the message on the function's second
+line:
 
 
 ::
@@ -337,7 +338,7 @@ the atom `sync` to the message on the function's second line:
 
 
 We can now provide a new function for asynchronous calls. The function
-`cast/2` will handle this:
+``cast/2`` will handle this:
 
 
 ::
@@ -374,7 +375,7 @@ to have your debug functions and other stuff like hot code reloading
 in there.
 
 One disappointing thing with the loop above is that the abstraction is
-leaking. The programmers who will use `my_server` will still need to
+leaking. The programmers who will use ``my_server`` will still need to
 know about references when sending synchronous messages and replying
 to them. That makes the abstraction useless. To use it, you still need
 to understand all the boring details. Here's a quick fix for it:
@@ -406,8 +407,8 @@ that should understand what From contains:
         Pid ! {Ref, Reply}.
 
 
-What is left to do is specify the starter functions ( `start`,
-`start_link` and `init`) that pass around the module names and
+What is left to do is specify the starter functions ( ``start``,
+``start_link`` and ``init``) that pass around the module names and
 whatnot. Once they're added, the module should look like this:
 
 
@@ -458,10 +459,10 @@ whatnot. Once they're added, the module should look like this:
 
 
 The next thing to do is reimplement the kitty server, now
-`kitty_server2` as a callback module that will respect the interface
-we defined for `my_server`. We'll keep the same interface as the
+``kitty_server2`` as a callback module that will respect the interface
+we defined for ``my_server``. We'll keep the same interface as the
 previous implementation, except all the calls are now redirected to go
-through `my_server`:
+through ``my_server``:
 
 
 ::
@@ -490,9 +491,9 @@ through `my_server`:
         my_server:call(Pid, terminate).
 
 
-Note that I added a second `-export()` at the top of the module. Those
-are the functions `my_server` will need to call to make everything
-work:
+Note that I added a second ``-export()`` at the top of the module.
+Those are the functions ``my_server`` will need to call to make
+everything work:
 
 
 ::
@@ -533,8 +534,8 @@ And then what needs to be done is to re-add the private functions:
         exit(normal).
 
 
-Just make sure to replace the `ok` we had before by `exit(normal)` in
-`terminate/1`, otherwise the server will keep going on.
+Just make sure to replace the ``ok`` we had before by ``exit(normal)``
+in ``terminate/1``, otherwise the server will keep going on.
 
 The code should be compilable and testable, and run in exactly the
 same manner as it was before. The code is quite similar, but let's see
@@ -570,7 +571,7 @@ around.
 Adding servers adds complexity in terms of code, but also in terms of
 testing, maintenance and understanding. Each implementation might be
 different, programmed in different styles by different people, and so
-on. However, if all these servers share the same common `my_server`
+on. However, if all these servers share the same common ``my_server``
 abstraction, you substantially reduce that complexity. You understand
 the basic concept of the module instantly ("oh, it's a server!"),
 there's a single generic implementation of it to test, document, etc.
@@ -585,7 +586,7 @@ it.
 This means you reduce a lot of time tracking and solving bugs (just do
 it at one place for all servers). It also means that you reduce the
 number of bugs you introduce. If you were to re-write the
-`my_server:call/3` or the process' main loop all the time, not only
+``my_server:call/3`` or the process' main loop all the time, not only
 would it be more time consuming, but chances of forgetting one step or
 the other would skyrocket, and so would bugs. Fewer bugs mean fewer
 calls during the night to go fix something, which is definitely good
@@ -626,7 +627,7 @@ products that need to be shipped. Again, you might see why doing all
 of this by yourself is a bit of a risky task. Luckily for you (and the
 people who'll support your applications), the Erlang/OTP team managed
 to handle all of that for you with the gen_server behaviour.
-`gen_server` is a bit like `my_server` on steroids, except it has
+``gen_server`` is a bit like ``my_server`` on steroids, except it has
 years and years of testing and production use behind it.
 
 

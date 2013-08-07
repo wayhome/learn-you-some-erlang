@@ -49,8 +49,8 @@ point numbers or integers: both types are supported when dealing with
 arithmetic. Integers and floating values are pretty much the only
 types of data Erlang's mathematical operators will handle
 transparently for you. However, if you want to have the integer-to-
-integer division, use `div`, and to have the modulo operator, use
-`rem` (remainder).
+integer division, use ``div``, and to have the modulo operator, use
+``rem`` (remainder).
 
 
 .. image:: ../images/calculator.png
@@ -73,7 +73,7 @@ mathematical operations obey the normal precedence rules.
 
 
 If you want to express integers in other bases than base 10, just
-enter the number as `Base#Value` (given Base is in the range 2..36):
+enter the number as ``Base#Value`` (given Base is in the range 2..36):
 
 
 ::
@@ -126,10 +126,10 @@ The first thing these commands tell us is that you can assign a value
 to a variable exactly once; then you can 'pretend' to assign a value
 to a variable if it's the same value it already has. If it's
 different, Erlang will complain. It's a correct observation, but the
-explanation is a bit more complex and depends on the `=` operator. The
-`=` operator (not the variables) has the role of comparing values and
-complaining if they're different. If they're the same, it returns the
-value:
+explanation is a bit more complex and depends on the ``=`` operator.
+The ``=`` operator (not the variables) has the role of comparing
+values and complaining if they're different. If they're the same, it
+returns the value:
 
 
 ::
@@ -147,7 +147,7 @@ associated to it), Erlang will automatically bind the right-hand side
 value to the variable on the left-hand side. The comparison will
 consequently succeed and the variable will keep the value in memory.
 
-This behavior of the `=` operator is the basis of something called
+This behavior of the ``=`` operator is the basis of something called
 'Pattern matching', which many functional programming languages have,
 although Erlang's way of doing things is usually regarded as more
 flexible and complete than alternatives. We'll see pattern matching
@@ -178,8 +178,8 @@ Totally useless for now, but you'll know it exists when we need it.
 
 Note: If you're testing in the shell and save the wrong value to a
 variable, it is possible to 'erase' that variable by using the
-function `f(Variable).`. If you wish to clear all variable names, do
-`f().`.
+function ``f(Variable).``. If you wish to clear all variable names, do
+``f().``.
 
 These functions are there only to help you when testing and only work
 in the shell. When writing real programs, we won't be able to destroy
@@ -227,8 +227,8 @@ same as a similar atom without them.
 
 I compared atoms to constants having their name as their values. You
 may have worked with code that used constants before: as an example,
-let's say I have values for eye colors: `BLUE -> 1, BROWN -> 2, GREEN
--> 3, OTHER -> 4`. You need to match the name of the constant to some
+let's say I have values for eye colors: ``BLUE -> 1, BROWN -> 2, GREEN
+-> 3, OTHER -> 4``. You need to match the name of the constant to some
 underlying value. Atoms let you forget about the underlying values: my
 eye colors can simply be 'blue', 'brown', 'green' and 'other'. These
 colors can be used anywhere in any piece of code: the underlying
@@ -263,9 +263,9 @@ honestly, it's what they are.
 
 Note: some atoms are reserved words and can not be used except for
 what the language designers wanted them to be: function names,
-operators, expressions, etc. These are: `after and andalso band begin
+operators, expressions, etc. These are: ``after and andalso band begin
 bnot bor bsl bsr bxor case catch cond div end fun if let not of or
-orelse query receive rem try when xor`
+orelse query receive rem try when xor``
 
 
 
@@ -300,10 +300,10 @@ Boolean algebra is dirt simple:
     false
 
 
-Note: the boolean operators `and` and `or` will always evaluate
+Note: the boolean operators ``and`` and ``or`` will always evaluate
 arguments on both sides of the operator. If you want to have the
 short-circuit operators (which will only evaluate the right-side
-argument if it needs to), use `andalso` and `orelse`.
+argument if it needs to), use ``andalso`` and ``orelse``.
 
 Testing for equality or inequality is also dirt simple, but has
 slightly different symbols from those you see in many other languages:
@@ -326,18 +326,18 @@ slightly different symbols from those you see in many other languages:
     false
 
 
-First of all, if your usual language uses `==` and `!=` to test for
-and against equality, Erlang uses `=:=` and `=/=`. The three last
-expressions (lines 9 to 11) also introduce us to a pitfall: Erlang
-won't care about floats and integers in arithmetic, but will do so
-when comparing them. No worry though, because the `==` and `/=`
+First of all, if your usual language uses ``==`` and ``!=`` to test
+for and against equality, Erlang uses ``=:=`` and ``=/=``. The three
+last expressions (lines 9 to 11) also introduce us to a pitfall:
+Erlang won't care about floats and integers in arithmetic, but will do
+so when comparing them. No worry though, because the ``==`` and ``/=``
 operators are there to help you in these cases. This is important to
 remember whether you want exact equality or not.
 
-Other operators for comparisons are `<` (less than), `>` (greater
-than), `>=` (greater than or equal to) and `=<` (less than or equal
-to). That last one is backwards (in my opinion) and is the source of
-many syntax errors in my code. Keep an eye on that `=<`.
+Other operators for comparisons are ``<`` (less than), ``>`` (greater
+than), ``>=`` (greater than or equal to) and ``=<`` (less than or
+equal to). That last one is backwards (in my opinion) and is the
+source of many syntax errors in my code. Keep an eye on that ``=<``.
 
 
 ::
@@ -353,9 +353,9 @@ many syntax errors in my code. Keep an eye on that `=<`.
     true
 
 
-What happens when doing `5 + llama` or `5 == true`? There's no better
-way to know than trying it and subsequently getting scared by error
-messages!
+What happens when doing ``5 + llama`` or ``5 == true``? There's no
+better way to know than trying it and subsequently getting scared by
+error messages!
 
 
 ::
@@ -369,7 +369,7 @@ messages!
 
 Welp! Erlang doesn't really like you misusing some of its fundamental
 types! The emulator returns a nice error message here. It tells us it
-doesn't like one of the two arguments used around the `+` operator!
+doesn't like one of the two arguments used around the ``+`` operator!
 
 Erlang getting mad at you for wrong types is not always true though:
 
@@ -415,8 +415,8 @@ expect false and true to mean anything but false and true.
 
 Note: The correct ordering of each element in a comparison is the
 following:
-`number < atom < reference < fun < port < pid < tuple < list < bit
-string`
+``number < atom < reference < fun < port < pid < tuple < list < bit
+string``
 
 You don't know all these types of things yet, but you will get to know
 them through the book. Just remember that this is why you can compare
@@ -431,7 +431,7 @@ Tuples
 
 A tuple is a way to organize data. It's a way to group together many
 terms when you know how many there are. In Erlang, a tuple is written
-in the form `{Element1, Element2, ..., ElementN}`. As an example,
+in the form ``{Element1, Element2, ..., ElementN}``. As an example,
 you'd give me the coordinates (x,y) if you wanted to tell me the
 position of a point in a Cartesian graph. We can represent this point
 as a tuple of two terms:
@@ -452,7 +452,7 @@ instead. However, what can I do if I receive a point and only want the
 X coordinate? It's not hard to extract that information. Remember that
 when we assigned values, Erlang would never complain if they were the
 same. Let's exploit that! You may need to clean the variables we had
-set with `f()`.
+set with ``f()``.
 
 
 ::
@@ -471,11 +471,11 @@ set with `f()`.
 From then on we can use X to get the first value of the tuple! How did
 that happen? First, X and Y had no value and were thus considered
 unbound variables. When we set them in the tuple {X,Y} on the left-
-hand side of the `=` operator, the `=` operator compares both values:
-{X,Y} vs. {4,5} . Erlang is smart enough to unpack the values from the
-tuple and distribute them to the unbound variables on the left-hand
-side. Then the comparison is only `{4,5} = {4,5}`, which obviously
-succeeds! That's one of the many forms of pattern matching.
+hand side of the ``=`` operator, the ``=`` operator compares both
+values: {X,Y} vs. {4,5} . Erlang is smart enough to unpack the values
+from the tuple and distribute them to the unbound variables on the
+left-hand side. Then the comparison is only ``{4,5} = {4,5}``, which
+obviously succeeds! That's one of the many forms of pattern matching.
 
 
 .. image:: ../images/mr-brackets.png
@@ -524,9 +524,9 @@ temperature in Kelvin, Celsius or Fahrenheit?
 
 
 This throws an error, but it's exactly what we want! This is, again,
-pattern matching at work. The `=` operator ends up comparing {kelvin,
-T} and {celsius, 23.213} : even if the variable T is unbound, Erlang
-won't see the celsius atom as identical to the kelvin atom when
+pattern matching at work. The ``=`` operator ends up comparing
+{kelvin, T} and {celsius, 23.213} : even if the variable T is unbound,
+Erlang won't see the celsius atom as identical to the kelvin atom when
 comparing them. An exception is thrown which stops the execution of
 code. By doing so, the part of our program that expects a temperature
 in Kelvin won't be able to process temperatures sent in Celsius. This
@@ -554,8 +554,8 @@ Lists are the bread and butter of many functional languages. They're
 used to solve all kinds of problems and are undoubtedly the most used
 data structure in Erlang. Lists can contain anything! Numbers, atoms,
 tuples, other lists; your wildest dreams in a single structure. The
-basic notation of a list is `[Element1, Element2, ..., ElementN]` and
-you can mix more than one type of data in it:
+basic notation of a list is ``[Element1, Element2, ..., ElementN]``
+and you can mix more than one type of data in it:
 
 
 ::
@@ -611,8 +611,8 @@ are still some functions missing from the standard library and while
 string processing is definitely doable in Erlang, there are somewhat
 better languages for tasks that need lots of it, like Perl or Python.
 
-To glue lists together, we use the `++` operator. The opposite of `++`
-is `--` and will remove elements from a list:
+To glue lists together, we use the ``++`` operator. The opposite of
+``++`` is ``--`` and will remove elements from a list:
 
 
 ::
@@ -628,9 +628,9 @@ is `--` and will remove elements from a list:
     []
 
 
-Both `++` and `--` are right-associative. This means the elements of
-many `--` or `++` operations will be done from right to left, as in
-the following examples:
+Both ``++`` and ``--`` are right-associative. This means the elements
+of many ``--`` or ``++`` operations will be done from right to left,
+as in the following examples:
 
 
 ::
@@ -661,15 +661,15 @@ be implemented in pure Erlang, and as such are defined in C, or
 whichever language Erlang happens to be implemented on (it was Prolog
 in the 80's). There are still some BIFs that could be done in Erlang
 but were still implemented in C in order to provide more speed to
-common operations. One example of this is the `length(List)` function,
-which will return the (you've guessed it) length of the list passed in
-as the argument.
+common operations. One example of this is the ``length(List)``
+function, which will return the (you've guessed it) length of the list
+passed in as the argument.
 
 Accessing or adding the head is fast and efficient: virtually all
 applications where you need to deal with lists will always operate on
 the head first. As it's used so frequently, there is a nicer way to
 separate the head from the tail of a list with the help of pattern
-matching: `[Head|Tail]`. Here's how you would add a new head to a
+matching: ``[Head|Tail]``. Here's how you would add a new head to a
 list:
 
 
@@ -704,8 +704,8 @@ first element (the head) sliced off a list in a similar manner.
     2
 
 
-The `|` we used is named the cons operator (constructor). In fact, any
-list can be built with only cons and values:
+The ``|`` we used is named the cons operator (constructor). In fact,
+any list can be built with only cons and values:
 
 
 ::
@@ -720,7 +720,7 @@ list can be built with only cons and values:
 
 
 This is to say any list can be built with the following formula:
-`[Term1| [Term2 | [... | [TermN]]]]...`. Lists can thus be defined
+``[Term1| [Term2 | [... | [TermN]]]]...``. Lists can thus be defined
 recursively as a head preceding a tail, which is itself a head
 followed by more heads. In this sense we could imagine a list being a
 bit like an earthworm: you can slice it in half and you'll then have
@@ -751,15 +751,15 @@ equivalent):
 With this understood, you should be able to deal with list
 comprehensions.
 
-Note: Using the form `[1 | 2]` gives what we call an 'improper list'.
-Improper lists will work when you pattern match in the `[Head|Tail]`
-manner, but will fail to be used with standard functions of Erlang
-(even `length()`). This is because Erlang expects proper lists. Proper
-lists end with an empty list as their last cell. When declaring an
-item like `[2]`, the list is automatically formed in a proper manner.
-As such, `[1|[2]]` would work! Improper lists, although syntactically
-valid, are of very limited use outside of user-defined data
-structures.
+Note: Using the form ``[1 | 2]`` gives what we call an 'improper
+list'. Improper lists will work when you pattern match in the
+``[Head|Tail]`` manner, but will fail to be used with standard
+functions of Erlang (even ``length()``). This is because Erlang
+expects proper lists. Proper lists end with an empty list as their
+last cell. When declaring an item like ``[2]``, the list is
+automatically formed in a proper manner. As such, ``[1|[2]]`` would
+work! Improper lists, although syntactically valid, are of very
+limited use outside of user-defined data structures.
 
 
 
@@ -785,11 +785,12 @@ An example of set notation would be
 . That set notation tells you the results you want will be all real
 numbers who are equal to their own square. The result of that set
 would be {0,1} . Another set notation example, simpler and abbreviated
-would be `{x : x > 0}`. Here, what we want is all numbers where x > 0.
+would be ``{x : x > 0}``. Here, what we want is all numbers where x >
+0.
 
 
 List comprehensions in Erlang are about building sets from other sets.
-Given the set `{2n : n in L}` where L is the list [1,2,3,4] , the
+Given the set ``{2n : n in L}`` where L is the list [1,2,3,4] , the
 Erlang implementation would be:
 
 
@@ -805,7 +806,7 @@ lot that changes: brackets ({}) become square brackets ([]), the colon
 (:) becomes two pipes (||) and the word 'in' becomes the arrow (<-).
 We only change symbols and keep the same logic. In the example above,
 each value of [1,2,3,4] is sequentially pattern matched to N . The
-arrow acts exactly like the `=` operator, with the exception that it
+arrow acts exactly like the ``=`` operator, with the exception that it
 doesn't throw exceptions.
 
 You can also add constraints to a list comprehension by using
@@ -820,7 +821,7 @@ numbers from one to ten, we could write something like:
     [2,4,6,8,10]
 
 
-Where `X rem 2 =:= 0` checks if a number is even. Practical
+Where ``X rem 2 =:= 0`` checks if a number is even. Practical
 applications come when we decide we want to apply a function to each
 element of a list, forcing it to respect constraints, etc. As an
 example, say we own a restaurant. A customer enters, sees our menu and
@@ -843,8 +844,8 @@ and $10 with taxes (say 7%) counted in afterwards.
 
 Of course, the decimals aren't rounded in a readable manner, but you
 get the point. The recipe for list comprehensions in Erlang is
-therefore `NewList = [Expression || Pattern <- List, Condition1,
-Condition2, ... ConditionN]`. The part `Pattern <- List` is named a
+therefore ``NewList = [Expression || Pattern <- List, Condition1,
+Condition2, ... ConditionN]``. The part ``Pattern <- List`` is named a
 Generator expression. You can have more than one!
 
 
@@ -855,11 +856,12 @@ Generator expression. You can have more than one!
     [3,4,4,5]
 
 
-This runs the operations `1+2`, `1+3`, `2+2`, `2+3`. So if you want to
-make the list comprehension recipe more generic, you get: `NewList =
-[Expression || GeneratorExp1, GeneratorExp2, ..., GeneratorExpN,
-Condition1, Condition2, ... ConditionM]`. Note that the generator
-expressions coupled with pattern matching also act as a filter:
+This runs the operations ``1+2``, ``1+3``, ``2+2``, ``2+3``. So if you
+want to make the list comprehension recipe more generic, you get:
+``NewList = [Expression || GeneratorExp1, GeneratorExp2, ...,
+GeneratorExpN, Condition1, Condition2, ... ConditionM]``. Note that
+the generator expressions coupled with pattern matching also act as a
+filter:
 
 
 ::
@@ -878,8 +880,8 @@ expressions coupled with pattern matching also act as a filter:
 
 
 If an element of the list 'Weather' doesn't match the {X, fog}
-pattern, it's simply ignored in the list comprehension whereas the `=`
-operator would have thrown an exception.
+pattern, it's simply ignored in the list comprehension whereas the
+``=`` operator would have thrown an exception.
 
 There is one more basic data type left for us to see for now. It is a
 surprising feature that makes interpreting binary data easy as pie.
@@ -954,7 +956,7 @@ of RGB colors in binary.
 On expression 4, we tried to unpack 4 values from the binary content.
 It throws an exception, because we have more than 4 segments, we in
 fact have 12! So what we do is tell Erlang that each variable on the
-left side will hold 24 bits of data. That's what `Var:24` means. We
+left side will hold 24 bits of data. That's what ``Var:24`` means. We
 can then take the first pixel and unpack it further into single color
 values:
 
@@ -998,26 +1000,26 @@ a binary segment. Those are all valid:
 where Size is always in bits and TypeSpecifierList represents one or
 more of the following:
 
-:Type: Possible values: `integer | float | binary | bytes | bitstring
-  | bits | utf8 | utf16 | utf32`
+:Type: Possible values: ``integer | float | binary | bytes | bitstring
+  | bits | utf8 | utf16 | utf32``
 This represents the kind of binary data used. Note that 'bytes' is
   shorthand for 'binary' and 'bits' is shorthand for 'bitstring'. When
   no type is specified, Erlang assumes an 'integer' type.
-:Signedness: Possible values: `signed | unsigned`
+:Signedness: Possible values: ``signed | unsigned``
 Only matters for matching when the type is integer. The default is
   'unsigned'.
-:Endianness: Possible values: `big | little | native`
+:Endianness: Possible values: ``big | little | native``
 Endianness only matters when the Type is either integer, utf16, utf32,
   or float. This has to do with how the system reads binary data. As an
   example, the BMP image header format holds the size of its file as an
   integer stored on 4 bytes. For a file that has a size of 72 bytes, a
-  little-endian system would represent this as `<<72,0,0,0>>` and a big-
-  endian one as `<<0,0,0,72>>`. One will be read as '72' while the other
-  will be read as '1207959552', so make sure you use the right
+  little-endian system would represent this as ``<<72,0,0,0>>`` and a
+  big-endian one as ``<<0,0,0,72>>``. One will be read as '72' while the
+  other will be read as '1207959552', so make sure you use the right
   endianness. There is also the option to use 'native', which will
   choose at run-time if the CPU uses little-endianness or big-endianness
   natively. By default, endianness is set to 'big'.
-:Unit: written `unit:Integer`
+:Unit: written ``unit:Integer``
 This is the size of each segment, in bits. The allowed range is 1..256
   and is set by default to 1 for integers, floats and bit strings and to
   8 for binary. The utf8, utf16 and utf32 types require no unit to be
@@ -1064,8 +1066,8 @@ using the usual tools given by most languages.
 
 The standard binary operations (shifting bits to left and right,
 binary 'and', 'or', 'xor', or 'not') also exist in Erlang. Just use
-the functions `bsl` (Bit Shift Left), `bsr` (Bit Shift Right), `band`,
-`bor`, `bxor`, and `bnot`.
+the functions ``bsl`` (Bit Shift Left), ``bsr`` (Bit Shift Right),
+``band``, ``bor``, ``bxor``, and ``bnot``.
 
 
 ::
@@ -1116,16 +1118,16 @@ There's a whole other aspect to binary notation: bit strings. Binary
 strings are bolted on top of the language the same way they are with
 lists, but they're much more efficient in terms of space. This is
 because normal lists are linked lists (1 'node' per letter) while bit
-strings are more like C arrays. Bit strings use the syntax `<<"this is
-a bit string!">>`. The downside of binary strings compared to lists is
-a loss in simplicity when it comes to pattern matching and
+strings are more like C arrays. Bit strings use the syntax ``<<"this
+is a bit string!">>``. The downside of binary strings compared to
+lists is a loss in simplicity when it comes to pattern matching and
 manipulation. Consequently, people tend to use binary strings when
 storing text that won't be manipulated too much or when space
 efficiency is a real issue.
 
 Note: Even though bit strings are pretty light, you should avoid using
 them to tag values. It could be tempting to use string literals to say
-`{<<"temperature">>,50}`, but always use atoms when doing that.
+``{<<"temperature">>,50}``, but always use atoms when doing that.
 Previously in this chapter, atoms were said to be taking only 4 or 8
 bytes in space, no matter how long they are. By using them, you'll
 have basically no overhead when copying data from function to function
@@ -1155,14 +1157,14 @@ shell:
     [2,4]
 
 
-The only change in syntax from regular list comprehensions is the `<-`
-which became `<=` and using binaries (<<>>) instead of lists ([]).
-Earlier in this chapter we've seen an example where there was a binary
-value of many pixels on which we used pattern matching to grab the RGB
-values of each pixel. It was alright, but on larger structures, it
-would become possibly harder to read and maintain. The same exercise
-can be done with a one-line binary comprehension, which is much
-cleaner:
+The only change in syntax from regular list comprehensions is the
+``<-`` which became ``<=`` and using binaries (<<>>) instead of lists
+([]). Earlier in this chapter we've seen an example where there was a
+binary value of many pixels on which we used pattern matching to grab
+the RGB values of each pixel. It was alright, but on larger
+structures, it would become possibly harder to read and maintain. The
+same exercise can be done with a one-line binary comprehension, which
+is much cleaner:
 
 
 ::
@@ -1174,8 +1176,8 @@ cleaner:
     [{213,45,132},{64,76,32},{76,0,0},{234,32,15}]
 
 
-Changing `<-` to `<=` let us use a binary stream as a generator. The
-complete binary comprehension basically changed binary data to
+Changing ``<-`` to ``<=`` let us use a binary stream as a generator.
+The complete binary comprehension basically changed binary data to
 integers inside tuples. Another binary comprehension syntax exists to
 let you do the exact opposite:
 

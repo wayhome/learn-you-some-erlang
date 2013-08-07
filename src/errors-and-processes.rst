@@ -63,9 +63,9 @@ Or, to put it in picture:
     :alt: A process receiving an exit signal
 
 
-However, this `{'EXIT', B, Reason}` message can not be caught with a
-`try ... catch` as usual. Other mechanisms need to be used to do this.
-We'll see them later.
+However, this ``{'EXIT', B, Reason}`` message can not be caught with a
+``try ... catch`` as usual. Other mechanisms need to be used to do
+this. We'll see them later.
 
 It's important to note that links are used to establish larger groups
 of processes that should all die together:
@@ -90,9 +90,9 @@ of processes that should all die together:
 
 This function will take an integer N , start N processes linked one to
 the other. In order to be able to pass the N-1 argument to the next
-'chain' process (which calls `spawn/1`), I wrap the call inside an
+'chain' process (which calls ``spawn/1``), I wrap the call inside an
 anonymous function so it doesn't need arguments anymore. Calling
-`spawn(?MODULE, chain, [N-1])` would have done a similar job.
+``spawn(?MODULE, chain, [N-1])`` would have done a similar job.
 
 Here, I'll have many processes linked together, dying as each of their
 successors exits:
@@ -125,27 +125,27 @@ and links going down:
     [shell] <-- restarted
 
 
-After the process running `linkmon:chain(0)` dies, the error is
+After the process running ``linkmon:chain(0)`` dies, the error is
 propagated down the chain of links until the shell process itself dies
 because of it. The crash could have happened in any of the linked
 processes; because links are bidirectional, you only need one of them
 to die for the others to follow suit.
 
 Note: If you wanted to kill another process from the shell, you could
-use the function exit/2, which is called this way: `exit(Pid,
-Reason)`. Try it if you wish.
+use the function exit/2, which is called this way: ``exit(Pid,
+Reason)``. Try it if you wish.
 
-Note: Links can not be stacked. If you call `link/1` 15 times for the
-same two processes, only one link will still exist between them and a
-single call to `unlink/1` will be enough to tear it down.
+Note: Links can not be stacked. If you call ``link/1`` 15 times for
+the same two processes, only one link will still exist between them
+and a single call to ``unlink/1`` will be enough to tear it down.
 
-Its important to note that `link(spawn(Function))` or
-`link(spawn(M,F,A))` happens in more than one step. In some cases, it
-is possible for a process to die before the link has been set up and
-then provoke unexpected behavior. For this reason, the function
+Its important to note that ``link(spawn(Function))`` or
+``link(spawn(M,F,A))`` happens in more than one step. In some cases,
+it is possible for a process to die before the link has been set up
+and then provoke unexpected behavior. For this reason, the function
 spawn_link/1-3 has been added to the language. It takes the same
-arguments as `spawn/1-3`, creates a process and links it as if
-`link/1` had been there, except it's all done as an atomic operation
+arguments as ``spawn/1-3``, creates a process and links it as if
+``link/1`` had been there, except it's all done as an atomic operation
 (the operations are combined as a single one, which can either fail or
 succeed, but nothing else). This is generally considered safer and you
 save a set of parentheses too.
@@ -176,9 +176,9 @@ died. This can be done by adding a layer on top of links (the
 delicious frosting on the cake) with a concept called *system
 processes*. System processes are basically normal processes, except
 they can convert exit signals to regular messages. This is done by
-calling `process_flag(trap_exit, true)` in a running process. Nothing
-speaks as much as an example, so we'll go with that. I'll just redo
-the chain example with a system process at the beginning:
+calling ``process_flag(trap_exit, true)`` in a running process.
+Nothing speaks as much as an example, so we'll go with that. I'll just
+redo the chain example with a system process at the beginning:
 
 
 ::
@@ -219,117 +219,120 @@ trap exits. Let's first set the bases to experiment without a system
 process. I'll successively show the results of uncaught throws, errors
 and exits in neighboring processes:
 
-:Exception source: `spawn_link(fun() -> ok end)`: Untrapped Result : -
-  nothing -
+:Exception source: ``spawn_link(fun() -> ok end)``: Untrapped Result :
+  - nothing -
 Trapped Result : {'EXIT', <0.61.0>, normal}
 The process exited normally, without a problem. Note that this looks a
-  bit like the result of `catch exit(normal)`, except a PID is added to
-  the tuple to know what processed failed.
-:Exception source: `spawn_link(fun() -> exit(reason) end)`: Untrapped
-  Result : ** exception exit: reason
+  bit like the result of ``catch exit(normal)``, except a PID is added
+  to the tuple to know what processed failed.
+:Exception source: ``spawn_link(fun() -> exit(reason) end)``:
+  Untrapped Result : ** exception exit: reason
 Trapped Result : {'EXIT', <0.55.0>, reason}
 The process has terminated for a custom reason. In this case, if there
   is no trapped exit, the process crashes. Otherwise, you get the above
   message.
-:Exception source: `spawn_link(fun() -> exit(normal) end)`: Untrapped
-  Result : - nothing -
+:Exception source: ``spawn_link(fun() -> exit(normal) end)``:
+  Untrapped Result : - nothing -
 Trapped Result : {'EXIT', <0.58.0>, normal}
 This successfully emulates a process terminating normally. In some
   cases, you might want to kill a process as part of the normal flow of
   a program, without anything exceptional going on. This is the way to
   do it.
-:Exception source: `spawn_link(fun() -> 1/0 end)`: Untrapped Result :
-  Error in process <0.44.0> with exit value: {badarith, [{erlang, '/',
+:Exception source: ``spawn_link(fun() -> 1/0 end)``: Untrapped Result
+  : Error in process <0.44.0> with exit value: {badarith, [{erlang, '/',
   [1,0]}]}
 Trapped Result : {'EXIT', <0.52.0>, {badarith, [{erlang, '/',
   [1,0]}]}}
-The error ( `{badarith, Reason}`) is never caught by a `try ... catch`
-  block and bubbles up into an 'EXIT' . At this point, it behaves
-  exactly the same as `exit(reason)` did, but with a stack trace giving
-  more details about what happened.
-:Exception source: `spawn_link(fun() -> erlang:error(reason) end)`:
+The error ( ``{badarith, Reason}``) is never caught by a ``try ...
+  catch`` block and bubbles up into an 'EXIT' . At this point, it
+  behaves exactly the same as ``exit(reason)`` did, but with a stack
+  trace giving more details about what happened.
+:Exception source: ``spawn_link(fun() -> erlang:error(reason) end)``:
   Untrapped Result : Error in process <0.47.0> with exit value: {reason,
   [{erlang, apply, 2}]}
 Trapped Result : {'EXIT', <0.74.0>, {reason, [{erlang, apply, 2}]}}
-Pretty much the same as with `1/0`. That's normal, `erlang:error/1` is
-  meant to allow you to do just that.
-:Exception source: `spawn_link(fun() -> throw(rocks) end)`: Untrapped
-  Result : Error in process <0.51.0> with exit value: {{nocatch, rocks},
-  [{erlang, apply, 2}]}
+Pretty much the same as with ``1/0``. That's normal,
+  ``erlang:error/1`` is meant to allow you to do just that.
+:Exception source: ``spawn_link(fun() -> throw(rocks) end)``:
+  Untrapped Result : Error in process <0.51.0> with exit value:
+  {{nocatch, rocks}, [{erlang, apply, 2}]}
 Trapped Result : {'EXIT', <0.79.0>, {{nocatch, rocks}, [{erlang,
   apply, 2}]}}
-Because the `throw` is never caught by a `try ... catch`, it bubbles
-  up into an error, which in turn bubbles up into an EXIT . Without
-  trapping exit, the process fails. Otherwise it deals with it fine.
+Because the ``throw`` is never caught by a ``try ... catch``, it
+  bubbles up into an error, which in turn bubbles up into an EXIT .
+  Without trapping exit, the process fails. Otherwise it deals with it
+  fine.
 
 
 And that's about it for usual exceptions. Things are normal:
 everything goes fine. Exceptional stuff happens: processes die,
 different signals are sent around.
 
-Then there's `exit/2`. This one is the Erlang process equivalent of a
-gun. It allows a process to kill another one from a distance, safely.
-Here are some of the possible calls:
+Then there's ``exit/2``. This one is the Erlang process equivalent of
+a gun. It allows a process to kill another one from a distance,
+safely. Here are some of the possible calls:
 
-:Exception source: `exit(self(), normal)`: Untrapped Result : **
+:Exception source: ``exit(self(), normal)``: Untrapped Result : **
   exception exit: normal
 Trapped Result : {'EXIT', <0.31.0>, normal}
-When not trapping exits, `exit(self(), normal)` acts the same as
-  `exit(normal)`. Otherwise, you receive a message with the same format
-  you would have had by listening to links from foreign processes dying.
-:Exception source: `exit(spawn_link(fun() -> timer:sleep(50000) end),
-  normal)`: Untrapped Result : - nothing -
+When not trapping exits, ``exit(self(), normal)`` acts the same as
+  ``exit(normal)``. Otherwise, you receive a message with the same
+  format you would have had by listening to links from foreign processes
+  dying.
+:Exception source: ``exit(spawn_link(fun() -> timer:sleep(50000) end),
+  normal)``: Untrapped Result : - nothing -
 Trapped Result : - nothing -
-This basically is a call to `exit(Pid, normal)`. This command doesn't
-  do anything useful, because a process can not be remotely killed with
-  the reason `normal` as an argument.
-:Exception source: `exit(spawn_link(fun() -> timer:sleep(50000) end),
-  reason)`: Untrapped Result : ** exception exit: reason
+This basically is a call to ``exit(Pid, normal)``. This command
+  doesn't do anything useful, because a process can not be remotely
+  killed with the reason ``normal`` as an argument.
+:Exception source: ``exit(spawn_link(fun() -> timer:sleep(50000) end),
+  reason)``: Untrapped Result : ** exception exit: reason
 Trapped Result : {'EXIT', <0.52.0>, reason}
 This is the foreign process terminating for reason itself. Looks the
-  same as if the foreign process called `exit(reason)` on itself.
-:Exception source: `exit(spawn_link(fun() -> timer:sleep(50000) end),
-  kill)`: Untrapped Result : ** exception exit: killed
+  same as if the foreign process called ``exit(reason)`` on itself.
+:Exception source: ``exit(spawn_link(fun() -> timer:sleep(50000) end),
+  kill)``: Untrapped Result : ** exception exit: killed
 Trapped Result : {'EXIT', <0.58.0>, killed}
 Surprisingly, the message gets changed from the dying process to the
-  spawner. The spawner now receives `killed` instead of `kill`. That's
-  because `kill` is a special exit signal. More details on this later.
-:Exception source: `exit(self(), kill)`: Untrapped Result : **
+  spawner. The spawner now receives ``killed`` instead of ``kill``.
+  That's because ``kill`` is a special exit signal. More details on this
+  later.
+:Exception source: ``exit(self(), kill)``: Untrapped Result : **
   exception exit: killed
 Trapped Result : ** exception exit: killed
 Oops, look at that. It seems like this one is actually impossible to
   trap. Let's check something.
-:Exception source: `spawn_link(fun() -> exit(kill) end)`: Untrapped
+:Exception source: ``spawn_link(fun() -> exit(kill) end)``: Untrapped
   Result : ** exception exit: killed
 Trapped Result : {'EXIT', <0.67.0>, kill}
 Now that's getting confusing. When another process kills itself with
-  `exit(kill)` and we don't trap exits, our own process dies with the
-  reason `killed`. However, when we trap exits, things don't happen that
-  way.
+  ``exit(kill)`` and we don't trap exits, our own process dies with the
+  reason ``killed``. However, when we trap exits, things don't happen
+  that way.
 
 
 While you can trap most exit reasons, there are situations where you
 might want to brutally murder a process: maybe one of them is trapping
 exits but is also stuck in an infinite loop, never reading any
-message. The `kill` reason acts as a special signal that can't be
+message. The ``kill`` reason acts as a special signal that can't be
 trapped. This ensures any process you terminate with it will really be
-dead. Usually, `kill` is a bit of a last resort, when everything else
-has failed.
+dead. Usually, ``kill`` is a bit of a last resort, when everything
+else has failed.
 
 
 .. image:: ../images/trap.png
     :alt: A mouse trap with a beige laptop on top
 
 
-As the `kill` reason can never be trapped, it needs to be changed to
-`killed` when other processes receive the message. If it weren't
+As the ``kill`` reason can never be trapped, it needs to be changed to
+``killed`` when other processes receive the message. If it weren't
 changed in that manner, every other process linked to it would in turn
-die for the same `kill` reason and would in turn kill its neighbors,
+die for the same ``kill`` reason and would in turn kill its neighbors,
 and so on. A death cascade would ensue.
 
-This also explains why `exit(kill)` looks like `killed` when received
-from another linked process (the signal is modified so it doesn't
-cascade), but still looks like `kill` when trapped locally.
+This also explains why ``exit(kill)`` looks like ``killed`` when
+received from another linked process (the signal is modified so it
+doesn't cascade), but still looks like ``kill`` when trapped locally.
 
 If you find this all confusing, don't worry. Many programmers feel the
 same. Exit signals are a bit of a funny beast. Luckily there aren't
@@ -402,8 +405,8 @@ process and the second one is the pid:
 
 
 Every time a process you monitor goes down, you will receive such a
-message. The message is `{'DOWN', MonitorReference, process, Pid,
-Reason}`. The reference is there to allow you to demonitor the
+message. The message is ``{'DOWN', MonitorReference, process, Pid,
+Reason}``. The reference is there to allow you to demonitor the
 process. Remember, monitors are stackable, so it's possible to take
 more than one down. References allow you to track each of them in a
 unique manner. Also note that as with links, there is an atomic
@@ -426,7 +429,7 @@ function to spawn a process while monitoring it, spawn_monitor/1-3:
 In this case, we demonitored the other process before it crashed and
 as such we had no trace of it dying. The function demonitor/2 also
 exists and gives a little bit more information. The second parameter
-can be a list of options. Only two exist, `info` and `flush`:
+can be a list of options. Only two exist, ``info`` and ``flush``:
 
 
 ::
@@ -444,11 +447,11 @@ can be a list of options. Only two exist, `info` and `flush`:
     ok
 
 
-The `info` option tells you if a monitor existed or not when you tried
-to remove it. This is why the expression 10 returned `false`. Using
-`flush` as an option will remove the `DOWN` message from the mailbox
-if it existed, resulting in `flush()` finding nothing in the current
-process' mailbox.
+The ``info`` option tells you if a monitor existed or not when you
+tried to remove it. This is why the expression 10 returned ``false``.
+Using ``flush`` as an option will remove the ``DOWN`` message from the
+mailbox if it existed, resulting in ``flush()`` finding nothing in the
+current process' mailbox.
 
 
 
@@ -542,10 +545,10 @@ is to restart it when it goes down:
 
 
 Here, the restarter will be its own process. It will in turn start the
-critic's process and if it ever dies of abnormal cause, `restarter/0`
-will loop and create a new critic. Note that I added a clause for
-`{'EXIT', Pid, shutdown}` as a way to manually kill the critic if we
-ever need to.
+critic's process and if it ever dies of abnormal cause,
+``restarter/0`` will loop and create a new critic. Note that I added a
+clause for ``{'EXIT', Pid, shutdown}`` as a way to manually kill the
+critic if we ever need to.
 
 The problem with our approach is that there is no way to find the Pid
 of the critic, and thus we can't call him to have his opinion. One of
@@ -557,8 +560,8 @@ Pid when sending messages. To give a process a name, the function
 erlang:register/2 is used. If the process dies, it will automatically
 lose its name or you can also use unregister/1 to do it manually. You
 can get a list of all registered processes with registered/0 or a more
-detailed one with the shell command `regs()`. Here we can rewrite the
-`restarter/0` function as follows:
+detailed one with the shell command ``regs()``. Here we can rewrite
+the ``restarter/0`` function as follows:
 
 
 ::
@@ -578,7 +581,7 @@ detailed one with the shell command `regs()`. Here we can rewrite the
         end. 
 
 
-So as you can see, `register/2` will always give our critic the name
+So as you can see, ``register/2`` will always give our critic the name
 'critic', no matter what the Pid is. What we need to do is then remove
 the need to pass in a Pid from the abstraction functions. Let's try
 this one:
@@ -597,14 +600,14 @@ this one:
         end.
 
 
-Here, the line `Pid = whereis(critic)` is used to find the critic's
+Here, the line ``Pid = whereis(critic)`` is used to find the critic's
 process identifier in order to pattern match against it in the
-`receive` expression. We want to match with this pid, because it makes
-sure we will match on the right message (there could be 500 of them in
-the mailbox as we speak!) This can be the source of a problem though.
-The code above assumes that the critic's pid will remain the same
-between the first two lines of the function. However, it is completely
-plausible the following will happen:
+``receive`` expression. We want to match with this pid, because it
+makes sure we will match on the right message (there could be 500 of
+them in the mailbox as we speak!) This can be the source of a problem
+though. The code above assumes that the critic's pid will remain the
+same between the first two lines of the function. However, it is
+completely plausible the following will happen:
 
 
 ::
@@ -661,9 +664,9 @@ processes, etc.
 
 Luckily for us, it's relatively easy to fix the code above if we don't
 assume the named process remains the same. Instead, we'll use
-references (created with `make_ref()`) as unique values to identify
-messages. We'll need to rewrite the `critic/0` function into
-`critic2/0` and `judge/3` into `judge2/2`:
+references (created with ``make_ref()``) as unique values to identify
+messages. We'll need to rewrite the ``critic/0`` function into
+``critic2/0`` and ``judge/3`` into ``judge2/2``:
 
 
 ::
@@ -692,13 +695,13 @@ messages. We'll need to rewrite the `critic/0` function into
         critic2().
 
 
-And then change `restarter/0` to fit by making it spawn `critic2/0`
-rather than `critic/0`. Now the other functions should keep working
-fine. The user won't see a difference. Well, they will because we
-renamed functions and changed the number of parameters, but they won't
-know what implementation details were changed and why it was
-important. All they'll see is that their code got simpler and they no
-longer need to send a pid around function calls:
+And then change ``restarter/0`` to fit by making it spawn
+``critic2/0`` rather than ``critic/0``. Now the other functions should
+keep working fine. The user won't see a difference. Well, they will
+because we renamed functions and changed the number of parameters, but
+they won't know what implementation details were changed and why it
+was important. All they'll see is that their code got simpler and they
+no longer need to send a pid around function calls:
 
 
 ::
@@ -718,10 +721,10 @@ longer need to send a pid around function calls:
 
 And now, even though we killed the critic, a new one instantly came
 back to solve our problems. That's the usefulness of named processes.
-Had you tried to call `linkmon:judge/2` without a registered process,
-a bad argument error would have been thrown by the `!` operator inside
-the function, making sure that processes that depend on named ones
-can't run without them.
+Had you tried to call ``linkmon:judge/2`` without a registered
+process, a bad argument error would have been thrown by the ``!``
+operator inside the function, making sure that processes that depend
+on named ones can't run without them.
 
 Note: If you remember earlier texts, atoms can be used in a limited
 (though high) number. You shouldn't ever create dynamic atoms. This

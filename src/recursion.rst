@@ -17,7 +17,7 @@ Some readers accustomed with imperative and object-oriented
 programming languages might be wondering why loops weren't shown
 already. The answer to this is "what is a loop?" Truth is, functional
 programming languages usually do not offer looping constructs like
-`for` and `while`. Instead, functional programmers rely on a silly
+``for`` and ``while``. Instead, functional programmers rely on a silly
 concept named *recursion*.
 
 I suppose you remember how invariable variables were explained in the
@@ -26,10 +26,11 @@ Recursion can also be explained with the help of mathematical concepts
 and functions. A basic mathematical function such as the factorial of
 a value is a good example of a function that can be expressed
 recursively. The factorial of a number n is the product of the
-sequence `1 x 2 x 3 x ... x n `, or alternatively ` n x n -1 x n -2 x
-... x 1`. To give some examples, the factorial of 3 is `3! = 3 x 2 x 1
-= 6`. The factorial of 4 would be `4! = 4 x 3 x 2 x 1 = 24`. Such a
-function can be expressed the following way in mathematical notation:
+sequence ``1 x 2 x 3 x ... x n ``, or alternatively `` n x n -1 x n -2
+x ... x 1``. To give some examples, the factorial of 3 is ``3! = 3 x 2
+x 1 = 6``. The factorial of 4 would be ``4! = 4 x 3 x 2 x 1 = 24``.
+Such a function can be expressed the following way in mathematical
+notation:
 
 
 .. image:: ../images/fac.png
@@ -38,7 +39,7 @@ function can be expressed the following way in mathematical notation:
 
 What this tells us is that if the value of n we have is 0 , we return
 the result 1 . For any value above 0, we return n multiplied by the
-factorial of `n-1`, which unfolds until it reaches 1:
+factorial of ``n-1``, which unfolds until it reaches 1:
 
 
 ::
@@ -52,10 +53,10 @@ factorial of `n-1`, which unfolds until it reaches 1:
 
 How can such a function be translated from mathematical notation to
 Erlang? The conversion is simple enough. Take a look at the parts of
-the notation: `n!`, 1 and `n((n-1)!)` and then the `if`s. What we've
-got here is a function name ( `n!`), guards (the `if`s) and a the
-function body ( 1 and `n((n-1)!)`). We'll rename `n!` to `fac(N)` to
-restrict our syntax a bit and then we get the following:
+the notation: ``n!``, 1 and ``n((n-1)!)`` and then the ``if``s. What
+we've got here is a function name ( ``n!``), guards (the ``if``s) and
+a the function body ( 1 and ``n((n-1)!)``). We'll rename ``n!`` to
+``fac(N)`` to restrict our syntax a bit and then we get the following:
 
 
 ::
@@ -106,8 +107,8 @@ the beginning that we will need:
 With most recursive functions, I find the base case easier to write
 first: what's the simplest input we can have to find a length from?
 Surely an empty list is the simplest one, with a length of 0. So let's
-make a mental note that `[] = 0` when dealing with lengths. Then the
-next simplest list has a length of 1: `[_] = 1`. This sounds like
+make a mental note that ``[] = 0`` when dealing with lengths. Then the
+next simplest list has a length of 1: ``[_] = 1``. This sounds like
 enough to get going with our definition. We can write this down:
 
 
@@ -123,10 +124,10 @@ either 0 or 1! Very useful indeed. Well of course it's useless,
 because it's not yet recursive, which brings us to the hardest part:
 extending our function so it calls itself for lists longer than 1 or
 0. It was `mentioned earlier`_ that lists are defined recursively as
-`[1 | [2| ... [n | []]]]`. This means we can use the `[H|T]` pattern
-to match against lists of one or more elements, as a list of length
-one will be defined as `[X|[]]` and a list of length two will be
-defined as `[X|[Y|[]]]`. Note that the second element is a list
+``[1 | [2| ... [n | []]]]``. This means we can use the ``[H|T]``
+pattern to match against lists of one or more elements, as a list of
+length one will be defined as ``[X|[]]`` and a list of length two will
+be defined as ``[X|[Y|[]]]``. Note that the second element is a list
 itself. This means we only need to count the first one and the
 function can call itself on the second element. Given each value in a
 list counts as a length of 1, the function can be rewritten the
@@ -141,8 +142,8 @@ following way:
 
 
 And now you've got your own recursive function to calculate the length
-of a list. To see how `len/1` would behave when ran, let's try it on a
-given list, say `[1,2,3,4]`:
+of a list. To see how ``len/1`` would behave when ran, let's try it on
+a given list, say ``[1,2,3,4]``:
 
 
 ::
@@ -185,12 +186,12 @@ grows as much as there are elements) to an iterative one (there is not
 really any growth). To have a function call being tail recursive, it
 needs to be 'alone'. Let me explain: what made our previous calls grow
 is how the answer of the first part depended on evaluating the second
-part. The answer to `1 + len(Rest)` needs the answer of `len(Rest)` to
-be found. The function `len(Rest)` itself then needed the result of
-another function call to be found. The additions would get stacked
-until the last one is found, and only then would the final result be
-calculated. Tail recursion aims to eliminate this stacking of
-operation by reducing them as they happen.
+part. The answer to ``1 + len(Rest)`` needs the answer of
+``len(Rest)`` to be found. The function ``len(Rest)`` itself then
+needed the result of another function call to be found. The additions
+would get stacked until the last one is found, and only then would the
+final result be calculated. Tail recursion aims to eliminate this
+stacking of operation by reducing them as they happen.
 
 In order to achieve this, we will need to hold an extra temporary
 variable as a parameter in our function. I'll illustrate the concept
@@ -209,13 +210,13 @@ computations as they happen in order to limit the growth of our calls:
     tail_fac(N,Acc) when N > 0 -> tail_fac(N-1,N*Acc).
 
 
-Here, I define both `tail_fac/1` and `tail_fac/2`. The reason for this
-is that Erlang doesn't allow default arguments in functions (different
-arity means different function) so we do that manually. In this
-specific case, `tail_fac/1` acts like an abstraction over the tail
-recursive `tail_fac/2` function. The details about the hidden
-accumulator of `tail_fac/2` don't interest anyone, so we would only
-export `tail_fac/1` from our module. When running this function, we
+Here, I define both ``tail_fac/1`` and ``tail_fac/2``. The reason for
+this is that Erlang doesn't allow default arguments in functions
+(different arity means different function) so we do that manually. In
+this specific case, ``tail_fac/1`` acts like an abstraction over the
+tail recursive ``tail_fac/2`` function. The details about the hidden
+accumulator of ``tail_fac/2`` don't interest anyone, so we would only
+export ``tail_fac/1`` from our module. When running this function, we
 can expand it to:
 
 
@@ -237,10 +238,10 @@ factorial of 1 million (if we forget 4! is a smaller number than 1M!
 in its complete representation, that is).
 
 With an example of tail recursive factorials under your belt, you
-might be able to see how this pattern could be applied to our `len/1`
-function. What we need is to make our recursive call 'alone'. If you
-like visual examples, just imagine you're going to put the `+1` part
-inside the function call by adding a parameter:
+might be able to see how this pattern could be applied to our
+``len/1`` function. What we need is to make our recursive call
+'alone'. If you like visual examples, just imagine you're going to put
+the ``+1`` part inside the function call by adding a parameter:
 
 
 ::
@@ -280,16 +281,16 @@ exists in Erlang (except list comprehensions), it's one of the most
 important concepts to understand. It's also useful in every other
 functional programming language you'll try afterwards, so take notes!
 
-The first function we'll write will be `duplicate/2`. This function
+The first function we'll write will be ``duplicate/2``. This function
 takes an integer as its first parameter and then any other term as its
 second parameter. It will then create a list of as many copies of the
 term as specified by the integer. Like before, thinking of the base
-case first is what might help you get going. For `duplicate/2`, asking
-to repeat something 0 time is the most basic thing that can be done.
-All we have to do is return an empty list, no matter what the term is.
-Every other case needs to try and get to the base case by calling the
-function itself. We will also forbid negative values for the integer,
-because you can't duplicate something `-n` times:
+case first is what might help you get going. For ``duplicate/2``,
+asking to repeat something 0 time is the most basic thing that can be
+done. All we have to do is return an empty list, no matter what the
+term is. Every other case needs to try and get to the base case by
+calling the function itself. We will also forbid negative values for
+the integer, because you can't duplicate something ``-n`` times:
 
 
 ::
@@ -320,7 +321,7 @@ into a temporary variable:
 
 Success! I want to change the subject a little bit here by drawing a
 parallel between tail recursion and a while loop. Our
-`tail_duplicate/2` function has all the usual parts of a while loop.
+``tail_duplicate/2`` function has all the usual parts of a while loop.
 If we were to imagine a while loop in a fictional language with
 Erlang-like syntax, our function could look a bit like this:
 
@@ -343,13 +344,13 @@ like a while loop.
 
 There's also an interesting property that we can 'discover' when we
 compare recursive and tail recursive functions by writing a
-`reverse/1` function, which will reverse a list of terms. For such a
+``reverse/1`` function, which will reverse a list of terms. For such a
 function, the base case is an empty list, for which we have nothing to
 reverse. We can just return an empty list when that happens. Every
 other possibility should try to converge to the base case by calling
-itself, like with `duplicate/2`. Our function is going to iterate
-through the list by pattern matching `[H|T]` and then putting H after
-the rest of the list:
+itself, like with ``duplicate/2``. Our function is going to iterate
+through the list by pattern matching ``[H|T]`` and then putting H
+after the rest of the list:
 
 
 ::
@@ -409,17 +410,17 @@ Which shows that the number of elements visited to reverse our list is
 now linear: not only do we avoid growing the stack, we also do our
 operations in a much more efficient manner!
 
-Another function to implement could be `sublist/2`, which takes a list
-L and an integer N , and returns the N first elements of the list. As
-an example, `sublist([1,2,3,4,5,6],3)` would return [1,2,3] . Again,
-the base case is trying to obtain 0 elements from a list. Take care
-however, because `sublist/2` is a bit different. You've got a second
-base case when the list passed is empty! If we do not check for empty
-lists, an error would be thrown when calling
-`recursive:sublist([1],2).` while we want `[1]` instead. Once this is
-defined, the recursive part of the function only has to cycle through
-the list, keeping elements as it goes, until it hits one of the base
-cases:
+Another function to implement could be ``sublist/2``, which takes a
+list L and an integer N , and returns the N first elements of the
+list. As an example, ``sublist([1,2,3,4,5,6],3)`` would return [1,2,3]
+. Again, the base case is trying to obtain 0 elements from a list.
+Take care however, because ``sublist/2`` is a bit different. You've
+got a second base case when the list passed is empty! If we do not
+check for empty lists, an error would be thrown when calling
+``recursive:sublist([1],2).`` while we want ``[1]`` instead. Once this
+is defined, the recursive part of the function only has to cycle
+through the list, keeping elements as it goes, until it hits one of
+the base cases:
 
 
 ::
@@ -447,10 +448,10 @@ manner as before:
 
 There's a flaw in this function. *A fatal flaw!* We use a list as an
 accumulator in exactly the same manner we did to reverse our list. If
-you compile this function as is, `sublist([1,2,3,4,5,6],3)` would not
-return [1,2,3] , but [3,2,1] . The only thing we can do is take the
-final result and reverse it ourselves. Just change the
-`tail_sublist/2` call and leave all our recursive logic intact:
+you compile this function as is, ``sublist([1,2,3,4,5,6],3)`` would
+not return [1,2,3] , but [3,2,1] . The only thing we can do is take
+the final result and reverse it ourselves. Just change the
+``tail_sublist/2`` call and leave all our recursive logic intact:
 
 
 ::
@@ -466,19 +467,19 @@ shorter lists, you might find your code is running faster with normal
 recursive calls than with tail recursive calls for this reason, but as
 your data sets grow, reversing the list will be comparatively lighter.
 
-Note: instead of writing your own `reverse/1` function, you should use
-`lists:reverse/1`. It's been used so much for tail recursive calls
-that the maintainers and developers of Erlang decided to turn it into
-a BIF. Your lists can now benefit from extremely fast reversal (thanks
-to functions written in C) which will make the reversal disadvantage a
-lot less obvious. The rest of the code in this chapter will make use
-of our own reversal function, but after that you should not use it
-ever again.
+Note: instead of writing your own ``reverse/1`` function, you should
+use ``lists:reverse/1``. It's been used so much for tail recursive
+calls that the maintainers and developers of Erlang decided to turn it
+into a BIF. Your lists can now benefit from extremely fast reversal
+(thanks to functions written in C) which will make the reversal
+disadvantage a lot less obvious. The rest of the code in this chapter
+will make use of our own reversal function, but after that you should
+not use it ever again.
 
 To push things a bit further, we'll write a zipping function. A
 zipping function will take two lists of same length as parameters and
 will join them as a list of tuples which all hold two terms. Our own
-`zip/2` function will behave this way:
+``zip/2`` function will behave this way:
 
 
 ::
@@ -514,14 +515,14 @@ scenario, you therefore have two base cases:
 
 Notice that no matter what our base cases are, the recursive part of
 the function remains the same. I would suggest you try and make your
-own tail recursive versions of `zip/2` and `lenient_zip/2`, just to
-make sure you fully understand how to make tail recursive functions:
-they'll be one of the central concepts of larger applications where
-our main loops will be made that way.
+own tail recursive versions of ``zip/2`` and ``lenient_zip/2``, just
+to make sure you fully understand how to make tail recursive
+functions: they'll be one of the central concepts of larger
+applications where our main loops will be made that way.
 
 If you want to check your answers, take a look at my implementation of
-recursive.erl, more precisely the `tail_zip/2` and
-`tail_lenient_zip/3` functions.
+recursive.erl, more precisely the ``tail_zip/2`` and
+``tail_lenient_zip/3`` functions.
 
 Note: tail recursion as seen here is not making the memory grow
 because when the virtual machine sees a function calling itself in a
@@ -534,7 +535,7 @@ LCO is done whenever the last expression to be evaluated in a function
 body is another function call. When that happens, as with TCO, the
 Erlang VM avoids storing the stack frame. As such tail recursion is
 also possible between multiple functions. As an example, the chain of
-functions `a() -> b(). b() -> c(). c() -> a().` will effectively
+functions ``a() -> b(). b() -> c(). c() -> a().`` will effectively
 create an infinite loop that won't go out of memory as LCO avoids
 overflowing the stack. This principle, combined with our use of
 accumulators is what makes tail recursion useful.
@@ -598,7 +599,7 @@ And you can now run your quicksort function. If you've looked for
 Erlang examples on the Internet before, you might have seen another
 implementation of quicksort, one that is simpler and easier to read,
 but makes use of list comprehensions. The easy to replace parts are
-the ones that create new lists, the `partition/4` function:
+the ones that create new lists, the ``partition/4`` function:
 
 
 ::
@@ -614,7 +615,7 @@ the ones that create new lists, the `partition/4` function:
 The main differences are that this version is much easier to read, but
 in exchange, it has to traverse the list to partition it in two parts.
 This is a fight of clarity against performance, but the real loser
-here is you, because a function `lists:sort/1` already exists. Use
+here is you, because a function ``lists:sort/1`` already exists. Use
 that one instead.
 
 Don't drink too much Kool-Aid:
@@ -629,8 +630,8 @@ Another problem relates to how we need to traverse all the partitioned
 lists more than once when attaching them to the pivot. It is possible
 to reduce the overhead a little by doing the concatenation while
 partitioning the lists in three parts. If you're curious about this,
-look at the last function ( `bestest_qsort/1`) of recursive.erl for an
-example.
+look at the last function ( ``bestest_qsort/1``) of recursive.erl for
+an example.
 
 A nice point about all of these quicksorts is that they will work on
 lists of any data type you've got, even tuples of lists and whatnot.
@@ -663,13 +664,13 @@ data to store), so we'll say that our nodes can also contain empty
 nodes.
 
 To represent nodes, tuples are an appropriate data structure. For our
-implementation, we can then define these tuples as `{node, {Key,
-Value, Smaller, Larger}}` (a tagged tuple!), where Smaller and Larger
-can be another similar node or an empty node ( `{node, nil}`). We
+implementation, we can then define these tuples as ``{node, {Key,
+Value, Smaller, Larger}}`` (a tagged tuple!), where Smaller and Larger
+can be another similar node or an empty node ( ``{node, nil}``). We
 won't actually need a concept more complex than that.
 
 Let's start building a module for our very basic tree implementation.
-The first function, `empty/0`, returns an empty node. The empty node
+The first function, ``empty/0``, returns an empty node. The empty node
 is the starting point of a new tree, also called the *root*:
 
 
@@ -728,7 +729,7 @@ two versions of a tree sometimes happen to be the same and are thus
 shared, copied by the VM only when needed.
 
 What's left to do on this example tree implementation is creating a
-`lookup/2` function that will let you find a value from a tree by
+``lookup/2`` function that will let you find a value from a tree by
 giving its key. The logic needed is extremely similar to the one used
 to add new content to the tree: we step through the nodes, checking if
 the lookup key is equal, smaller or larger than the current node's
@@ -805,10 +806,11 @@ recursive data structure other than a list! *Anita Bath* now...
 Note: Our tree implementation is very naive: we do not support common
 operations such as deleting nodes or rebalancing the tree to make the
 following lookups faster. If you're interested in implementing and/or
-exploring these, studying the implementation of Erlang's `gb_trees`
-module ( `otp_src_R<version>B<revision>/lib/stdlib/src/gb_trees.erl`)
-is a good idea. This is also the module you should use when dealing
-with trees in your code, rather than reinventing your own wheel.
+exploring these, studying the implementation of Erlang's ``gb_trees``
+module (
+``otp_src_R<version>B<revision>/lib/stdlib/src/gb_trees.erl``) is a
+good idea. This is also the module you should use when dealing with
+trees in your code, rather than reinventing your own wheel.
 
 
 

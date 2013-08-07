@@ -11,11 +11,11 @@ Bears, ETS, Beets
 
 Something we've been doing time and time again has been to implement
 some kind of storage device as a process. We've done fridges to store
-things, built `regis` to register processes, seen key/value stores,
+things, built ``regis`` to register processes, seen key/value stores,
 etc. If we were programmers doing object-oriented design, we would be
 having a bunch of singletons floating around, and special storage
-classes and whatnot. In fact, wrapping data structures like `dict`s
-and `gb_trees` in processes is a bit like that.
+classes and whatnot. In fact, wrapping data structures like ``dict``s
+and ``gb_trees`` in processes is a bit like that.
 
 Holding data structures in a process is actually fine for a lot of
 cases — whenever we actually need that data to do some task within the
@@ -76,8 +76,8 @@ optimize away a lot of the pain.
 Don't Drink Too Much Kool-Aid:
 While ETS tables are a nice way to optimize, they should still be used
 with some care. By default, the VM is limited to 1400 ETS tables.
-While it is possible to change that number ( `erl -env
-ERL_MAX_ETS_TABLES Number`), this default low level is a good sign
+While it is possible to change that number ( ``erl -env
+ERL_MAX_ETS_TABLES Number``), this default low level is a good sign
 that you should try to avoid having one table per process in general
 
 But before we rewrite regis to use ETS, we should try to understand a
@@ -88,7 +88,7 @@ bit of ETS' principles beforehand.
 The Concepts of ETS
 ~~~~~~~~~~~~~~~~~~~
 
-ETS tables are implemented as BIFs in the `ets` module. The main
+ETS tables are implemented as BIFs in the ``ets`` module. The main
 design objectives ETS had was to provide a way to store large amounts
 of data in Erlang with constant access time (functional data
 structures usually tend to flirt with logarithmic access time) and to
@@ -104,8 +104,8 @@ possibility to give them names (in a separate registry), etc.
 All ETS tables natively store Erlang tuples containing whatever you
 want, where one of the tuple elements will act as a primary key that
 you use to sort things. That is to say, having tuples of people of the
-form `{Name, Age, PhoneNumber, Email}` will let you have a table that
-looks like:
+form ``{Name, Age, PhoneNumber, Email}`` will let you have a table
+that looks like:
 
 
 ::
@@ -130,23 +130,23 @@ store data into tables:
   when you need to use a standard key/value store with constant time
   access.
 :ordered_set: There can still only be one key instance per table, but
-  `ordered_set` adds a few other interesting properties. The first is
-  that elements in an `ordered_set` table will be ordered (who would
+  ``ordered_set`` adds a few other interesting properties. The first is
+  that elements in an ``ordered_set`` table will be ordered (who would
   have thought?!). The first element of the table is the smallest one,
   and the last element is the largest one. If you traverse a table
   iteratively (jumping to the next element over and over again), the
-  values should be increasing, which is not necessarily true of `set`
+  values should be increasing, which is not necessarily true of ``set``
   tables. Ordered set tables are great when you frequently need to
   operate on ranges (I want entries 12 to 50 !). They will, however,
-  have the downside of being slower in their access time ( `O(log N)`
+  have the downside of being slower in their access time ( ``O(log N)``
   where N is the number of objects stored).
 :bag: A bag table can have multiple entries with the same key, as long
   as the tuples themselves are different. This means that the table can
-  have `{key, some, values}` and `{key, other, values}` inside of it
+  have ``{key, some, values}`` and ``{key, other, values}`` inside of it
   without a problem, which would be impossible with sets (they have the
-  same key). However, you couldn't have `{key, some, values}` twice in
+  same key). However, you couldn't have ``{key, some, values}`` twice in
   the table as they would be entirely identical.
-:duplicate_bag: The tables of this type work like `bag` tables, with
+:duplicate_bag: The tables of this type work like ``bag`` tables, with
   the exception that they do allow entirely identical tuples to be held
   multiple time within the same table.
 
@@ -181,53 +181,54 @@ dies, the table is automatically given away to the heir process.
 ETS Phone Home
 ~~~~~~~~~~~~~~
 
-To start an ETS table, the function `ets:new/2` has to be called. The
-function takes the argument Name and then a list of options. In
+To start an ETS table, the function ``ets:new/2`` has to be called.
+The function takes the argument Name and then a list of options. In
 return, what you get is a unique identifier necessary to use the
 table, comparable to a Pid for processes. The options can be any of
 these:
 
-: `Type = set | ordered_set | bag | duplicate_bag`: Sets the type of
+: ``Type = set | ordered_set | bag | duplicate_bag``: Sets the type of
   table you want to have, as described in the previous section. The
-  default value is `set`.
-: `Access = private | protected | public`: Lets us set the permissions
-  on the table as described earlier. The default option is `protected`.
-: `named_table`: Funnily enough, if you call `ets:new(some_name, [])`,
-  you'll be starting a protected set table, without a name. For the name
-  to be used as a way to contact a table (and to be made unique), the
-  option `named_table` has to be passed to the function. Otherwise, the
-  name of the table will purely be for documentation purposes and will
-  appear in functions such as `ets:i()`, which print information about
-  all ETS tables in the system.
-: `{keypos, Position}`: As you may (and should) recall, ETS tables
+  default value is ``set``.
+: ``Access = private | protected | public``: Lets us set the
+  permissions on the table as described earlier. The default option is
+  ``protected``.
+: ``named_table``: Funnily enough, if you call ``ets:new(some_name,
+  [])``, you'll be starting a protected set table, without a name. For
+  the name to be used as a way to contact a table (and to be made
+  unique), the option ``named_table`` has to be passed to the function.
+  Otherwise, the name of the table will purely be for documentation
+  purposes and will appear in functions such as ``ets:i()``, which print
+  information about all ETS tables in the system.
+: ``{keypos, Position}``: As you may (and should) recall, ETS tables
   work by storing tuples. The Position parameter holds an integer from 1
   to N telling which of each tuple's element shall act as the primary
   key of the database table. The default key position is set to 1. This
   means you have to be careful if you're using records as each record's
   first element is always going to be the record's name (remember what
   they look like in their tuple form). If you want to use any field as
-  the key, use `{keypos, #RecordName.FieldName}`, as it will return the
-  position of FieldName within the record's tuple representation.
-: `{heir, Pid, Data} | {heir, none}`: As mentioned in the previous
+  the key, use ``{keypos, #RecordName.FieldName}``, as it will return
+  the position of FieldName within the record's tuple representation.
+: ``{heir, Pid, Data} | {heir, none}``: As mentioned in the previous
   section, ETS tables have a process that acts as their parent. If the
   process dies, the table disappears. If the data attached to a table is
   something you might want to keep alive, then defining a heir can be
   useful. If the process attached to a table dies, the heir receives a
-  message saying `{'ETS-TRANSFER', TableId, FromPid, Data}'`, where Data
-  is the element passed when the option was first defined. The table is
-  automatically inherited by the heir. By default, no heir is defined.
-  It is possible to define or change a heir at a later point in time by
-  calling `ets:setopts(Table, {heir, Pid, Data})` or `ets:setopts(Table,
-  {heir, none})`. If you simply want to give the table away, call
-  `ets:give_away/3`.
-: `{read_concurrency, true | false}`: This is an option to optimize
+  message saying ``{'ETS-TRANSFER', TableId, FromPid, Data}'``, where
+  Data is the element passed when the option was first defined. The
+  table is automatically inherited by the heir. By default, no heir is
+  defined. It is possible to define or change a heir at a later point in
+  time by calling ``ets:setopts(Table, {heir, Pid, Data})`` or
+  ``ets:setopts(Table, {heir, none})``. If you simply want to give the
+  table away, call ``ets:give_away/3``.
+: ``{read_concurrency, true | false}``: This is an option to optimize
   the table for read concurrency. Setting this option to true means that
   reads become way cheaper to do, but then make switching to writes a
   lot more expensive. Basically, this option should be enabled when you
   do a lot of reading and little writing and need an extra kick of
   performance. If you do some reading, some writing and they are
   interleaved, using this option might even hurt performance.
-: `{write_concurrency, true | false}`: Usually, writing to a table
+: ``{write_concurrency, true | false}``: Usually, writing to a table
   will lock the whole thing and nobody else can access it, either for
   reading or writing to it, until the write is done. Setting this option
   to 'true' lets both reads and writes be done concurrently, without
@@ -235,22 +236,22 @@ these:
   the performance of sequential writes by a single process and also the
   capacity of concurrent reads. You can combine this option with
   'read_concurrency' when both writes and reads come in large bursts.
-: `compressed`: Using this option will allow the data in the table to
-  be compressed for most fields, but not the primary key. This comes at
-  the cost of performance when it comes to inspecting entire elements of
-  the table, as we will see with the next functions.
+: ``compressed``: Using this option will allow the data in the table
+  to be compressed for most fields, but not the primary key. This comes
+  at the cost of performance when it comes to inspecting entire elements
+  of the table, as we will see with the next functions.
 
 
 Then, the opposite of table creation is table destruction. For that
-one, all that's needed is to call `ets:delete(Table)` where Table is
+one, all that's needed is to call ``ets:delete(Table)`` where Table is
 either a table id or the name of a named table. If you want to delete
 a single entry from the table, a very similar function call is
-required: `ets:delete(Table, Key)`.
+required: ``ets:delete(Table, Key)``.
 
 Two more functions are required for very basic table handling:
-`insert(Table, ObjectOrObjects)` and `lookup(Table, Key)`. In the case
-of `insert/2`, ObjectOrObjects can be either a single tuple or a list
-of tuples to insert:
+``insert(Table, ObjectOrObjects)`` and ``lookup(Table, Key)``. In the
+case of ``insert/2``, ObjectOrObjects can be either a single tuple or
+a list of tuples to insert:
 
 
 ::
@@ -274,16 +275,16 @@ of tuples to insert:
     []
 
 
-You'll notice that the `lookup` function returns a list. It will do
+You'll notice that the ``lookup`` function returns a list. It will do
 that for all types of tables, even though set-based tables will always
 return at most one item. It just means that you should be able to use
-the `lookup` function in a generic way even when you use bags or
+the ``lookup`` function in a generic way even when you use bags or
 duplicate bags (which may return many values for a single key).
 
 Another thing that takes place in the snippet above is that inserting
 the same key twice overwrites it. This will always happen in sets and
 ordered sets, but not in bags or duplicate bags. If you want to avoid
-this, the function `ets:insert_new/2` might be what you want, as it
+this, the function ``ets:insert_new/2`` might be what you want, as it
 will only insert elements if they are not in the table already.
 
 Note: The tuples do not have to all be of the same size in an ETS
@@ -292,11 +293,11 @@ however necessary that the tuple is at least of the same size (or
 greater) than whatever the key position is.
 
 There's another lookup function available if you need to only fetch
-part of a tuple. The function is `lookup_element(TableID, Key,
-PositionToReturn)` and it will either return the element that matched
+part of a tuple. The function is ``lookup_element(TableID, Key,
+PositionToReturn)`` and it will either return the element that matched
 (or a list of them if there is more than one with a bag or duplicate
 bag table). If the element isn't there, the function errors out with
-`badarg` as a reason.
+``badarg`` as a reason.
 
 In any case let's try again with a bag:
 
@@ -316,10 +317,10 @@ In any case let's try again with a bag:
     [{bacon,delicious},{bacon,fat}]
 
 
-As this is a bag, `{bacon, fat}` is only there once even though we
+As this is a bag, ``{bacon, fat}`` is only there once even though we
 inserted twice, but you can see that we can still have more than one
 'bacon' entry. The other thing to look at here is that without passing
-in the `named_table` option, we have to use the TableId to use the
+in the ``named_table`` option, we have to use the TableId to use the
 table.
 
 Note: if at any point while copying these examples your shell crashes,
@@ -327,7 +328,7 @@ the tables are going to disappear as their parent process (the shell)
 has disappeared.
 
 The last basic operations we can make use of will be about traversing
-tables one by one. If you're paying attention, `ordered_set` tables
+tables one by one. If you're paying attention, ``ordered_set`` tables
 are the best fit for this:
 
 
@@ -364,10 +365,10 @@ and then we need to see what happens in boundary conditions:
     '$end_of_table'
 
 
-When you see atoms starting with a `$`, you should know that they're
+When you see atoms starting with a ``$``, you should know that they're
 some special value (chosen by convention) by the OTP team telling you
 about something. Whenever you're trying to iterate outside of the
-table, you'll see these `$end_of_table` atoms.
+table, you'll see these ``$end_of_table`` atoms.
 
 So we know how to use ETS as a very basic key-value store. There are
 more advanced uses now, when we need more than just matching on keys.
@@ -400,9 +401,9 @@ of regular data structures.
 This notation is based on tuples to fit nicely with ETS. It simply
 lets you specify variables (regular and "don't care" variables), that
 can be mixed with the tuples to do pattern matching. Variables are
-written as `'$0'`, `'$1'`, `'$2'`, and so on (the number has no
+written as ``'$0'``, ``'$1'``, ``'$2'``, and so on (the number has no
 importance except in how you'll get the results) for regular
-variables. The "don't care" variable can be written as `'_'`. All
+variables. The "don't care" variable can be written as ``'_'``. All
 these atoms can take form in a tuple like:
 
 
@@ -412,14 +413,14 @@ these atoms can take form in a tuple like:
     {items, '$3', '$1', '_', '$3'}
 
 
-This is roughly equivalent to saying `{items, C, A, _, C}` with
+This is roughly equivalent to saying ``{items, C, A, _, C}`` with
 regular pattern matching. As such, you can guess that the first
-element needs to be the atom `items`, that the second and fifth slots
-of the tuple need to be identical, etc.
+element needs to be the atom ``items``, that the second and fifth
+slots of the tuple need to be identical, etc.
 
 To make use of this notation in a more practical setting, two
-functions are available: `match/2` and `match_object/2` (there are
-`match/3` and `match_object/3` available as well, but their use is
+functions are available: ``match/2`` and ``match_object/2`` (there are
+``match/3`` and ``match_object/3`` available as well, but their use is
 outside the scope of this chapter and readers are encouraged to check
 the docs for details.) The former will return the variables of the
 pattern, while the later will return the whole entry that matched the
@@ -442,19 +443,19 @@ pattern.
     true
 
 
-The nice thing about `match/2-3` as a function is that it only returns
-what is strictly necessary to be returned. This is useful because as
-mentioned earlier, ETS tables are following the nothing-shared ideals.
-If you have very large records, only copying the necessary fields
-might be a good thing to do. Anyway, you'll also notice that while the
-numbers in variables have no explicit meaning, their order is
-important. In the final list of values returned, the value bound to
-`$114` will always come after the values bound to `$6` by the pattern.
-If nothing matches, empty lists are returned.
+The nice thing about ``match/2-3`` as a function is that it only
+returns what is strictly necessary to be returned. This is useful
+because as mentioned earlier, ETS tables are following the nothing-
+shared ideals. If you have very large records, only copying the
+necessary fields might be a good thing to do. Anyway, you'll also
+notice that while the numbers in variables have no explicit meaning,
+their order is important. In the final list of values returned, the
+value bound to ``$114`` will always come after the values bound to
+``$6`` by the pattern. If nothing matches, empty lists are returned.
 
 It is also possible you might want to delete entries based on such a
-pattern match. In these cases, the function `ets:match_delete(Table,
-Pattern)` is what you want.
+pattern match. In these cases, the function ``ets:match_delete(Table,
+Pattern)`` is what you want.
 
 
 .. image:: ../images/claw-game.png
@@ -522,12 +523,12 @@ Or from a yet higher view:
 
 So yeah, things like that represent, roughly, the pattern in a
 function head, then the guards, then the body of a function. The
-format is still limited to `'$N'` variables for the initial pattern,
+format is still limited to ``'$N'`` variables for the initial pattern,
 exactly the same to what it was for match functions. The new sections
 are the guard patterns, allowing to do something quite similar to
 regular guards. If we look closely to the guard
-`[{'<','$3',4.0},{is_float,'$3'}]`, we can see that it is quite
-similar to `... when Var < 4.0, is_float(Var) -> ...` as a guard.
+``[{'<','$3',4.0},{is_float,'$3'}]``, we can see that it is quite
+similar to ``... when Var < 4.0, is_float(Var) -> ...`` as a guard.
 
 The next guard, more complex this time, is:
 
@@ -539,19 +540,20 @@ The next guard, more complex this time, is:
      {'orelse',{'==','$2',meat},{'==','$2',dairy}}]
 
 
-Translating it gives us a guard that looks like `... when Var4 > 150
-andalso Var4 < 500, Var2 == meat orelse Var2 == dairy -> ...`. Got it?
+Translating it gives us a guard that looks like ``... when Var4 > 150
+andalso Var4 < 500, Var2 == meat orelse Var2 == dairy -> ...``. Got
+it?
 
 Each operator or guard function works with a prefix syntax, meaning
-that we use the order `{FunctionOrOperator, Arg1, ..., ArgN}`. So
-`is_list(X)` becomes `{is_list, '$1'}`, `X andalso Y` becomes
-`{'andalso', X, Y}`, and so on. Reserved keywords such as `andalso`,
-`orelse` and operators like `==` need to be put into atoms so the
-Erlang parser won't choke on them.
+that we use the order ``{FunctionOrOperator, Arg1, ..., ArgN}``. So
+``is_list(X)`` becomes ``{is_list, '$1'}``, ``X andalso Y`` becomes
+``{'andalso', X, Y}``, and so on. Reserved keywords such as
+``andalso``, ``orelse`` and operators like ``==`` need to be put into
+atoms so the Erlang parser won't choke on them.
 
 The last section of the pattern is what you want to return. Just put
 the variables you need in there. If you want to return the full input
-of the match specification, use the variable `'$_'` to do so. A full
+of the match specification, use the variable ``'$_'`` to do so. A full
 specification of match specifications can be found in the Erlang
 Documentation.
 
@@ -579,13 +581,13 @@ each module that needs it. The way to do it in a module is as follows:
         ets:fun2ms(fun(X) when X > 4 -> X end).
 
 
-The line `-include_lib("stdlib/include/ms_transform.hrl").` contains
+The line ``-include_lib("stdlib/include/ms_transform.hrl").`` contains
 some special code that will override the meaning of
-`ets:fun2ms(SomeLiteralFun)` whenever it's being used in a module.
+``ets:fun2ms(SomeLiteralFun)`` whenever it's being used in a module.
 Rather than being a higher order function, the parse transform will
 analyse what is in the fun (the pattern, the guards and the return
-value), remove the function call to `ets:fun2ms/1`, and replace it all
-with an actual match specification. Weird, huh? The best is that
+value), remove the function call to ``ets:fun2ms/1``, and replace it
+all with an actual match specification. Weird, huh? The best is that
 because this happens at compile time, there is no overhead to using
 this way of doing things.
 
@@ -659,8 +661,8 @@ assigning values from within binaries is not allowed, etc. Try stuff
 in the shell, see what you can do.
 
 Don't Drink Too Much Kool-Aid:
-A function like `ets:fun2ms` sounds totally awesome, right! You have
-to be careful with it. A problem with it is that if `ets:fun2ms` can
+A function like ``ets:fun2ms`` sounds totally awesome, right! You have
+to be careful with it. A problem with it is that if ``ets:fun2ms`` can
 handle dynamic funs when in the shell (you can pass funs around and it
 will just eat them up), this isn't possible in compiled modules.
 
@@ -671,23 +673,23 @@ inspected to know how they are on the inside.
 
 On the other hand, shell funs are abstract terms not yet evaluated.
 They're made in a way that the shell can call the evaluator on them.
-The function `fun2ms` will thus have two versions of itself: one for
+The function ``fun2ms`` will thus have two versions of itself: one for
 when you're getting compiled code, and one from when you're in the
 shell.
 
 This is fine, except that the funs aren't interchangeable with
 different types of funs. This means that you can't take a compiled fun
-and try to call `ets:fun2ms` on it while in the shell, and you can't
+and try to call ``ets:fun2ms`` on it while in the shell, and you can't
 take a dynamic fun and send it over to a compiled bit of code that's
-calling `fun2ms` in there. Too bad!
+calling ``fun2ms`` in there. Too bad!
 
 To make match specifications useful, it would make sense to use them.
-This can be done by using the functions `ets:select/2` to fetch
-results, `ets:select_reverse/2` to get results in reverse in
-`ordered_set` tables (for other types, it's the same as `select/2`),
-`ets:select_count/2` to know how many results match the specification,
-and `ets:select_delete(Table, MatchSpec)` to delete records matching a
-match specification.
+This can be done by using the functions ``ets:select/2`` to fetch
+results, ``ets:select_reverse/2`` to get results in reverse in
+``ordered_set`` tables (for other types, it's the same as
+``select/2``), ``ets:select_count/2`` to know how many results match
+the specification, and ``ets:select_delete(Table, MatchSpec)`` to
+delete records matching a match specification.
 
 Let's try it, first defining a record for our tables, and then
 populating them with various goods:
@@ -737,7 +739,7 @@ Or maybe what we want is just delicious food:
     [#food{name = cake,calories = 650,price = 7.21,group = delicious}]
 
 
-Deleting has a little special twist to it. You have to return `true`
+Deleting has a little special twist to it. You have to return ``true``
 in the pattern instead of any kind of value:
 
 
@@ -756,14 +758,14 @@ And as the last selection shows, items over $5.00 were removed from
 the table.
 
 There are way more functions inside ETS, such as ways to convert the
-table to lists or files ( `ets:tab2list/1`, `ets:tab2file/1`,
-`ets:file2tab/1`), get information about all tables ( `ets:i/0`,
-`ets:info(Table)`). Heading over to the official documentation is
+table to lists or files ( ``ets:tab2list/1``, ``ets:tab2file/1``,
+``ets:file2tab/1``), get information about all tables ( ``ets:i/0``,
+``ets:info(Table)``). Heading over to the official documentation is
 strongly recommended in this case.
 
-There's also a module called `tv` (Table Viewer) that can be used to
+There's also a module called ``tv`` (Table Viewer) that can be used to
 visually manage the ETS tables on a given Erlang VM. Just call
-`tv:start()` and a window will be opened, showing you your tables.
+``tv:start()`` and a window will be opened, showing you your tables.
 
 
 
@@ -772,14 +774,14 @@ DETS
 
 DETS is a disk-based version of ETS, with a few key differences.
 
-There are no longer `ordered_set` tables, there is a disk-size limit
-of 2GB for DETS files, and operations such as `prev/1` and `next/1`
-are not nearly as safe or fast.
+There are no longer ``ordered_set`` tables, there is a disk-size limit
+of 2GB for DETS files, and operations such as ``prev/1`` and
+``next/1`` are not nearly as safe or fast.
 
 Starting and stopping tables has changed a bit. A new database table
-is created by calling `dets:open_file/2`, and is closed by doing
-`dets:close/1`. The table can later be re-opened by calling
-`dets:open_file/1`.
+is created by calling ``dets:open_file/2``, and is closed by doing
+``dets:close/1``. The table can later be re-opened by calling
+``dets:open_file/1``.
 
 Otherwise, the API is nearly the same, and it is thus possible to have
 a very simple way to handle writing and looking for data inside of
@@ -822,8 +824,8 @@ should be performed by the process that owns the table. The safe ones
 should be allowed to be public, done outside of the owner process.
 We'll keep this in mind as we update regis.
 
-The first step will be to make a copy of `regis-1.0.0` as
-`regis-1.1.0`. I'm bumping the second number and not the third one
+The first step will be to make a copy of ``regis-1.0.0`` as
+``regis-1.1.0``. I'm bumping the second number and not the third one
 here because our changes shouldn't break the existing interface, are
 technically not bugfixes, and so we're only going to consider it to be
 a feature upgrade.
@@ -870,19 +872,19 @@ structure, should not need to change too much:
     get_names() -> ok.
 
 
-For the public interface, only `whereis/1` and `get_names/0` will
+For the public interface, only ``whereis/1`` and ``get_names/0`` will
 change and be rewritten. That's because, as mentioned earlier, those
 are single-read safe operations. The rest will require to be
 serialized in the process owning the table. That's it for the API so
 far. Let's head for the inside of the module.
 
 We're going to use an ETS table to store stuff, so it makes sense to
-put that table into the `init` function. Moreover, because our
-`whereis/1` and `get_names/0` functions will give public access to the
-table (for speed reasons), naming the table will be necessary for it
-to be accessible to the outside world. By naming the table, much like
-what happens when we name processes, we can hardcode the name in the
-functions, compared to needing to pass an id around.
+put that table into the ``init`` function. Moreover, because our
+``whereis/1`` and ``get_names/0`` functions will give public access to
+the table (for speed reasons), naming the table will be necessary for
+it to be accessible to the outside world. By naming the table, much
+like what happens when we name processes, we can hardcode the name in
+the functions, compared to needing to pass an id around.
 
 
 ::
@@ -896,8 +898,8 @@ functions, compared to needing to pass an id around.
         {ok, ?MODULE}.
 
 
-The next function will be `handle_call/3`, handling the message
-`{register, Name, Pid}` as defined in `register/2`.
+The next function will be ``handle_call/3``, handling the message
+``{register, Name, Pid}`` as defined in ``register/2``.
 
 
 ::
@@ -929,31 +931,32 @@ three basic rules to respect:
 
 
 This is what the code above does. The match specification derived from
-`fun({N,P,_Ref}) when N==Name; P==Pid -> {N,P} end` will look through
-the whole table for entries that match either the name or the pid that
-we're trying to register. If there's a match, we return both the name
-and pids that were found. This may be weird, but it makes sense to
-want both when we look at the patterns for the `case ... of` after
-that.
+``fun({N,P,_Ref}) when N==Name; P==Pid -> {N,P} end`` will look
+through the whole table for entries that match either the name or the
+pid that we're trying to register. If there's a match, we return both
+the name and pids that were found. This may be weird, but it makes
+sense to want both when we look at the patterns for the ``case ...
+of`` after that.
 
 The first pattern means nothing was found, and so insertions are good.
 We monitor the process we have registered (to unregister it in case of
 failure) and then add the entry to the table. In case the name we are
 trying to register was already in the table, the pattern
-`[{Name,_}|_]` will take care of it. If it was the Pid that matched,
-then the pattern `[{_,Pid}|_]` will take care of it. That's why both
+``[{Name,_}|_]`` will take care of it. If it was the Pid that matched,
+then the pattern ``[{_,Pid}|_]`` will take care of it. That's why both
 values are returned: it makes it simpler to match on the whole tuple
 later on, not caring which of them matched in the match spec. Why is
-the pattern of the form `[Tuple|_]` rather than just `[Tuple]`? The
-explanation is simple enough. If we're traversing the table looking
-for either Pids or names that are similar, it is possible the list
-return will be `[{NameYouWant, SomePid},{SomeName,PidYouWant}]`. If
-that happens, then a pattern match of the form `[Tuple]` will crash
-the process in charge of the table and ruin your day.
+the pattern of the form ``[Tuple|_]`` rather than just ``[Tuple]``?
+The explanation is simple enough. If we're traversing the table
+looking for either Pids or names that are similar, it is possible the
+list return will be ``[{NameYouWant,
+SomePid},{SomeName,PidYouWant}]``. If that happens, then a pattern
+match of the form ``[Tuple]`` will crash the process in charge of the
+table and ruin your day.
 
 Oh yeah, don't forget to add the
-`-include_lib("stdlib/include/ms_transform.hrl").` in the module,
-otherwise, `fun2ms` will die with a weird error message:
+``-include_lib("stdlib/include/ms_transform.hrl").`` in the module,
+otherwise, ``fun2ms`` will die with a weird error message:
 
 
 ::
@@ -1064,23 +1067,24 @@ Here's the rest of the OTP callbacks:
         ok.
 
 
-We don't care about any of them, except receiving a `DOWN` message,
+We don't care about any of them, except receiving a ``DOWN`` message,
 meaning one of the processes we were monitoring died. When that
 happens, we delete the entry based on the reference we have in the
 message, then move on.
 
-You'll notice that `code_change/3` could actually work as a transition
-between the old `regis_server` and the new `regis_server`.
-Implementing this function is left as an exercise to the reader. I
-always hate books that give exercises to the reader without solutions,
-so here's at least a little pointer so I'm not just being a jerk like
-all the other writers out there: you have to take either of the two
-`gb_trees` from the older version, and use `gb_trees:map/2` or the
-`gb_trees` iterators to populate a new table before moving on. The
-downgrade function can be written by doing the opposite.
+You'll notice that ``code_change/3`` could actually work as a
+transition between the old ``regis_server`` and the new
+``regis_server``. Implementing this function is left as an exercise to
+the reader. I always hate books that give exercises to the reader
+without solutions, so here's at least a little pointer so I'm not just
+being a jerk like all the other writers out there: you have to take
+either of the two ``gb_trees`` from the older version, and use
+``gb_trees:map/2`` or the ``gb_trees`` iterators to populate a new
+table before moving on. The downgrade function can be written by doing
+the opposite.
 
 All that's left to do is fix the two public functions we have left
-unimplemented before. Of course, we could write a `%% TODO` comment,
+unimplemented before. Of course, we could write a ``%% TODO`` comment,
 call it a day and go drink until we forget we're programmers, but that
 would be a tiny bit irresponsible. Let's fix stuff:
 
@@ -1096,9 +1100,9 @@ would be a tiny bit irresponsible. Let's fix stuff:
         end.
 
 
-This one looks for a name, returns the Pid or `undefined` depending on
-whether the entry has been found or not. Note that we do use
-`regis_server` ( `?MODULE`) as the table name there; that's why we
+This one looks for a name, returns the Pid or ``undefined`` depending
+on whether the entry has been found or not. Note that we do use
+``regis_server`` ( ``?MODULE``) as the table name there; that's why we
 made it protected and named in the first place. For the next one:
 
 
@@ -1111,10 +1115,10 @@ made it protected and named in the first place. For the next one:
         ets:select(?MODULE, MatchSpec).
 
 
-We use `fun2ms` again to match on the Name and keep only that.
+We use ``fun2ms`` again to match on the Name and keep only that.
 Selecting from the table will return a list and do what we need.
 
-That's it! You can run the test suite in `test/` to make things go:
+That's it! You can run the test suite in ``test/`` to make things go:
 
 
 ::

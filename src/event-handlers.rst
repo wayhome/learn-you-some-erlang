@@ -12,7 +12,7 @@ There is a certain thing that I've avoided getting into in a few of
 the previous examples. If you look back at the `reminder app`_, you'll
 see that I somehow mentioned that we could notify clients, whether
 they were IM, mail, etc. In the `previous chapter`_, our trading
-system used `io:format/2` to notify people of what was going on.
+system used ``io:format/2`` to notify people of what was going on.
 
 You can probably see the common link between both cases. They're all
 about letting people (or some process or application) know about an
@@ -65,30 +65,30 @@ to do it with ease and we'll see how to do it later in this chapter.
 
 I usually write a very basic version of the OTP behaviour we'll see in
 pure Erlang beforehand, but in this case, I'll instead come straight
-to the point. Here comes `gen_event`.
+to the point. Here comes ``gen_event``.
 
 
 
 Generic Event Handlers
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The `gen_event` behaviour differs quite a bit from the `gen_server`
-and `gen_fsm` behaviours in that you are never really starting a
-process. The whole part I've described above about 'accepting a
-callback' is the reason for this. The `gen_event` behaviour basically
-runs the process that accepts and calls functions, and you only
-provide a module with these functions. This is to say, you have
-nothing to do with regards to event manipulation except give your
-callback functions in a format that pleases the *event manager*. All
-managing is done for free; you only provide what's specific to your
-application. This is not really surprising given OTP is, again, all
-about separating what's generic from specific.
+The ``gen_event`` behaviour differs quite a bit from the
+``gen_server`` and ``gen_fsm`` behaviours in that you are never really
+starting a process. The whole part I've described above about
+'accepting a callback' is the reason for this. The ``gen_event``
+behaviour basically runs the process that accepts and calls functions,
+and you only provide a module with these functions. This is to say,
+you have nothing to do with regards to event manipulation except give
+your callback functions in a format that pleases the *event manager*.
+All managing is done for free; you only provide what's specific to
+your application. This is not really surprising given OTP is, again,
+all about separating what's generic from specific.
 
-This separation, however, means that the standard `spawn -> init ->
-loop -> terminate` pattern will only be applied to event handlers. Now
-if you recall what has been said before, event handlers are a bunch of
-functions running in the manager. This means the currently presented
-model:
+This separation, however, means that the standard ``spawn -> init ->
+loop -> terminate`` pattern will only be applied to event handlers.
+Now if you recall what has been said before, event handlers are a
+bunch of functions running in the manager. This means the currently
+presented model:
 
 
 .. image:: ../images/common-pattern.png
@@ -119,26 +119,26 @@ init and terminate
 ``````````````````
 
 The init and terminate functions are similar to what we've seen in the
-previous behaviours with servers and finit state machines. `init/1`
-takes a list of arguments and returns `{ok, State}`. Whatever happens
-in `init/1` should have its counterpart in `terminate/2`.
+previous behaviours with servers and finit state machines. ``init/1``
+takes a list of arguments and returns ``{ok, State}``. Whatever
+happens in ``init/1`` should have its counterpart in ``terminate/2``.
 
 
 
 handle_event
 ````````````
 
-The `handle_event(Event, State)` function is more or less the core of
-`gen_event`'s callback modules. It works like `gen_server`'s
-`handle_cast/2` in that it works asynchronously. It differs with
+The ``handle_event(Event, State)`` function is more or less the core
+of ``gen_event``'s callback modules. It works like ``gen_server``'s
+``handle_cast/2`` in that it works asynchronously. It differs with
 regards to what it can return though:
 
 
-+ `{ok, NewState}`
-+ `{ok, NewState, hibernate}`, which puts the event manager itself
++ ``{ok, NewState}``
++ ``{ok, NewState, hibernate}``, which puts the event manager itself
   into hibernation until the next event
-+ `remove_handler`
-+ `{swap_handler, Args1, NewState, NewHandler, Args2}`
++ ``remove_handler``
++ ``{swap_handler, Args1, NewState, NewHandler, Args2}``
 
 
 
@@ -146,42 +146,42 @@ regards to what it can return though:
     :alt: A sleeping polar bear with a birthday hat
 
 
-The tuple `{ok, NewState}` works in a way similar to what we've seen
-with `gen_server:handle_cast/2`; it simply updates its own state and
-doesn't reply to anyone. In the case of `{ok, NewState, hibernate}` it
-is to be noted that the whole event manager is going to be put in
+The tuple ``{ok, NewState}`` works in a way similar to what we've seen
+with ``gen_server:handle_cast/2``; it simply updates its own state and
+doesn't reply to anyone. In the case of ``{ok, NewState, hibernate}``
+it is to be noted that the whole event manager is going to be put in
 hibernation. Remember that event handlers run in the same process as
-their manager. Then `remove_handler` drops the handler from the
+their manager. Then ``remove_handler`` drops the handler from the
 manager. This can be useful whenever your event handler knows its done
-and it has nothing else to do. Finally, there's `{swap_handler, Args1,
-NewState, NewHandler, Args2}`. This one is not used too frequently,
-but what it does is remove the current event handler and replace it
-with a new one. This is done by first calling
-`CurrentHandler:terminate(Args1, NewState)` and removing the current
-handler, then adding a new one by calling `NewHandler:init(Args2,
-ResultFromTerminate)`. This can be useful in the cases where you know
+and it has nothing else to do. Finally, there's ``{swap_handler,
+Args1, NewState, NewHandler, Args2}``. This one is not used too
+frequently, but what it does is remove the current event handler and
+replace it with a new one. This is done by first calling
+``CurrentHandler:terminate(Args1, NewState)`` and removing the current
+handler, then adding a new one by calling ``NewHandler:init(Args2,
+ResultFromTerminate)``. This can be useful in the cases where you know
 some specific event happened and you're better of giving control to a
 new handler. This is likely the kind of thing where you'll simply know
 when you need it. Again, it's not that frequently used.
 
-All incoming events can come from `gen_event:notify/2` which is
-asynchronous like `gen_server:cast/2` is. There is also
-`gen_event:sync_notify/2` which is synchronous. This is a bit funny to
-say, because `handle_event/2` remains asynchronous. The idea here is
-that the function call only returns once all event handlers have seen
-and treated the new message. Until then, the event manager will keep
-blocking the calling process by not replying.
+All incoming events can come from ``gen_event:notify/2`` which is
+asynchronous like ``gen_server:cast/2`` is. There is also
+``gen_event:sync_notify/2`` which is synchronous. This is a bit funny
+to say, because ``handle_event/2`` remains asynchronous. The idea here
+is that the function call only returns once all event handlers have
+seen and treated the new message. Until then, the event manager will
+keep blocking the calling process by not replying.
 
 
 
 handle_call
 ```````````
 
-This is similar to a `gen_server`'s `handle_call` callback, except
-that it can return `{ok, Reply, NewState}`, `{ok, Reply, NewState,
-hibernate}`, `{remove_handler, Reply}` or `{swap_handler, Reply,
-Args1, NewState, Handler2, Args2}`. The `gen_event:call/3-4` function
-is used to make the call.
+This is similar to a ``gen_server``'s ``handle_call`` callback, except
+that it can return ``{ok, Reply, NewState}``, ``{ok, Reply, NewState,
+hibernate}``, ``{remove_handler, Reply}`` or ``{swap_handler, Reply,
+Args1, NewState, Handler2, Args2}``. The ``gen_event:call/3-4``
+function is used to make the call.
 
 This raises a question. How does this work when we have something like
 15 different event handlers? Do we expect 15 replies or just one that
@@ -189,19 +189,19 @@ contains them all? Well, in fact we'll be forced to choose only one
 handler to reply to us. We'll get into the details of how this is done
 when we actually see how to attach handlers to our event manager, but
 if you're impatient, you can look at how the function
-`gen_event:add_handler/3` works to try to figure it out.
+``gen_event:add_handler/3`` works to try to figure it out.
 
 
 
 handle_info
 ```````````
 
-The `handle_info/2` callback is pretty much the same as `handle_event`
-(same return values and everything), with the exception that it only
-treats out of band messages, such as exit signals, messages sent
-directly to the event manager with the `!` operator, etc. It has use
-cases similar to those of `handle_info` in `gen_server` and in
-`gen_fsm`.
+The ``handle_info/2`` callback is pretty much the same as
+``handle_event`` (same return values and everything), with the
+exception that it only treats out of band messages, such as exit
+signals, messages sent directly to the event manager with the ``!``
+operator, etc. It has use cases similar to those of ``handle_info`` in
+``gen_server`` and in ``gen_fsm``.
 
 
 
@@ -209,10 +209,10 @@ code_change
 ```````````
 
 Code change works in exactly the same manner as it does for
-`gen_server`s, except it's for each individual event handler. It takes
-3 arguments, OldVsn , State , and Extra , which are in order, the
-version number, the current handler's state and data we can ignore for
-now. All it needs to do is return `{ok, NewState}`.
+``gen_server``s, except it's for each individual event handler. It
+takes 3 arguments, OldVsn , State , and Extra , which are in order,
+the version number, the current handler's state and data we can ignore
+for now. All it needs to do is return ``{ok, NewState}``.
 
 
 
@@ -220,9 +220,9 @@ It's Curling Time!
 ~~~~~~~~~~~~~~~~~~
 
 With the callbacks seen, we can start looking at implementing
-something with `gen_event`. For this part of the chapter, I've chosen
-to make a set of event handlers used to track game updates of one of
-the most entertaining sports in the world: curling.
+something with ``gen_event``. For this part of the chapter, I've
+chosen to make a set of event handlers used to track game updates of
+one of the most entertaining sports in the world: curling.
 
 If you've never seen or played curling before (which is a shame!), the
 rules are relatively simple:
@@ -298,16 +298,16 @@ trivialities for a tutorial.
 This hardware interface lets us have a little bit of design time to
 ourselves. We know that there are a few events to handle for now:
 adding teams, going to the next round, setting the number of points.
-We will only use the `reset_board` functionality when starting a new
+We will only use the ``reset_board`` functionality when starting a new
 game and won't need it as part of our protocol. The events we need
 might take the following form in our protocol:
 
 
-+ `{set_teams, TeamA, TeamB}`, where this is translated to a single
-  call to `curling_scoreboard_hw:set_teams(TeamA, TeamB)`;
-+ `{add_points, Team, N}`, where this is translated to N calls to
-  `curling_scoreboard_hw:add_point(Team)`;
-+ `next_round`, which gets translated to a single call with the same
++ ``{set_teams, TeamA, TeamB}``, where this is translated to a single
+  call to ``curling_scoreboard_hw:set_teams(TeamA, TeamB)``;
++ ``{add_points, Team, N}``, where this is translated to N calls to
+  ``curling_scoreboard_hw:add_point(Team)``;
++ ``next_round``, which gets translated to a single call with the same
   name.
 
 
@@ -343,12 +343,12 @@ skeleton:
         ok.
 
 
-This is a skeleton that we can use for every `gen_event` callback
+This is a skeleton that we can use for every ``gen_event`` callback
 module out there. For now, the scoreboard event handler itself won't
 need to do anything special except forward the calls to the hardware
-module. We expect the events to come from `gen_event:notify/2`, so the
-handling of the protocol should be done in `handle_event/2`. The file
-curling_scoreboard.erl shows the updates:
+module. We expect the events to come from ``gen_event:notify/2``, so
+the handling of the protocol should be done in ``handle_event/2``. The
+file curling_scoreboard.erl shows the updates:
 
 
 ::
@@ -382,8 +382,8 @@ curling_scoreboard.erl shows the updates:
         {ok, State}.
 
 
-You can see the updates done to the `handle_event/2` function. Trying
-it:
+You can see the updates done to the ``handle_event/2`` function.
+Trying it:
 
 
 ::
@@ -415,18 +415,19 @@ it:
 
 
 A few things are going on here. The first of them is that we're
-starting the `gen_event` process as a standalone thing. We then attach
-our event handler to it dynamically with `gen_event:add_handler/3`.
-This can be done as many times as you want. However, as mentioned in
-the `handle_call` part earlier, this might cause problems when you
-want to work with a particular event handler. If you want to call, add
-or delete a specific handler when there's more than one instance of
-it, you'll have to find a way to uniquely identify it. My favorite way
-of doing it (one that works great if you don't have anything more
-specific in mind) is to just use `make_ref()` as a unique value. To
-give this value to the handler, you add it by calling `add_handler/3`
-as `gen_event:add_handler(Pid, {Module, Ref}, Args)`. From this point
-on, you can use `{Module, Ref}` to talk to that specific handler.
+starting the ``gen_event`` process as a standalone thing. We then
+attach our event handler to it dynamically with
+``gen_event:add_handler/3``. This can be done as many times as you
+want. However, as mentioned in the ``handle_call`` part earlier, this
+might cause problems when you want to work with a particular event
+handler. If you want to call, add or delete a specific handler when
+there's more than one instance of it, you'll have to find a way to
+uniquely identify it. My favorite way of doing it (one that works
+great if you don't have anything more specific in mind) is to just use
+``make_ref()`` as a unique value. To give this value to the handler,
+you add it by calling ``add_handler/3`` as
+``gen_event:add_handler(Pid, {Module, Ref}, Args)``. From this point
+on, you can use ``{Module, Ref}`` to talk to that specific handler.
 Problem solved.
 
 
@@ -436,13 +437,13 @@ Problem solved.
 
 Anyway, you can then see that we send messages to the event handler,
 which successfully calls the hardware module. We then remove the
-handler. Here, `turn_off` is an argument to the `terminate/2`
+handler. Here, ``turn_off`` is an argument to the ``terminate/2``
 function, which our implementation currently doesn't care about. The
 handler is gone, but we can still send events to the event manager.
 Hooray.
 
 One awkward thing with the code snippet above is that we're forced to
-call the `gen_event` module directly and show everyone what our
+call the ``gen_event`` module directly and show everyone what our
 protocol looks like. A better option would be to provide an
 abstraction module on top of it that just wraps all we need. This will
 look a lot nicer to everyone using our code and will, again, let us
@@ -523,11 +524,11 @@ needs them.
 
 The first thing to do is update the curling.erl module with the new
 interface. Because we want things to be easy to use, we'll only add
-two functions, `join_feed/2` and `leave_feed/2`. Joining the feed
+two functions, ``join_feed/2`` and ``leave_feed/2``. Joining the feed
 should be doable just by inputting the right Pid for the event manager
 and the Pid to forward all the events to. This should return a unique
 value that can then be used to unsubscribe from the feed with
-`leave_feed/2`:
+``leave_feed/2``:
 
 
 ::
@@ -546,7 +547,7 @@ value that can then be used to unsubscribe from the feed with
 
 
 Note that I'm using the technique described earlier for multiple
-handlers ( `{curling_feed, make_ref()}`). You can see that this
+handlers ( ``{curling_feed, make_ref()}``). You can see that this
 function expects a gen_event callback module named curling_feed. If I
 only used the name of the module as a HandlerId , things would have
 still worked fine,except that we would have no control on which
@@ -556,7 +557,7 @@ Ref makes sure that some guy from the Head-Smashed-In Buffalo Jump
 press leaving the place won't disconnect a journalist from *The
 Economist* (no idea why they'd do a report on curling, but what do you
 know). Anyway, here is the implementation I've made of the
-`curling_feed` module:
+``curling_feed`` module:
 
 
 ::
@@ -588,7 +589,7 @@ know). Anyway, here is the implementation I've made of the
         ok.
 
 
-The only interesting thing here is still the `handle_event/2`
+The only interesting thing here is still the ``handle_event/2``
 function, which blindly forwards all events to the subscribing Pid.
 Now when we use the new modules:
 
@@ -626,11 +627,12 @@ processes many times and it will work fine.
 This introduces a problem though. What if one of the curling feed
 subscribers crashes? Do we just keep the handler going on there?
 Ideally, we wouldn't have to. In fact, we don't have to. All that
-needs to be done is to change the call from `gen_event:add_handler/3`
-to `gen_event:add_sup_handler/3`. If you crash, the handler is gone.
-Then on the opposite end, if the `gen_event` manager crashes, the
-message `{gen_event_EXIT, Handler, Reason}` is sent back to you so you
-can handle it. Easy enough, right? Think again.
+needs to be done is to change the call from
+``gen_event:add_handler/3`` to ``gen_event:add_sup_handler/3``. If you
+crash, the handler is gone. Then on the opposite end, if the
+``gen_event`` manager crashes, the message ``{gen_event_EXIT, Handler,
+Reason}`` is sent back to you so you can handle it. Easy enough,
+right? Think again.
 
 
 
@@ -649,34 +651,35 @@ you, on top of your parents. Now if you ever did something wrong, you
 would get scolded by your mom, dad, aunt, grandmother and then
 everyone would keep telling you after that even though you already
 clearly knew you had done something wrong. Well
-`gen_event:add_sup_handler/3` is a bit like that; no, seriously.
+``gen_event:add_sup_handler/3`` is a bit like that; no, seriously.
 
-Whenever you use `gen_event:add_sup_handler/3`, a link is set up
+Whenever you use ``gen_event:add_sup_handler/3``, a link is set up
 between your process and the event manager so both of them are
 supervised and the handler knows if its parent process fails. If you
 recall the `Errors and Processes`_ chapter and its section on
 monitors, I have mentioned that monitors are great for writing
 libraries which need to know what's going on with other processes
 because they can be stacked, at the opposite of links. Well
-`gen_event` predates the appearance of monitors in Erlang and a strong
-commitment to backwards compatibility introduced this pretty bad wart.
-Basically, because you could have the same process acting as the
-parent of many event handlers, so the library doesn't ever unlink the
-processes (except when it terminates for good) just in case. Monitors
-would actually solve the problem, but they aren't being used there.
+``gen_event`` predates the appearance of monitors in Erlang and a
+strong commitment to backwards compatibility introduced this pretty
+bad wart. Basically, because you could have the same process acting as
+the parent of many event handlers, so the library doesn't ever unlink
+the processes (except when it terminates for good) just in case.
+Monitors would actually solve the problem, but they aren't being used
+there.
 
 This mean that everything goes alright when your own process crashes:
 the supervised handler is terminated (with the call to
-`YourModule:terminate({stop, Reason}, State)`). Everything goes
+``YourModule:terminate({stop, Reason}, State)``). Everything goes
 alright when your handler itself crashes (but not the event manager):
-you will receive `{gen_event_EXIT, HandlerId, Reason}`. When the event
-manager is shut down though, you will either:
+you will receive ``{gen_event_EXIT, HandlerId, Reason}``. When the
+event manager is shut down though, you will either:
 
 
-+ Receive the `{gen_event_EXIT, HandlerId, Reason}` message then crash
-  because you're not trapping exits;
-+ Receive the `{gen_event_EXIT, HandlerId, Reason}` message, then a
-  standard `'EXIT'` message that is either superfluous or confusing.
++ Receive the ``{gen_event_EXIT, HandlerId, Reason}`` message then
+  crash because you're not trapping exits;
++ Receive the ``{gen_event_EXIT, HandlerId, Reason}`` message, then a
+  standard ``'EXIT'`` message that is either superfluous or confusing.
 
 
 That's quite a wart, but at least you know about it. You can try and
@@ -688,8 +691,8 @@ We're not done yet! what happens if some member of the media is not
 there on time? We need to be able to tell them from the feed what the
 current state of the game is. For this, we'll write an additional
 event handler named curling_accumulator. Again, before writing it
-entirely, we might want to add it to the `curling` module with the few
-calls we want:
+entirely, we might want to add it to the ``curling`` module with the
+few calls we want:
 
 
 ::
@@ -716,16 +719,16 @@ calls we want:
         gen_event:call(Pid, curling_accumulator, game_data).
 
 
-A thing to notice here is that the `game_info/1` function uses only
-`curling_accumulator` as a handler id. In the cases where you have
-many versions of the same handler, the hint about using `make_ref()`
+A thing to notice here is that the ``game_info/1`` function uses only
+``curling_accumulator`` as a handler id. In the cases where you have
+many versions of the same handler, the hint about using ``make_ref()``
 (or any other means) to ensure you write to the right handler still
-holds. Also note that I made the `curling_accumulator` handler start
+holds. Also note that I made the ``curling_accumulator`` handler start
 automatically, much like the scoreboard. Now for the module itself. It
 should be able to hold state for the curling game: so far we have
 teams, score and rounds to track. This can all be held in a state
 record, changed on each event received. Then, we will only need to
-reply to the `game_data` call, as below:
+reply to the ``game_data`` call, as below:
 
 
 ::
@@ -811,11 +814,11 @@ all night now.
 We haven't seen all there is to do with gen_event as a module. In
 fact, we haven't seen the most common use of event handlers: logging
 and system alarms. I decided against showing them because pretty much
-any other source on Erlang out there uses `gen_event` strictly for
+any other source on Erlang out there uses ``gen_event`` strictly for
 that. If you're interested in going there, check out error_logger
 first.
 
-Even if we've not seen the most common uses of `gen_event`, it's
+Even if we've not seen the most common uses of ``gen_event``, it's
 important to say that we've seen all the concepts necessary to
 understanding them, building our own and integrating them into our
 applications. More importantly, we've finally covered the three main

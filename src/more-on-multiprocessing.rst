@@ -51,7 +51,7 @@ process:
 
 Something's wrong with it. When we ask to store the food, the process
 should reply with ok , but there is nothing actually storing the food;
-`fridge1()` is called and then the function starts from scratch,
+``fridge1()`` is called and then the function starts from scratch,
 without state. You can also see that when we call the process to take
 food from the fridge, there is no state to take it from and so the
 only thing to reply is not_found . In order to store and take food
@@ -85,14 +85,14 @@ then look in that list when someone needs to eat something:
         end.
 
 
-The first thing to notice is that `fridge2/1` takes one argument,
+The first thing to notice is that ``fridge2/1`` takes one argument,
 FoodList . You can see that when we send a message that matches
-`{From, {store, Food}}`, the function will add Food to FoodList before
-going. Once that recursive call is made, it will then be possible to
-retrieve the same item. In fact, I implemented it there. The function
-uses `lists:member/2` to check whether Food is part of FoodList or
-not. Depending on the result, the item is sent back to the calling
-process (and removed from FoodList ) or not_found is sent back
+``{From, {store, Food}}``, the function will add Food to FoodList
+before going. Once that recursive call is made, it will then be
+possible to retrieve the same item. In fact, I implemented it there.
+The function uses ``lists:member/2`` to check whether Food is part of
+FoodList or not. Depending on the result, the item is sent back to the
+calling process (and removed from FoodList ) or not_found is sent back
 otherwise:
 
 
@@ -133,7 +133,7 @@ stuff and then try to take it from the fridge.
 As expected, we can take bacon from the fridge because we have put it
 in there first (along with the milk and baking soda), but the fridge
 process has no turkey to find when we request some. This is why we get
-the last `{<0.51.0>,not_found}` message.
+the last ``{<0.51.0>,not_found}`` message.
 
 
 
@@ -184,7 +184,7 @@ Now the interaction with the process is much cleaner:
 
 
 We don't have to care about how the messages work anymore, if sending
-`self()` or a precise atom like `take` or `store` is needed: all
+``self()`` or a precise atom like ``take`` or ``store`` is needed: all
 that's needed is a pid and knowing what functions to call. This hides
 all of the dirty work and makes it easier to build on the fridge
 process.
@@ -192,7 +192,7 @@ process.
 One thing left to do would be to hide that whole part about needing to
 spawn a process. We dealt with hiding messages, but then we still
 expect the user to handle the creation of the process. I'll add the
-following `start/1` function:
+following ``start/1`` function:
 
 
 ::
@@ -207,16 +207,16 @@ following `start/1` function:
     :alt: Two tin cans with a string, where the tin cans somehow represent the abstraction layer between the vibrating string and the voice
 
 
-Here, `?MODULE` is a macro returning the current module's name. It
+Here, ``?MODULE`` is a macro returning the current module's name. It
 doesn't look like there are any advantages to writing such a function,
 but there really are some. The essential part of it would be
-consistency with the calls to `take/2` and `store/2`: everything about
-the fridge process is now handled by the kitchen module. If you were
-to add logging when the fridge process is started or start a second
-process (say a freezer), it would be really easy to do inside our
-`start/1` function. However if the spawning is left for the user to do
-through `spawn/3`, then every place that starts a fridge now needs to
-add the new calls. That's prone to errors and errors suck.
+consistency with the calls to ``take/2`` and ``store/2``: everything
+about the fridge process is now handled by the kitchen module. If you
+were to add logging when the fridge process is started or start a
+second process (say a freezer), it would be really easy to do inside
+our ``start/1`` function. However if the spawning is left for the user
+to do through ``spawn/3``, then every place that starts a fridge now
+needs to add the new calls. That's prone to errors and errors suck.
 
 Let's see this function put to use:
 
@@ -245,8 +245,8 @@ Time Out
 ~~~~~~~~
 
 Let's try a little something with the help of the command
-`pid(A,B,C)`, which lets us change the 3 integers A , B and C into a
-pid. Here we'll deliberately feed `kitchen:take/2` a fake one:
+``pid(A,B,C)``, which lets us change the 3 integers A , B and C into a
+pid. Here we'll deliberately feed ``kitchen:take/2`` a fake one:
 
 
 ::
@@ -256,8 +256,8 @@ pid. Here we'll deliberately feed `kitchen:take/2` a fake one:
     
 
 
-Woops. The shell is frozen. This happened because of how `take/2` was
-implemented. To understand what goes on, let's first revise what
+Woops. The shell is frozen. This happened because of how ``take/2``
+was implemented. To understand what goes on, let's first revise what
 happens in the normal case:
 
 
@@ -292,7 +292,7 @@ certain period of time if it gets no sign of receiving data. A web
 browser does it when a page or image takes too long to load, you do it
 when someone takes too long before answering the phone or is late at a
 meeting. Erlang certainly has an appropriate mechanism for that, and
-it's part of the `receive` construct:
+it's part of the ``receive`` construct:
 
 
 ::
@@ -305,15 +305,15 @@ it's part of the `receive` construct:
     end.
 
 
-The part in between `receive` and `after` is exactly the same that we
-already know. The `after` part will be triggered if as much time as
-Delay (an integer representing milliseconds) has been spent without
+The part in between ``receive`` and ``after`` is exactly the same that
+we already know. The ``after`` part will be triggered if as much time
+as Delay (an integer representing milliseconds) has been spent without
 receiving a message that matches the Match pattern. When this happens,
 Expression2 is executed.
 
-We'll write two new interface functions, `store2/2` and `take2/2`,
-which will act exactly like `store/2` and `take/2` with the exception
-that they will stop waiting after 3 seconds:
+We'll write two new interface functions, ``store2/2`` and ``take2/2``,
+which will act exactly like ``store/2`` and ``take/2`` with the
+exception that they will stop waiting after 3 seconds:
 
 
 ::
@@ -336,8 +336,8 @@ that they will stop waiting after 3 seconds:
         end.
 
 
-Now you can unfreeze the shell with ``^G`_` and try the new interface
-functions:
+Now you can unfreeze the shell with ```^G`_`` and try the new
+interface functions:
 
 
 ::
@@ -356,15 +356,15 @@ functions:
 
 And now it works.
 
-Note: I said that `after` only takes milliseconds as a value, but it
-is actually possible to use the atom `infinity`. While this is not
-useful in many cases (you might just remove the `after` clause
+Note: I said that ``after`` only takes milliseconds as a value, but it
+is actually possible to use the atom ``infinity``. While this is not
+useful in many cases (you might just remove the ``after`` clause
 altogether), it is sometimes used when the programmer can submit the
 wait time to a function where receiving a result is expected. That
 way, if the programmer really wants to wait forever, he can.
 
 There are uses to such timers other than giving up after too long. One
-very simple example is how the `timer:sleep/1` function we've used
+very simple example is how the ``timer:sleep/1`` function we've used
 before works. Here's how it is implemented (let's put it in a new
 multiproc.erl module):
 
@@ -379,9 +379,9 @@ multiproc.erl module):
 
 
 In this specific case, no message will ever be matched in the
-`receive` part of the construct because there is no pattern. Instead,
-the `after` part of the construct will be called once the delay T has
-passed.
+``receive`` part of the construct because there is no pattern.
+Instead, the ``after`` part of the construct will be called once the
+delay T has passed.
 
 Another special case is when the timeout is at 0:
 
@@ -399,9 +399,9 @@ Another special case is when the timeout is at 0:
 
 When that happens, the Erlang VM will try and find a message that fits
 one of the available patterns. In the case above, anything matches. As
-long as there are messages, the `flush/0` function will recursively
-call itself until the mailbox is empty. Once this is done, the `after
-0 -> ok` part of the code is executed and the function returns.
+long as there are messages, the ``flush/0`` function will recursively
+call itself until the mailbox is empty. Once this is done, the ``after
+0 -> ok`` part of the code is executed and the function returns.
 
 
 
@@ -448,10 +448,10 @@ priority above 10 coming first:
     [high,high,low,low]
 
 
-Because I used the `after 0` bit, every message will be obtained until
-none is left, but the process will try to grab all those with a
+Because I used the ``after 0`` bit, every message will be obtained
+until none is left, but the process will try to grab all those with a
 priority above 10 before even considering the other messages, which
-are accumulated in the `normal/0` call.
+are accumulated in the ``normal/0`` call.
 
 If this practice looks interesting, be aware that is is sometimes
 unsafe due to the way selective receives work in Erlang.
@@ -463,9 +463,9 @@ were received. This means every time you match a message, it begins by
 the oldest one.
 
 That oldest message is then tried against every pattern of the
-`receive` until one of them matches. When it does, the message is
+``receive`` until one of them matches. When it does, the message is
 removed from the mailbox and the code for the process executes
-normally until the next `receive`. When this next `receive` is
+normally until the next ``receive``. When this next ``receive`` is
 evaluated, the VM will look for the oldest message currently in the
 mailbox (the one after the one we removed), and so on.
 
@@ -540,11 +540,11 @@ other process doesn't receive what it should.
 
 In the case you do need to work with a priority in your messages and
 can't use such a catch-all clause, a smarter way to do it would be to
-implement a min-heap or use the `gb_trees` module and dump every
+implement a min-heap or use the ``gb_trees`` module and dump every
 received message in it (make sure to put the priority number first in
 the key so it gets used for sorting the messages). Then you can just
-search for the `smallest` or `largest` element in the data structure
-according to your needs.
+search for the ``smallest`` or ``largest`` element in the data
+structure according to your needs.
 
 In most cases, this technique should let you receive messages with a
 priority more efficiently than selective receives. However, it could
@@ -555,9 +555,9 @@ optimizing.
 Note: Since R14A, a new optimization has been added to Erlang's
 compiler. It simplifies selective receives in very specific cases of
 back-and-forth communications between processes. An example of such a
-function is `optimized/1` in multiproc.erl.
+function is ``optimized/1`` in multiproc.erl.
 
-To make it work, a reference ( `make_ref()`) has to be created in a
+To make it work, a reference ( ``make_ref()``) has to be created in a
 function and then sent in a message. In the same function, a selective
 receive is then made. If no message can match unless it contains the
 same reference, the compiler automatically makes sure the VM will skip
